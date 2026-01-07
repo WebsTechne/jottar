@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+////////////////////
+// AUTH / USER
+////////////////////
+
+model User {
+  id             String         @id @default(uuid()) @db.Uuid
+  email          String?        @unique @db.VarChar(255)
+  name           String?
+  image          String?
+  emailVerified  Boolean?       @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  accounts       Account[]
+  sessions       Session[]
+  notes          Note[]
+  categories     Folder[]
+  tags           Tag[]
+
+  @@map("user")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String    @db.Uuid
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+////////////////////
+// CORE NOTES
+////////////////////
+
+model Note {
+  id        String    @id @default(uuid()) @db.Uuid
+  title     String?   @db.VarChar(255)
+  content   String    @db.Text
+
+  folderId  String?   @db.Uuid
+  folder    Folder?   @relation(fields: [folderId], references: [id])
+
+  userId    String    @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  noteTags  NoteTag[]
+
+  isPinned  Boolean   @default(false)
+  favorite  Boolean   @default(false)
+  archived Boolean @default(false)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([folderId])
+  @@map("note")
+}
+
+////////////////////
+// CATEGORY (aka Folder)
+////////////////////
+
+model Folder {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(50)
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notes     Note[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@map("folder")
+}
+
+////////////////////
+// TAGS (many-to-many)
+////////////////////
+
+model Tag {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String    @db.VarChar(100)
+  userId    String    @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  noteTags  NoteTag[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([userId, name])
+  @@map("tag")
+}
+
+model NoteTag {
+  id        String   @id @default(uuid()) @db.Uuid
+  noteId    String   @db.Uuid
+  tagId     String   @db.Uuid
+  note      Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([noteId, tagId])
+  @@index([noteId])
+  @@index([tagId])
+  @@map("note_tag")
+}
