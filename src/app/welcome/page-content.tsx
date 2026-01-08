@@ -6,9 +6,12 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ReactLenis } from "lenis/react";
 import BackgroundBalls from "@/components/background-balls";
+import { SplitText } from "gsap/all";
+
+gsap.registerPlugin(SplitText);
 
 export default function PageContent() {
-  const lenisRef = useRef<any>();
+  const lenisRef = useRef<any>(null);
 
   useEffect(() => {
     function update(time: number) {
@@ -20,20 +23,78 @@ export default function PageContent() {
     return () => gsap.ticker.remove(update);
   }, []);
 
+  const main = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const words = ["stories", "ideas", "thoughts", "dreams", "plans"];
+      let currentIndex = 0;
+      const wordElement = document.getElementById("words");
+      if (!wordElement) return;
+
+      const cycleWords = () => {
+        const currentSplit = new SplitText(wordElement, { type: "chars" });
+
+        gsap.to(currentSplit.chars, {
+          yPercent: -100,
+          stagger: 0.02,
+          duration: 0.3,
+          ease: "power2.in",
+          onComplete: () => {
+            currentSplit.revert();
+
+            currentIndex = (currentIndex + 1) % words.length;
+            wordElement.textContent = words[currentIndex];
+
+            const newSplit = new SplitText(wordElement, { type: "chars" });
+            gsap.from(newSplit.chars, {
+              yPercent: 100,
+              stagger: 0.02,
+              duration: 0.3,
+              ease: "power2.out",
+              onComplete: () => {
+                newSplit.revert();
+                gsap.delayedCall(1.5, cycleWords);
+              },
+            });
+          },
+        });
+      };
+
+      wordElement.textContent = words[currentIndex];
+      const initialSplit = new SplitText(wordElement, { type: "chars" });
+      gsap.from(initialSplit.chars, {
+        yPercent: 100,
+        stagger: 0.02,
+        duration: 0.3,
+        ease: "power2.out",
+        onComplete: () => {
+          initialSplit.revert();
+          gsap.delayedCall(1.5, cycleWords);
+        },
+      });
+    },
+    { scope: main },
+  );
+
   return (
     <>
       <ReactLenis root options={{ autoRaf: false }} ref={lenisRef} />
 
-      <section className="flex-center relative min-h-screen w-full max-w-screen overflow-clip">
+      <section
+        ref={main}
+        className="flex-center relative min-h-screen w-full max-w-screen overflow-clip"
+      >
         <BackgroundBalls />
 
         <div className="bg-background/60 flex-center z-10 h-screen w-full bg-[url('/images/noise.png')] bg-blend-overlay">
           <div className="border-3 md:w-160">
-            <h1 className="w-max border text-6xl leading-none font-black tracking-wide uppercase transition-[width] duration-300">
+            <h1 className="w-max border text-6xl leading-none font-black tracking-tight uppercase transition-[width] duration-300">
               Jot down{" "}
-              <span className="inline-block h-15.5 overflow-y-clip text-6xl leading-none font-black tracking-wide uppercase">
-                stories
-              </span>
+              <span
+                id="words"
+                className="inline-block h-15.5 overflow-y-clip text-6xl leading-none font-black tracking-tight uppercase"
+              ></span>
             </h1>
             <p className="text-lg">
               Start jotting down your thoughts and ideas.
