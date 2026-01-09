@@ -87,16 +87,16 @@ export default function PageContent() {
       >
         <BackgroundBalls />
 
-        <div className="bg-background/60 flex-center z-10 h-screen w-full bg-[url('/images/noise.png')] bg-blend-overlay">
-          <div className="md:w-160">
-            <h1 className="w-max text-6xl leading-none font-black tracking-tight uppercase transition-[width] duration-300">
+        <div className="bg-background/60 flex-center z-10 h-screen w-full bg-[url('/images/noise.png')] px-4 bg-blend-overlay">
+          <div className="w-full md:max-w-160">
+            <h1 className="w-max text-2xl leading-none font-black tracking-tight uppercase transition-[width] duration-300 sm:text-3xl md:text-6xl">
               Jot down{" "}
               <span
                 id="words"
-                className="inline-block h-15.5 overflow-y-clip text-6xl leading-none font-black tracking-tight uppercase"
+                className="inline-block overflow-y-clip text-2xl leading-none font-black tracking-tight uppercase sm:text-3xl md:h-15.5 md:text-6xl"
               ></span>
             </h1>
-            <p className="text-lg">
+            <p className="text-sm sm:text-lg">
               Start jotting down your thoughts and ideas.
             </p>
           </div>

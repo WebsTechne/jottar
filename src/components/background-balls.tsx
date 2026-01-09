@@ -66,11 +66,11 @@ export default function BackgroundBalls() {
     <>
       <span
         ref={ball1}
-        className="bg-foreground/90 dark:bg-foreground/70 absolute top-1/2 left-6/10 z-1 size-125 rounded-full blur-[90px] duration-200"
+        className="bg-foreground/90 dark:bg-foreground/70 absolute top-1/2 left-6/10 z-1 size-80 rounded-full blur-[90px] duration-200 md:size-125"
       ></span>
       <span
         ref={ball2}
-        className="bg-chart-2/80 absolute top-14/20 left-83/100 z-1 size-125 rounded-full blur-[90px] duration-200"
+        className="bg-chart-2/80 absolute top-14/20 left-83/100 z-1 size-80 rounded-full blur-[90px] duration-200 md:size-125"
       ></span>
     </>
   );
