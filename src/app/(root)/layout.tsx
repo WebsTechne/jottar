@@ -10,5 +10,5 @@ export default async function Layout({ children }: { children: ReactNode }) {
     redirect("/welcome");
   }
 
-  return { children };
+  return <>{children}</>;
 }
