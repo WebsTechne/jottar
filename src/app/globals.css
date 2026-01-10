@@ -133,3 +133,34 @@
 @utility flex-center {
   @apply flex items-center justify-center;
 }
+
+@layer components {
+  .input-group {
+    &:has(input:focus) .input-label {
+      @apply text-foreground;
+    }
+    &:has(input.required) .input-label::after {
+      content: "*";
+      color: var(--destructive);
+      margin-left: 1px;
+    }
+
+    @apply flex h-max w-full flex-col items-start gap-[1.5px];
+  }
+  /* max-w-120 for input-group */
+  .input-label {
+    @apply text-muted-foreground gap-0!;
+  }
+
+  .input {
+    @apply text-foreground h-11! !shadow-none dark:border-0!; /* h-12 !h-11.25 */
+  }
+
+  .input-error {
+    @apply text-destructive m-0! text-sm font-medium;
+  }
+
+  .button {
+    @apply h-11!;
+  }
+}
