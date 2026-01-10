@@ -92,7 +92,7 @@ const StarterKitExample = () => {
         onClick={() => {
           editor?.chain().focus().run();
         }}
-        className="bg-background min-h-[18rem] cursor-text"
+        className="bg-background min-h-72 cursor-text"
       >
         <EditorContent className="outline-none" editor={editor} />
       </div>

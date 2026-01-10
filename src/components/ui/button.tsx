@@ -1,6 +1,6 @@
 "use client";
 
-import { ComponentPropsWithoutRef } from "react";
+import React, { ComponentPropsWithoutRef } from "react";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -41,21 +41,23 @@ const buttonVariants = cva(
   },
 );
 
-function Button({
-  className,
-  variant = "default",
-  size = "default",
-  ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+export type ButtonProps = React.ComponentPropsWithRef<typeof ButtonPrimitive> &
+  VariantProps<typeof buttonVariants>;
+
+const Button = React.forwardRef<
+  React.ElementRef<typeof ButtonPrimitive>,
+  ButtonProps
+>(({ className, variant = "default", size = "default", ...props }, ref) => {
   return (
     <ButtonPrimitive
+      ref={ref}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
   );
-}
+});
 
-export type ButtonProps = ButtonPrimitive.Props &
-  VariantProps<typeof buttonVariants>;
+Button.displayName = "Button";
+
 export { Button, buttonVariants };
