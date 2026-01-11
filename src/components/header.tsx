@@ -17,7 +17,7 @@ const Header = ({ session }: { session: ServerSession }) => {
 
   return (
     <header className="flex h-12 items-center justify-between border-b px-4">
-      <section className="flex items-center gap-1.5">
+      <section className="flex items-center gap-1 text-lg font-semibold">
         <HugeiconsIcon
           icon={QuillWrite01Icon}
           strokeWidth={2}
@@ -38,7 +38,7 @@ const Header = ({ session }: { session: ServerSession }) => {
           onClick={() =>
             toast.info("Nothing here yet...", { closeButton: true })
           }
-          className="hidden sm:inline"
+          className="hidden p-0! px-0! py-0! sm:inline-flex"
         >
           <HugeiconsIcon icon={Search01Icon} className="size-6!" />
         </Button>

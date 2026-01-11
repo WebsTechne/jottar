@@ -83,7 +83,7 @@ export default function PageContent() {
 
   return (
     <>
-      <section className="fixed top-0 right-0 left-0 z-1000 flex h-12 items-center gap-1.5">
+      <section className="fixed top-0 right-0 left-0 z-1000 flex h-12 items-center gap-1 text-lg font-semibold">
         <HugeiconsIcon
           icon={QuillWrite01Icon}
           strokeWidth={2}
