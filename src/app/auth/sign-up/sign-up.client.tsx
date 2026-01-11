@@ -37,6 +37,10 @@ import { cn } from "@/lib/utils";
 // validation: identifier must be email, password 6+ chars
 const formSchema = z
   .object({
+    name: z
+      .string()
+      .min(2, "Name must be at least 2 characters.")
+      .max(100, "Name must be at most 100 characters."),
     email: z.email("Please enter a valid email address."),
     password: z
       .string()
@@ -85,9 +89,10 @@ export function SignUpClient() {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: "", password: "", confirmPassword: "" },
+    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
   });
 
+  const nameError = form.formState.errors.name;
   const emailError = form.formState.errors.email;
   const passwordError = form.formState.errors.password;
 
@@ -98,7 +103,7 @@ export function SignUpClient() {
   const onSubmit = async (data: FormValues) => {
     const { confirmPassword, ...payload } = {
       ...data,
-      name: "",
+      name: data.name,
       email: data.email.toLowerCase().trim(),
     };
 
@@ -153,6 +158,28 @@ export function SignUpClient() {
           title="Create account"
           description="Sign up for the best experience"
         />
+
+        {/* Name */}
+        <Field data-invalid={!!nameError} className="input-group gap-1.5!">
+          <FieldLabel htmlFor="form-rhf-name" className="input-label">
+            Name
+          </FieldLabel>
+          <Input
+            {...form.register("name")}
+            id="form-rhf-name"
+            aria-invalid={!!nameError}
+            aria-describedby={nameError ? "form-rhf-name-error" : undefined}
+            autoComplete="name"
+            className="input required"
+            type="text"
+            placeholder="John Doe"
+          />
+          <FieldError
+            errors={[emailError]}
+            id="form-rhf-email-error"
+            role="alert"
+          />
+        </Field>
 
         {/* Email */}
         <Field data-invalid={!!emailError} className="input-group gap-1.5!">

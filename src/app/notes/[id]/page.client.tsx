@@ -16,31 +16,6 @@ import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 
-function useTrackInternalRoute() {
-  const pathname = usePathname();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("lastInternalRoute", pathname);
-    }
-  }, [pathname]);
-}
-
-function useBack(defaultRoute = "/") {
-  const router = useRouter();
-
-  const goBack = () => {
-    const lastInternal = sessionStorage.getItem("lastInternalRoute");
-    if (lastInternal) {
-      router.push(lastInternal);
-    } else {
-      router.push(defaultRoute);
-    }
-  };
-
-  return goBack;
-}
-
 const Editor = dynamic(
   () => import("@/components/editor").then((mod) => mod.Editor),
   {
@@ -94,8 +69,7 @@ const NotePageClient = ({ note }: NotePageClientProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  useTrackInternalRoute();
-  const goBack = useBack("/");
+  const router = useRouter();
 
   const editor = useEditor({
     extensions: extensions as Extension[],
@@ -190,7 +164,7 @@ const NotePageClient = ({ note }: NotePageClientProps) => {
   return (
     <>
       <header className="bg-background flex h-12 items-center justify-between border px-2 py-2">
-        <Button variant="ghost" size="icon-sm" onClick={goBack}>
+        <Button variant="ghost" size="icon-sm" onClick={() => router.back()}>
           <HugeiconsIcon
             icon={ArrowLeft02Icon}
             size={24}

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Raleway } from "next/font/google";
 import "lenis/dist/lenis.css";
 import "./globals.css";
-import { headers } from "next/headers";
 import LayoutContent from "./layout-content";
+import { auth } from "@/lib/auth";
 
 const raleway = Raleway({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -16,6 +16,8 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export type ServerSession = typeof auth.$Infer.Session | null;
 
 export const metadata: Metadata = {
   title: "Create Next App",

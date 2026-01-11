@@ -7,6 +7,10 @@ import { useGSAP } from "@gsap/react";
 import { ReactLenis } from "lenis/react";
 import BackgroundBalls from "@/components/background-balls";
 import { SplitText } from "gsap/all";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { QuillWrite01Icon } from "@hugeicons/core-free-icons";
 
 gsap.registerPlugin(SplitText);
 
@@ -99,6 +103,20 @@ export default function PageContent() {
             <p className="text-sm sm:text-lg">
               Start jotting down your thoughts and ideas.
             </p>
+            <div className="mt-5">
+              <Link
+                className={buttonVariants({ variant: "default", size: "lg" })}
+                href={`/auth/sign-in?returnTo=${encodeURIComponent("/")}`}
+              >
+                <HugeiconsIcon
+                  icon={QuillWrite01Icon}
+                  size={24}
+                  strokeWidth={2}
+                  className="size-6!"
+                />
+                Start jotting
+              </Link>
+            </div>
           </div>
         </div>
       </section>
