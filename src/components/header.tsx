@@ -17,7 +17,14 @@ const Header = ({ session }: { session: ServerSession }) => {
 
   return (
     <header className="flex h-12 items-center justify-between border-b px-4">
-      <section className=""></section>
+      <section className="flex items-center gap-1.5">
+        <HugeiconsIcon
+          icon={QuillWrite01Icon}
+          strokeWidth={2}
+          className="size-6!"
+        />
+        Jottar
+      </section>
 
       <section className="flex items-center gap-3">
         <Link href="/new" className={buttonVariants({ size: "sm" })}>
@@ -31,6 +38,7 @@ const Header = ({ session }: { session: ServerSession }) => {
           onClick={() =>
             toast.info("Nothing here yet...", { closeButton: true })
           }
+          className="hidden sm:inline"
         >
           <HugeiconsIcon icon={Search01Icon} className="size-6!" />
         </Button>

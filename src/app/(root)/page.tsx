@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { Note } from "@prisma/client";
 import { headers } from "next/headers";
 import { getNotes } from "../../lib/fetch/get-notes";
+import Link from "next/link";
 
 export default async function Page() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -42,6 +43,17 @@ export default async function Page() {
           </div>
         </section>
       </main>
+
+      <footer>
+        <ul>
+          <li>
+            <Link href="/legal/privacy">Privacy</Link>
+          </li>
+          <li>
+            <Link href="/legal/terms">Terms and Conditions</Link>
+          </li>
+        </ul>
+      </footer>
     </>
   );
 }

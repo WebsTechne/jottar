@@ -83,6 +83,15 @@ export default function PageContent() {
 
   return (
     <>
+      <section className="fixed top-0 right-0 left-0 z-1000 flex h-12 items-center gap-1.5">
+        <HugeiconsIcon
+          icon={QuillWrite01Icon}
+          strokeWidth={2}
+          className="size-6!"
+        />
+        Jottar
+      </section>
+
       <ReactLenis root options={{ autoRaf: false }} ref={lenisRef} />
 
       <section
@@ -122,6 +131,17 @@ export default function PageContent() {
       </section>
 
       <ScrollTest />
+
+      <footer>
+        <ul>
+          <li>
+            <Link href="/legal/privacy">Privacy</Link>
+          </li>
+          <li>
+            <Link href="/legal/terms">Terms and Conditions</Link>
+          </li>
+        </ul>
+      </footer>
     </>
   );
 }
