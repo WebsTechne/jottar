@@ -163,7 +163,7 @@ const NotePageClient = ({ note }: NotePageClientProps) => {
 
   return (
     <>
-      <header className="bg-background flex h-12 items-center justify-between border px-2 py-2">
+      <header className="bg-background flex h-12 items-center justify-between gap-1 border px-2 py-2">
         <Button variant="ghost" size="icon-sm" onClick={() => router.back()}>
           <HugeiconsIcon
             icon={ArrowLeft02Icon}
@@ -172,16 +172,20 @@ const NotePageClient = ({ note }: NotePageClientProps) => {
             className="size-6!"
           />
         </Button>
-        <span
-          className={cn(
-            "relative",
-            hasUnsavedChanges &&
-              "after:absolute after:top-0 after:mt-0.5 after:ml-1 after:inline-block after:size-2 after:rounded-full after:bg-yellow-500 after:text-white after:dark:bg-yellow-600",
-          )}
-        >
-          {note.title || "Untitled Note "}
-        </span>
-        <div className="flex items-center gap-2">
+
+        <div className="bg-muted text-muted-foreground! flex h-full max-w-100 flex-1 items-center justify-center rounded-full">
+          <span
+            className={cn(
+              "relative line-clamp-1 max-w-50",
+              hasUnsavedChanges &&
+                "after:absolute after:top-0 after:mt-0.5 after:ml-1 after:inline-block after:size-2 after:rounded-full after:bg-yellow-500 after:text-white after:dark:bg-yellow-600",
+            )}
+          >
+            {note.title || "Untitled Note "}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-3">
           <SaveButton onSave={handleSave} isSaving={isSaving} />
           <ThemeToggle />
         </div>

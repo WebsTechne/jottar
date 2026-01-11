@@ -35,16 +35,18 @@ const ThemeToggle = ({
         <span className="group">
           <HugeiconsIcon
             icon={Sun03Icon}
+            size={24}
             strokeWidth={2}
-            className="transition-transform duration-150 ease-out will-change-transform"
+            className="size-6!"
           />
         </span>
       ) : (
         <span className="group">
           <HugeiconsIcon
             icon={MoonIcon}
+            size={24}
             strokeWidth={2}
-            className="transition-transform duration-150 ease-out will-change-transform"
+            className="size-6!"
           />
         </span>
       )}

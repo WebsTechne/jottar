@@ -130,7 +130,7 @@ const NewNotePage = () => {
     <>
       <header className="bg-background flex h-12 items-center justify-between border px-2 py-2">
         <span>New note • Jottar</span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:gap-3">
           <SaveButton onSave={handleSave} isSaving={isSaving} />
           <ThemeToggle />
         </div>

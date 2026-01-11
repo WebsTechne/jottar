@@ -12,16 +12,17 @@ interface SaveButtonProps {
 const SaveButton = ({ onSave, isSaving }: SaveButtonProps) => {
   return (
     <Button
-      variant="outline"
-      size="sm"
+      variant="ghost"
+      size="icon-sm"
       onClick={onSave}
       disabled={!onSave || isSaving}
-      className="not-sm:aspect-square! not-sm:p-0! not-sm:px-0! not-sm:py-0!"
     >
-      <HugeiconsIcon icon={FloppyDiskIcon} size={16} strokeWidth={2} />{" "}
-      <span className="hidden sm:inline">
-        {isSaving ? "Saving..." : "Save"}
-      </span>
+      <HugeiconsIcon
+        icon={FloppyDiskIcon}
+        size={24}
+        strokeWidth={2}
+        className="size-6!"
+      />
     </Button>
   );
 };

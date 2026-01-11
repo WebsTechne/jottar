@@ -57,7 +57,6 @@ function AccountButton({
   const user = session?.user;
 
   if (!user) return <span className="bg-muted size-9 rounded-full">null</span>;
-  console.log(user);
 
   const { name, image } = user;
   const { initials } = getInitials(name);
