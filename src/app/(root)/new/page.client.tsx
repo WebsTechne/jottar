@@ -10,6 +10,9 @@ import { toast } from "sonner";
 import { SaveButton } from "@/components/toolbars/save-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { createNote } from "@/lib/actions/note-actions";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 
 const Editor = dynamic(
   () => import("@/components/editor").then((mod) => mod.Editor),
@@ -128,7 +131,15 @@ const NewNotePage = () => {
 
   return (
     <>
-      <header className="bg-background flex h-12 items-center justify-between border px-2 py-2">
+      <header className="bg-background flex h-12 items-center justify-between gap-1 border px-2 py-2">
+        <Button variant="ghost" size="icon-sm" onClick={() => router.back()}>
+          <HugeiconsIcon
+            icon={ArrowLeft02Icon}
+            size={24}
+            strokeWidth={2}
+            className="size-6!"
+          />
+        </Button>
         <span>New note • Jottar</span>
         <div className="flex items-center gap-2 sm:gap-3">
           <SaveButton onSave={handleSave} isSaving={isSaving} />
