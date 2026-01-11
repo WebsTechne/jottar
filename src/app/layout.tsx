@@ -31,6 +31,12 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" className={raleway.variable} suppressHydrationWarning>
+      <head>
+        <meta
+          name="google-site-verification"
+          content="ze3TIUtX0yRpxLheDZ98occjvqsabFeaOXi86Tg2aOc"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
