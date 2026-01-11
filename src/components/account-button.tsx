@@ -7,6 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
@@ -73,21 +74,24 @@ function AccountButton({
           </span>
         }
       ></DropdownMenuTrigger>
-      <DropdownMenuContent className="mr-5 min-w-40">
+      <DropdownMenuContent className="min-w-40">
         <DropdownMenuGroup>
-          {/* Account */}
+          {/* Settings */}
           <DropdownMenuItem
             render={
               <Link href="/settings">
-                <HugeiconsIcon icon={Settings02Icon} /> Account
+                <HugeiconsIcon icon={Settings02Icon} strokeWidth={1.7} />{" "}
+                Settings
               </Link>
             }
           ></DropdownMenuItem>
         </DropdownMenuGroup>
 
+        <DropdownMenuSeparator />
+
         {/* Theme */}
-        <DropdownMenuGroup className="text-muted-foreground flex flex-row! items-center justify-between gap-2 p-1 text-sm">
-          Change Theme
+        <DropdownMenuGroup className="text-muted-foreground flex flex-row! items-center justify-between gap-2 p-1">
+          Theme
           <span className="flex items-center rounded-full bg-black/7 p-0.5 dark:bg-black/25">
             <DropdownMenuItem
               className={cn(
@@ -119,12 +123,14 @@ function AccountButton({
           </span>
         </DropdownMenuGroup>
 
+        <DropdownMenuSeparator />
+
         <DropdownMenuGroup>
           <DropdownMenuItem
             variant="destructive"
             onClick={() => signOutAndRedirect({ returnTo, push })}
           >
-            <HugeiconsIcon icon={LogoutSquare01Icon} />
+            <HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={1.7} />
             Sign out
           </DropdownMenuItem>
         </DropdownMenuGroup>
