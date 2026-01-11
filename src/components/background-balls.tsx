@@ -11,7 +11,6 @@ export default function BackgroundBalls() {
   // useGSAP is the modern way to use GSAP in React, it handles cleanup automatically.
   useGSAP(() => {
     // --- Tweakable Values ---
-    x;
     // // MOVEMENT_STRENGTH: Higher value means a larger range of movement.
     // A value of 100 means the ball can move 50px in either direction from its center.
     const MOVEMENT_STRENGTH_1 = 80;
