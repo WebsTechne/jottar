@@ -10,17 +10,17 @@ const _getFolders = async () => {
 
   if (!user) {
     return;
-	}
+  }
 
-	return prisma.folder.findMany({
-		select: {
-			id: true,
-			name: true,
-			userId: true,
-			notes: true
-		}, where: {
-			userId: { equals: user.id }
-		}
-	})
+  return prisma.folder.findMany({
+    select: {
+      id: true,
+      name: true,
+      userId: true,
+      notes: true,
+    },
+    where: { userId: { equals: user.id } },
+  });
+};
 
-	export const getFolders = cache(_getFolders);
+export const getFolders = cache(_getFolders);

@@ -25,9 +25,7 @@ const _getNotes = async () => {
       createdAt: true,
       updatedAt: true,
     },
-    where: {
-      userId: { equals: user.id },
-    },
+    where: { userId: { equals: user.id } },
   });
 };
 
