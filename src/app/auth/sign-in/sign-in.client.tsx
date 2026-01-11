@@ -137,7 +137,7 @@ export function SignInClient() {
         <AuthMessage
           id="sign-in-heading"
           title="Welcome back"
-          description="Sig in with your email and password"
+          description="Sign in with your email and password"
         />
 
         {/* Email */}
