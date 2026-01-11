@@ -15,6 +15,7 @@ import { Note } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
+import { NoteDetails } from "@/components/toolbars/note-details";
 
 const Editor = dynamic(
   () => import("@/components/editor").then((mod) => mod.Editor),
@@ -173,17 +174,19 @@ const NotePageClient = ({ note }: NotePageClientProps) => {
           />
         </Button>
 
-        <div className="bg-muted text-muted-foreground! flex h-full max-w-100 flex-1 items-center justify-center rounded-full">
-          <span
-            className={cn(
-              "relative line-clamp-1 max-w-50",
-              hasUnsavedChanges &&
-                "after:absolute after:top-0 after:mt-0.5 after:ml-1 after:inline-block after:size-2 after:rounded-full after:bg-yellow-500 after:text-white after:dark:bg-yellow-600",
-            )}
-          >
-            {note.title || "Untitled Note "}
-          </span>
-        </div>
+        <NoteDetails>
+          <div className="bg-muted text-muted-foreground! flex h-full max-w-100 flex-1 cursor-pointer items-center justify-center rounded-full">
+            <span
+              className={cn(
+                "relative line-clamp-1 max-w-50",
+                hasUnsavedChanges &&
+                  "after:absolute after:top-0 after:mt-0.5 after:ml-1 after:inline-block after:size-2 after:rounded-full after:bg-yellow-500 after:text-white after:dark:bg-yellow-600",
+              )}
+            >
+              {note.title || "Untitled Note "}
+            </span>
+          </div>
+        </NoteDetails>
 
         <div className="flex items-center gap-2 sm:gap-3">
           <SaveButton onSave={handleSave} isSaving={isSaving} />
