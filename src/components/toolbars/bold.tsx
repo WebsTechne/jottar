@@ -9,19 +9,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useToolbar } from "@/components/toolbars/toolbar-provider";
-import type { Extension } from "@tiptap/core";
-import type { StarterKitOptions } from "@tiptap/starter-kit";
+import { type Editor } from "@tiptap/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { TextBoldIcon } from "@hugeicons/core-free-icons";
 
-type StarterKitExtensions = Extension<StarterKitOptions, any>;
+type BoldToolbarProps = {
+  editor: Editor | null;
+} & React.ComponentPropsWithoutRef<typeof Button>;
 
 const BoldToolbar = React.forwardRef<
   React.ElementRef<typeof Button>,
-  ButtonProps
->(({ className, onClick, children, ...props }, ref) => {
-  const { editor } = useToolbar();
+  BoldToolbarProps
+>(({ className, editor, onClick, children, ...props }, ref) => {
   return (
     <Tooltip>
       <TooltipTrigger

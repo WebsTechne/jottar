@@ -9,16 +9,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useToolbar } from "@/components/toolbars/toolbar-provider";
+import { type Editor } from "@tiptap/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { LeftToRightListBulletIcon } from "@hugeicons/core-free-icons";
 
+type BulletListToolbarProps = {
+  editor: Editor | null;
+} & React.ComponentPropsWithoutRef<typeof Button>;
+
 const BulletListToolbar = React.forwardRef<
   React.ElementRef<typeof Button>,
-  ButtonProps
->(({ className, onClick, children, ...props }, ref) => {
-  const { editor } = useToolbar();
-
+  BulletListToolbarProps
+>(({ className, editor, onClick, children, ...props }, ref) => {
   return (
     <Tooltip>
       <TooltipTrigger
@@ -42,7 +44,11 @@ const BulletListToolbar = React.forwardRef<
         }
       >
         {children || (
-          <HugeiconsIcon icon={LeftToRightListBulletIcon} size={16} strokeWidth={2} />
+          <HugeiconsIcon
+            icon={LeftToRightListBulletIcon}
+            size={16}
+            strokeWidth={2}
+          />
         )}
       </TooltipTrigger>
       <TooltipContent>

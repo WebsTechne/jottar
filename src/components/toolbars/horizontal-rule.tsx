@@ -9,15 +9,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useToolbar } from "@/components/toolbars/toolbar-provider";
+import { type Editor } from "@tiptap/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { TrapezoidLineHorizontalIcon } from "@hugeicons/core-free-icons";
 
+type HorizontalRuleToolbarProps = {
+  editor: Editor | null;
+} & React.ComponentPropsWithoutRef<typeof Button>;
+
 const HorizontalRuleToolbar = React.forwardRef<
   React.ElementRef<typeof Button>,
-  ButtonProps
->(({ className, onClick, children, ...props }, ref) => {
-  const { editor } = useToolbar();
+  HorizontalRuleToolbarProps
+>(({ className, editor, onClick, children, ...props }, ref) => {
   return (
     <Tooltip>
       <TooltipTrigger
@@ -36,7 +39,11 @@ const HorizontalRuleToolbar = React.forwardRef<
         }
       >
         {children || (
-          <HugeiconsIcon icon={TrapezoidLineHorizontalIcon} size={16} strokeWidth={2} />
+          <HugeiconsIcon
+            icon={TrapezoidLineHorizontalIcon}
+            size={16}
+            strokeWidth={2}
+          />
         )}
       </TooltipTrigger>
       <TooltipContent>

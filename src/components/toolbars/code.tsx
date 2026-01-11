@@ -9,15 +9,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useToolbar } from "@/components/toolbars/toolbar-provider";
+import { type Editor } from "@tiptap/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CodeSimpleIcon } from "@hugeicons/core-free-icons";
 
+type CodeToolbarProps = {
+  editor: Editor | null;
+} & React.ComponentPropsWithoutRef<typeof Button>;
+
 const CodeToolbar = React.forwardRef<
   React.ElementRef<typeof Button>,
-  ButtonProps
->(({ className, onClick, children, ...props }, ref) => {
-  const { editor } = useToolbar();
+  CodeToolbarProps
+>(({ className, editor, onClick, children, ...props }, ref) => {
   return (
     <Tooltip>
       <TooltipTrigger
@@ -40,7 +43,9 @@ const CodeToolbar = React.forwardRef<
           />
         }
       >
-        {children || <HugeiconsIcon icon={CodeSimpleIcon} size={16} strokeWidth={2} />}
+        {children || (
+          <HugeiconsIcon icon={CodeSimpleIcon} size={16} strokeWidth={2} />
+        )}
       </TooltipTrigger>
       <TooltipContent>
         <span>Code</span>

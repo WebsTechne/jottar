@@ -9,15 +9,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useToolbar } from "@/components/toolbars/toolbar-provider";
+import { type Editor } from "@tiptap/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { TextWrapIcon } from "@hugeicons/core-free-icons";
 
+type HardBreakToolbarProps = {
+  editor: Editor | null;
+} & React.ComponentPropsWithoutRef<typeof Button>;
+
 const HardBreakToolbar = React.forwardRef<
   React.ElementRef<typeof Button>,
-  ButtonProps
->(({ className, onClick, children, ...props }, ref) => {
-  const { editor } = useToolbar();
+  HardBreakToolbarProps
+>(({ className, editor, onClick, children, ...props }, ref) => {
   return (
     <Tooltip>
       <TooltipTrigger
@@ -35,7 +38,9 @@ const HardBreakToolbar = React.forwardRef<
           />
         }
       >
-        {children || <HugeiconsIcon icon={TextWrapIcon} size={16} strokeWidth={2} />}
+        {children || (
+          <HugeiconsIcon icon={TextWrapIcon} size={16} strokeWidth={2} />
+        )}
       </TooltipTrigger>
       <TooltipContent>
         <span>Hard break</span>

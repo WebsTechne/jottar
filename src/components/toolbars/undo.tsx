@@ -9,16 +9,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useToolbar } from "@/components/toolbars/toolbar-provider";
+import { type Editor } from "@tiptap/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowMoveUpLeftIcon } from "@hugeicons/core-free-icons";
 
+type UndoToolbarProps = {
+  editor: Editor | null;
+} & React.ComponentPropsWithoutRef<typeof Button>;
+
 const UndoToolbar = React.forwardRef<
   React.ElementRef<typeof Button>,
-  ButtonProps
->(({ className, onClick, children, ...props }, ref) => {
-  const { editor } = useToolbar();
-
+  UndoToolbarProps
+>(({ className, editor, onClick, children, ...props }, ref) => {
   return (
     <Tooltip>
       <TooltipTrigger
@@ -40,7 +42,8 @@ const UndoToolbar = React.forwardRef<
         {children || (
           <HugeiconsIcon
             icon={ArrowMoveUpLeftIcon}
-            size={26}
+            size={16}
+            strokeWidth={2}
             color="currentColor"
           />
         )}

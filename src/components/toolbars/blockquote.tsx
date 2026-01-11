@@ -9,15 +9,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useToolbar } from "@/components/toolbars/toolbar-provider";
+import { type Editor } from "@tiptap/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { LeftToRightBlockQuoteIcon } from "@hugeicons/core-free-icons";
 
+type BlockquoteToolbarProps = {
+  editor: Editor | null;
+} & React.ComponentPropsWithoutRef<typeof Button>;
+
 const BlockquoteToolbar = React.forwardRef<
   React.ElementRef<typeof Button>,
-  ButtonProps
->(({ className, onClick, children, ...props }, ref) => {
-  const { editor } = useToolbar();
+  BlockquoteToolbarProps
+>(({ className, editor, onClick, children, ...props }, ref) => {
   return (
     <Tooltip>
       <TooltipTrigger
@@ -41,7 +44,11 @@ const BlockquoteToolbar = React.forwardRef<
         }
       >
         {children || (
-          <HugeiconsIcon icon={LeftToRightBlockQuoteIcon} size={16} strokeWidth={2} />
+          <HugeiconsIcon
+            icon={LeftToRightBlockQuoteIcon}
+            size={16}
+            strokeWidth={2}
+          />
         )}
       </TooltipTrigger>
       <TooltipContent>

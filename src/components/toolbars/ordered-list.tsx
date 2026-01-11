@@ -9,15 +9,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useToolbar } from "@/components/toolbars/toolbar-provider";
+import { type Editor } from "@tiptap/react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { LeftToRightListNumberIcon } from "@hugeicons/core-free-icons";
 
+type OrderedListToolbarProps = {
+  editor: Editor | null;
+} & React.ComponentPropsWithoutRef<typeof Button>;
+
 const OrderedListToolbar = React.forwardRef<
   React.ElementRef<typeof Button>,
-  ButtonProps
->(({ className, onClick, children, ...props }, ref) => {
-  const { editor } = useToolbar();
+  OrderedListToolbarProps
+>(({ className, editor, onClick, children, ...props }, ref) => {
   return (
     <Tooltip>
       <TooltipTrigger
@@ -41,7 +44,11 @@ const OrderedListToolbar = React.forwardRef<
         }
       >
         {children || (
-          <HugeiconsIcon icon={LeftToRightListNumberIcon} size={16} strokeWidth={2} />
+          <HugeiconsIcon
+            icon={LeftToRightListNumberIcon}
+            size={16}
+            strokeWidth={2}
+          />
         )}
       </TooltipTrigger>
       <TooltipContent>
