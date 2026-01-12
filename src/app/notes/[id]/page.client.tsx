@@ -11,13 +11,13 @@ import { SaveButton } from "@/components/toolbars/save-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { updateNote } from "@/lib/actions/note-actions";
 import { cn } from "@/lib/utils";
-import { type Note } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { type FolderWithNotes } from "@/lib/fetch/get-folders";
 import { type TagWithNoteTags } from "@/lib/fetch/get-tags";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { NoteDetails } from "@/components/toolbars/note-details";
+import { NoteWithNoteTags } from "./page";
 
 const Editor = dynamic(
   () => import("@/components/editor").then((mod) => mod.Editor),
@@ -65,7 +65,7 @@ const extensions = [
 ];
 
 interface NotePageClientProps {
-  note: Note;
+  note: NoteWithNoteTags;
   folders: FolderWithNotes[];
   tags: TagWithNoteTags[];
 }
@@ -178,7 +178,7 @@ const NotePageClient = ({ note, folders, tags }: NotePageClientProps) => {
           />
         </Button>
 
-        <NoteDetails>
+        <NoteDetails note={note} folders={folders} tags={tags}>
           <div className="bg-muted text-muted-foreground! flex h-full max-w-100 flex-1 cursor-pointer items-center justify-center rounded-full">
             <span
               className={cn(

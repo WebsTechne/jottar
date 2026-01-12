@@ -5,12 +5,23 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getFolders } from "@/lib/fetch/get-folders";
 import { getTags } from "@/lib/fetch/get-tags";
+import { Prisma } from "@prisma/client";
 
 interface NotePageProps {
   params: {
     id: string;
   };
 }
+
+export type NoteWithNoteTags = Prisma.NoteGetPayload<{
+  include: {
+    noteTags: {
+      select: {
+        tagId: true;
+      };
+    };
+  };
+}>;
 
 export default async function NotePage({ params }: NotePageProps) {
   const awaitedParams = await params;
@@ -21,10 +32,17 @@ export default async function NotePage({ params }: NotePageProps) {
     return notFound();
   }
 
-  const note = await prisma.note.findUnique({
+  const note: NoteWithNoteTags | null = await prisma.note.findUnique({
     where: {
       id: awaitedParams.id,
       userId: session.user.id,
+    },
+    include: {
+      noteTags: {
+        select: {
+          tagId: true,
+        },
+      },
     },
   });
 

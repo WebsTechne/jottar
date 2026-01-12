@@ -1,10 +1,11 @@
 "use client";
 
 import { cloneElement, useState, type ReactElement } from "react";
-
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -27,22 +28,43 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import capitalize from "@/lib/helpers/capitalize";
+import { type FolderWithNotes } from "@/lib/fetch/get-folders";
+import { type TagWithNoteTags } from "@/lib/fetch/get-tags";
+import { type NoteWithNoteTags } from "@/app/notes/[id]/page";
+import { Button } from "../ui/button";
 
-export function NoteDetails({ children }: { children: ReactElement }) {
-  const items = ["#Tag-1", "#Tag-2", "#Tag-3"];
+interface NoteDetailsProps {
+  children: ReactElement;
+  note: NoteWithNoteTags;
+  folders: FolderWithNotes[];
+  tags: TagWithNoteTags[];
+}
 
+export function NoteDetails({
+  children,
+  note,
+  folders,
+  tags,
+}: NoteDetailsProps) {
   const [open, setOpen] = useState(false);
 
-  const roleItems = [
-    { label: "Developer", value: "developer" },
-    { label: "Designer", value: "designer" },
-    { label: "Manager", value: "manager" },
-    { label: "Other", value: "other" },
-  ];
+  const [title, setTitle] = useState(note.title || "");
+  const [selectedFolderId, setSelectedFolderId] = useState(note.folderId);
+  const initialSelectedTagIds = note.noteTags.map((nt) => nt.tagId);
+  const [selectedTagIds, setSelectedTagIds] = useState(initialSelectedTagIds);
 
-  // Controlled state for inputs to avoid uncontrolled -> controlled warnings
-  const [title, setTitle] = useState("");
-  const [role, setRole] = useState<string | null>(null);
+  const resetState = () => {
+    setTitle(note.title || "");
+    setSelectedFolderId(note.folderId);
+    setSelectedTagIds(initialSelectedTagIds);
+  };
+
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      resetState();
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -65,15 +87,18 @@ export function NoteDetails({ children }: { children: ReactElement }) {
             className="input h-10! w-full"
           />
 
-          <MultiSelect>
+          <MultiSelect
+            values={selectedTagIds}
+            onValuesChange={setSelectedTagIds}
+          >
             <MultiSelectTrigger className="input w-full">
-              <MultiSelectValue placeholder="Select frameworks..." />
+              <MultiSelectValue placeholder="Select tags..." />
             </MultiSelectTrigger>
             <MultiSelectContent>
               <MultiSelectGroup>
-                {items.map((tag) => (
-                  <MultiSelectItem key={tag} value={tag}>
-                    {tag}
+                {tags.map((tag) => (
+                  <MultiSelectItem key={tag.id} value={tag.id}>
+                    {tag.name}
                   </MultiSelectItem>
                 ))}
               </MultiSelectGroup>
@@ -81,24 +106,40 @@ export function NoteDetails({ children }: { children: ReactElement }) {
           </MultiSelect>
 
           <Select
-            value={role ?? ""}
-            onValueChange={(value) => setRole(value)}
-            onOpenChange={(open) => console.log(open)} // Example handler
+            value={selectedFolderId ?? ""}
+            onValueChange={setSelectedFolderId}
           >
-            <SelectTrigger id="desktop-form-role" className="input w-full">
+            <SelectTrigger className="input w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {roleItems.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    {item.label}
+                <SelectItem value="">No Folder</SelectItem>
+                {folders.map((folder) => (
+                  <SelectItem key={folder.id} value={folder.id}>
+                    {capitalize(folder.name)}
                   </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
           </Select>
         </form>
+
+        <DialogFooter className="grid grid-cols-2">
+          <DialogClose
+            className="h-11! w-full"
+            render={
+              <Button
+                variant="secondary"
+                className="h-11! w-full"
+                onClick={resetState}
+              >
+                Close
+              </Button>
+            }
+          />
+          <Button className="h-11! w-full">Save</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
