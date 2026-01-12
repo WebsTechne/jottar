@@ -64,6 +64,7 @@ function AccountButton({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        nativeButton={false}
         render={
           <span className="flex-center inline-flex size-9 rounded-full">
             <Avatar className="ring-accent dark:ring-accent/50 size-6.5 duration-300 hover:ring-[6px]">
@@ -77,6 +78,7 @@ function AccountButton({
         <DropdownMenuGroup>
           {/* Settings */}
           <DropdownMenuItem
+            nativeButton={false}
             render={
               <Link href="/settings">
                 <HugeiconsIcon icon={Settings02Icon} strokeWidth={1.7} />{" "}
@@ -93,6 +95,7 @@ function AccountButton({
           Theme
           <span className="flex items-center rounded-full bg-black/7 p-0.5 dark:bg-black/25">
             <DropdownMenuItem
+              nativeButton={false}
               className={cn(
                 theme === "light" && "bg-muted!",
                 "grid size-6.5! place-items-center rounded-full p-0!",
@@ -102,6 +105,7 @@ function AccountButton({
               <HugeiconsIcon icon={Sun03Icon} />
             </DropdownMenuItem>
             <DropdownMenuItem
+              nativeButton={false}
               className={cn(
                 theme === "dark" && "bg-muted!",
                 "grid size-6.5! place-items-center rounded-full p-0!",
@@ -111,6 +115,7 @@ function AccountButton({
               <HugeiconsIcon icon={Moon01Icon} />
             </DropdownMenuItem>
             <DropdownMenuItem
+              nativeButton={false}
               className={cn(
                 theme === "system" && "bg-muted!",
                 "grid size-6.5! place-items-center rounded-full p-0!",
@@ -126,6 +131,7 @@ function AccountButton({
 
         <DropdownMenuGroup>
           <DropdownMenuItem
+            nativeButton={false}
             variant="destructive"
             onClick={() => signOutAndRedirect({ returnTo, push })}
           >

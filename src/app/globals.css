@@ -153,7 +153,7 @@
   }
 
   .input {
-    @apply text-foreground h-11! !shadow-none dark:border-0!; /* h-12 !h-11.25 */
+    @apply text-foreground h-11! shadow-none! dark:border-0!; /* h-12 !h-11.25 */
   }
 
   .input-error {

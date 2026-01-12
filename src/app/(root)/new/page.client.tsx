@@ -69,7 +69,7 @@ function getInitialContent() {
   if (savedContent) {
     try {
       return JSON.parse(savedContent);
-    } catch (e) {
+    } catch (err) {
       return savedContent;
     }
   }

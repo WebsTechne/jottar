@@ -65,7 +65,7 @@ export default function BackgroundBalls() {
     <>
       <span
         ref={ball1}
-        className="dark:bg-foreground/70 absolute top-1/2 left-6/10 z-1 size-80 rounded-full bg-pink-700/70 blur-[90px] duration-200 md:size-125"
+        className="dark:bg-foreground/70! absolute top-1/2 left-6/10 z-1 size-80 rounded-full bg-pink-700/70 blur-[90px] duration-200 md:size-125"
       ></span>
       <span
         ref={ball2}
