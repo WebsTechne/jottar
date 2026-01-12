@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useEditor, type Extension } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -11,9 +11,11 @@ import { SaveButton } from "@/components/toolbars/save-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { updateNote } from "@/lib/actions/note-actions";
 import { cn } from "@/lib/utils";
-import { Note } from "@prisma/client";
+import { type Note } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { type FolderWithNotes } from "@/lib/fetch/get-folders";
+import { type TagWithNoteTags } from "@/lib/fetch/get-tags";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { NoteDetails } from "@/components/toolbars/note-details";
 
@@ -64,9 +66,11 @@ const extensions = [
 
 interface NotePageClientProps {
   note: Note;
+  folders: FolderWithNotes[];
+  tags: TagWithNoteTags[];
 }
 
-const NotePageClient = ({ note }: NotePageClientProps) => {
+const NotePageClient = ({ note, folders, tags }: NotePageClientProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 

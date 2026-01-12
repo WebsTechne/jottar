@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import NotePageClient from "./page.client";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { getFolders } from "@/lib/fetch/get-folders";
+import { getTags } from "@/lib/fetch/get-tags";
 
 interface NotePageProps {
   params: {
@@ -26,9 +28,13 @@ export default async function NotePage({ params }: NotePageProps) {
     },
   });
 
+  const [folders, tags] = await Promise.all([getFolders(), getTags()]);
+
   if (!note) {
     return notFound();
   }
 
-  return <NotePageClient note={note} />;
+  return (
+    <NotePageClient note={note} folders={folders || []} tags={tags || []} />
+  );
 }

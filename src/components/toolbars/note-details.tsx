@@ -1,7 +1,6 @@
 "use client";
 
 import { cloneElement, useState, type ReactElement } from "react";
-import { useMediaQuery } from "@/hooks/use-media-quary";
 
 import {
   Dialog,
@@ -33,7 +32,6 @@ export function NoteDetails({ children }: { children: ReactElement }) {
   const items = ["#Tag-1", "#Tag-2", "#Tag-3"];
 
   const [open, setOpen] = useState(false);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const roleItems = [
     { label: "Developer", value: "developer" },
