@@ -128,6 +128,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  button,
+  a {
+    cursor: pointer;
+  }
 }
 
 @utility flex-center {

@@ -52,7 +52,9 @@ export default async function NotePage({ params }: NotePageProps) {
     return notFound();
   }
 
-  return (
-    <NotePageClient note={note} folders={folders || []} tags={tags || []} />
-  );
+  // Filter out any potential falsy values from the arrays before passing to client
+  const validFolders = (folders || []).filter(Boolean);
+  const validTags = (tags || []).filter(Boolean);
+
+  return <NotePageClient note={note} folders={validFolders} tags={validTags} />;
 }
