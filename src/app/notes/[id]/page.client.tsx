@@ -168,7 +168,7 @@ const NotePageClient = ({ note, folders, tags }: NotePageClientProps) => {
 
   return (
     <>
-      <header className="bg-background flex h-12 items-center justify-between gap-1 border px-2 py-2">
+      <header className="bg-background sticky top-0 z-1000 flex h-12 items-center justify-between gap-1 border px-2 py-2">
         <Button variant="ghost" size="icon-sm" onClick={() => router.back()}>
           <HugeiconsIcon
             icon={ArrowLeft02Icon}

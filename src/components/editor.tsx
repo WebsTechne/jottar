@@ -27,7 +27,7 @@ const Editor = ({ editor }: EditorProps) => {
 
   return (
     <div className="relative w-full overflow-hidden rounded-b-2xl pb-3">
-      <div className="bg-background sticky top-0 left-0 z-20 flex w-full items-center justify-between overflow-clip rounded-b-2xl border border-t-0 px-2 py-2">
+      <div className="bg-background fixed top-(--header-h) left-0 z-20 flex w-full items-center justify-between overflow-clip rounded-b-2xl border border-t-0 px-2 py-2">
         <ScrollArea className="w-full">
           <div className="flex items-center gap-2">
             <UndoToolbar editor={editor} />
@@ -52,7 +52,10 @@ const Editor = ({ editor }: EditorProps) => {
         }}
         className="bg-background min-h-72 cursor-text"
       >
-        <EditorContent className="outline-none" editor={editor} />
+        <EditorContent
+          className="mt-[calc(var(--header-h)*1)] outline-none"
+          editor={editor}
+        />
       </div>
     </div>
   );
