@@ -58,7 +58,8 @@ export function NoteDetails({
   const [tagInputValue, setTagInputValue] = useState("");
   const [folderInputValue, setFolderInputValue] = useState("");
 
-  const resetState = () => {
+  const resetState = (e) => {
+    e.preventDefault();
     setTitle(note.title || "");
     setSelectedFolderId(note.folderId);
     setSelectedTagIds(initialSelectedTagIds);
@@ -74,6 +75,10 @@ export function NoteDetails({
   };
 
   const tagsAnchor = useComboboxAnchor();
+
+  const getSelectedFolderName = () => {
+    return folders.find((f) => f.id === selectedFolderId)?.name || "";
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
