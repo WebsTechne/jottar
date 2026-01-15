@@ -27,7 +27,7 @@ export default async function NotesPage() {
         <section className="section">
           <h1 className="heading">Notes</h1>
 
-          <div className="container">
+          <div className="wrap">
             {pinnedNotes.map((n) => (
               <NoteCard key={n.id} note={n} />
             ))}

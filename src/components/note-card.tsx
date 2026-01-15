@@ -23,7 +23,7 @@ const NoteCard = ({ note }: { note: Note }) => {
   const { date, time } = formatDateTime(note.updatedAt.toString());
 
   return (
-    <div className="bg-card corner-squircle relative max-w-full rounded-4xl border p-2">
+    <div className="bg-card corner-squircle relative w-full rounded-4xl border p-2">
       {note.isPinned && (
         <span className="absolute top-1 right-1 inline-flex size-5 items-center justify-center rounded-full border">
           <HugeiconsIcon

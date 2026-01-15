@@ -21,7 +21,7 @@ export default async function Page() {
         <section className="section">
           <h1 className="heading">Notes</h1>
 
-          <div className="container">
+          <div className="wrap">
             {overviewNotes.map((n) => (
               <NoteCard key={n.id} note={n} />
             ))}
