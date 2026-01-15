@@ -9,7 +9,7 @@ import { QuillWrite01Icon } from "@hugeicons/core-free-icons";
 export function CreateNewBtn() {
   return (
     <Link
-      href="/notes/new"
+      href="/new"
       className={cn(buttonVariants(), "button w-full font-bold")}
     >
       <HugeiconsIcon
