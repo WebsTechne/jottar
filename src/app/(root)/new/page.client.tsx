@@ -7,12 +7,12 @@ import { useEditor, type Extension } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { toast } from "sonner";
 
-import { SaveButton } from "@/components/toolbars/save-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { createNote } from "@/lib/actions/note-actions";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
+import { cn } from "@/lib/utils";
 
 const Editor = dynamic(
   () => import("@/components/editor").then((mod) => mod.Editor),
@@ -80,6 +80,9 @@ function getInitialContent() {
 const NewNotePage = () => {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(
+    () => !!getInitialContent(),
+  );
 
   const editor = useEditor({
     extensions: extensions as Extension[],
@@ -91,6 +94,7 @@ const NewNotePage = () => {
     if (editor) {
       const saveContent = () => {
         localStorage.setItem("draft:new", JSON.stringify(editor.getJSON()));
+        setHasUnsavedChanges(true);
       };
       editor.on("update", saveContent);
       return () => {
@@ -106,7 +110,7 @@ const NewNotePage = () => {
 
     try {
       const content = editor.getJSON();
-      const result = await createNote(content);
+      const result = await createNote(JSON.stringify(content));
 
       if (result.error) {
         toast.error(result.error);
@@ -142,11 +146,15 @@ const NewNotePage = () => {
         </Button>
         <span>New note • Jottar</span>
         <div className="flex items-center gap-2 sm:gap-3">
-          <SaveButton onSave={handleSave} isSaving={isSaving} />
           <ThemeToggle />
         </div>
       </header>
-      <Editor editor={editor} />
+      <Editor
+        editor={editor}
+        onSave={handleSave}
+        isSaving={isSaving}
+        hasUnsavedChanges={hasUnsavedChanges}
+      />
     </>
   );
 };

@@ -15,12 +15,21 @@ import { StrikeThroughToolbar } from "@/components/toolbars/strikethrough";
 import { UndoToolbar } from "@/components/toolbars/undo";
 import { EditorContent, type Editor as EditorType } from "@tiptap/react";
 import { ScrollArea } from "./ui/scroll-area";
+import { SaveButton } from "./toolbars/save-button";
 
 interface EditorProps {
   editor: EditorType | null;
+  onSave?: () => void;
+  isSaving?: boolean;
+  hasUnsavedChanges?: boolean;
 }
 
-const Editor = ({ editor }: EditorProps) => {
+const Editor = ({
+  editor,
+  onSave,
+  isSaving,
+  hasUnsavedChanges,
+}: EditorProps) => {
   if (!editor) {
     return null;
   }
@@ -33,6 +42,16 @@ const Editor = ({ editor }: EditorProps) => {
             <UndoToolbar editor={editor} />
             <RedoToolbar editor={editor} />
             <Separator orientation="vertical" className="h-7" />
+            {onSave && (
+              <>
+                <SaveButton
+                  onSave={onSave}
+                  isSaving={isSaving}
+                  hasUnsavedChanges={hasUnsavedChanges}
+                />
+                <Separator orientation="vertical" className="h-7" />
+              </>
+            )}
             <BoldToolbar editor={editor} />
             <ItalicToolbar editor={editor} />
             <StrikeThroughToolbar editor={editor} />

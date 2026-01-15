@@ -162,7 +162,8 @@ function ComboboxItem({
       {...props}
     >
       {children}
-      <ComboboxPrimitive.ItemIndicator
+			<ComboboxPrimitive.ItemIndicator
+				nativeButton={false}
         render={
           <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />
         }

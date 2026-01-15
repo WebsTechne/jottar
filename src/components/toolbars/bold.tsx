@@ -46,7 +46,7 @@ const BoldToolbar = React.forwardRef<
         {children || (
           <HugeiconsIcon
             icon={TextBoldIcon}
-            size={16}
+            size={18}
             color="currentColor"
             strokeWidth={3}
           />

@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
-export async function createNote(content: object) {
+export async function createNote(content: string) {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
@@ -15,7 +15,7 @@ export async function createNote(content: object) {
   const newNote = await prisma.note.create({
     data: {
       userId: session.user.id,
-      content: JSON.stringify(content),
+      content: content,
     },
   });
 
@@ -24,7 +24,7 @@ export async function createNote(content: object) {
   return { data: newNote };
 }
 
-export async function updateNote(id: string, content: object) {
+export async function updateNote(id: string, content: string) {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
@@ -37,7 +37,7 @@ export async function updateNote(id: string, content: object) {
       userId: session.user.id,
     },
     data: {
-      content: JSON.stringify(content),
+      content: content,
     },
   });
 
@@ -45,3 +45,38 @@ export async function updateNote(id: string, content: object) {
 
   return { data: updatedNote };
 }
+
+export async function updateNoteDetails(
+  id: string,
+  data: {
+    title?: string;
+    folderId?: string | null;
+  },
+) {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session) {
+    return { error: "Not authenticated" };
+  }
+
+  try {
+    const updatedNote = await prisma.note.update({
+      where: {
+        id: id,
+        userId: session.user.id,
+      },
+      data: {
+        title: data.title,
+      },
+    });
+
+    revalidatePath(`/notes/${id}`);
+    revalidatePath(`/`);
+
+    return { data: updatedNote };
+  } catch (error) {
+    console.error("Failed to update note details:", error);
+    return { error: "Failed to update note details" };
+  }
+}
+

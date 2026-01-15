@@ -6,10 +6,7 @@ import { Header } from "@/components/header";
 import { NoteCard } from "@/components/note-card";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  ArrowUpRight01Icon,
-  ArrowUpRight03Icon,
-} from "@hugeicons/core-free-icons";
+import { ArrowUpRight03Icon } from "@hugeicons/core-free-icons";
 
 export default async function Page() {
   const session = await auth.api.getSession({ headers: await headers() });

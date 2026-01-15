@@ -7,7 +7,6 @@ import { useEditor, type Extension } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { toast } from "sonner";
 
-import { SaveButton } from "@/components/toolbars/save-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { updateNote } from "@/lib/actions/note-actions";
 import { cn } from "@/lib/utils";
@@ -148,15 +147,19 @@ const NotePageClient = ({ note, folders, tags }: NotePageClientProps) => {
     setIsSaving(true);
     try {
       const content = editor.getJSON();
-      const result = await updateNote(note.id, content);
+      const result = await updateNote(note.id, JSON.stringify(content));
 
       if (result.error) {
         toast.error(result.error);
       } else if (result.data) {
+        const localDraftRaw = localStorage.getItem(`draft:note:${note.id}`);
+        const localDraft = localDraftRaw ? JSON.parse(localDraftRaw) : {};
         const newDraft = {
+          ...localDraft,
           content,
           updatedAt: result.data.updatedAt,
         };
+        delete newDraft.lastModified;
         localStorage.setItem(`draft:note:${note.id}`, JSON.stringify(newDraft));
         setHasUnsavedChanges(false);
         toast.success("Note updated!");
@@ -180,24 +183,22 @@ const NotePageClient = ({ note, folders, tags }: NotePageClientProps) => {
 
         <NoteDetails note={note} folders={folders} tags={tags}>
           <div className="bg-muted text-muted-foreground! flex h-full max-w-100 flex-1 cursor-pointer items-center justify-center rounded-full">
-            <span
-              className={cn(
-                "relative line-clamp-1 max-w-50",
-                hasUnsavedChanges &&
-                  "after:absolute after:top-0 after:mt-0.5 after:ml-1 after:inline-block after:size-2 after:rounded-full after:bg-yellow-500 after:text-white after:dark:bg-yellow-600",
-              )}
-            >
+            <span className="relative line-clamp-1 max-w-50">
               {note.title || "Untitled Note "}
             </span>
           </div>
         </NoteDetails>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <SaveButton onSave={handleSave} isSaving={isSaving} />
           <ThemeToggle />
         </div>
       </header>
-      <Editor editor={editor} />
+      <Editor
+        editor={editor}
+        onSave={handleSave}
+        isSaving={isSaving}
+        hasUnsavedChanges={hasUnsavedChanges}
+      />
     </>
   );
 };

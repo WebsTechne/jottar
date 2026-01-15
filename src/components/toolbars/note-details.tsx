@@ -33,6 +33,11 @@ import { type NoteWithNoteTags } from "@/app/notes/[id]/page";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { PlusSignIcon } from "@hugeicons/core-free-icons";
 
+import { updateNoteDetails } from "@/lib/actions/note-actions";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Spinner } from "../ui/spinner";
+
 interface NoteDetailsProps {
   children: ReactElement;
   note: NoteWithNoteTags;
@@ -46,7 +51,9 @@ export function NoteDetails({
   folders,
   tags,
 }: NoteDetailsProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // States for controlled form inputs
   const [title, setTitle] = useState(note.title || "");
@@ -73,6 +80,22 @@ export function NoteDetails({
     }
   };
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const result = await updateNoteDetails(note.id, { title });
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("Note updated!");
+        router.refresh(); // Refresh Server Components
+        setOpen(false); // Close dialog
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const tagsAnchor = useComboboxAnchor();
 
   const getSelectedFolderName = () => {
@@ -80,8 +103,9 @@ export function NoteDetails({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+			<DialogTrigger
+				nativeButton={false}
         render={(props) => cloneElement(children, props)}
       ></DialogTrigger>
       <DialogContent className="p-4! sm:max-w-125">
@@ -89,7 +113,13 @@ export function NoteDetails({
           <DialogTitle>Note details</DialogTitle>
         </DialogHeader>
 
-        <form className="flex flex-col gap-3">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave();
+          }}
+          className="flex flex-col gap-3"
+        >
           <Input
             type="text"
             name="title"
@@ -199,21 +229,23 @@ export function NoteDetails({
 
         <DialogFooter className="grid grid-cols-2">
           <DialogClose
-            className="h-11! w-full"
             render={
               <Button
                 variant="secondary"
                 className="h-11! w-full"
-                onClick={(e) => {
-                  e.preventDefault();
-                  resetState;
-                }}
+                onClick={() => resetState()}
               >
                 Close
               </Button>
             }
-          />
-          <Button className="h-11! w-full">Save</Button>
+          ></DialogClose>
+          <Button
+            className="h-11! w-full"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            {isSaving ? <Spinner /> : "Save"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
