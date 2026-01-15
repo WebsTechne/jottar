@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 import { Note } from "@prisma/client";
 import { headers } from "next/headers";
 import { getNotes } from "@/lib/fetch/get-notes";
-import { CreateNewBtn } from "./create-new-btn";
 
 export default async function NotesPage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -41,8 +40,6 @@ export default async function NotesPage() {
               <p>No notes found</p>
             )}
           </div>
-
-          <CreateNewBtn />
         </section>
       </main>
     </>
