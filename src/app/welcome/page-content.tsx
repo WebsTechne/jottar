@@ -132,13 +132,23 @@ export default function PageContent() {
 
       <ScrollTest />
 
-      <footer>
+      <footer className="text-muted-foreground p-4 text-sm">
         <ul>
           <li>
-            <Link href="/legal/privacy">Privacy</Link>
+            <Link
+              href="/legal/privacy"
+              className="hover:text-foreground transition-200 hover:font-bold"
+            >
+              Privacy
+            </Link>
           </li>
           <li>
-            <Link href="/legal/terms">Terms and Conditions</Link>
+            <Link
+              href="/legal/terms"
+              className="hover:text-foreground transition-200 hover:font-bold"
+            >
+              Terms and Conditions
+            </Link>
           </li>
         </ul>
       </footer>

@@ -45,17 +45,6 @@ export default async function Page() {
           <h1 className="heading">Folders</h1>
         </section>
       </main>
-
-      <footer>
-        <ul>
-          <li>
-            <Link href="/legal/privacy">Privacy</Link>
-          </li>
-          <li>
-            <Link href="/legal/terms">Terms and Conditions</Link>
-          </li>
-        </ul>
-      </footer>
     </>
   );
 }

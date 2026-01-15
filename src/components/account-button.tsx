@@ -81,7 +81,7 @@ function AccountButton({
             nativeButton={false}
             render={
               <Link href="/settings">
-                <HugeiconsIcon icon={Settings02Icon} strokeWidth={1.7} />{" "}
+                {/*<HugeiconsIcon icon={Settings02Icon} strokeWidth={1.7} />{" "}*/}
                 Settings
               </Link>
             }
@@ -135,7 +135,7 @@ function AccountButton({
             variant="destructive"
             onClick={() => signOutAndRedirect({ returnTo, push })}
           >
-            <HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={1.7} />
+            {/*<HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={1.7} />*/}
             Sign out
           </DropdownMenuItem>
         </DropdownMenuGroup>

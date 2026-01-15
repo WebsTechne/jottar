@@ -222,6 +222,10 @@ h3.tiptap-heading + h2.tiptap-heading {
 }
 
 @layer components {
+  .overlay {
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 isolate z-1001 bg-black/70 duration-100 supports-backdrop-filter:backdrop-blur-[2px];
+  }
+
   .section {
     @apply mb-5 flex flex-col gap-2 border-b px-4 py-4;
 
