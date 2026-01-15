@@ -31,7 +31,6 @@ const Header = ({ session }: { session: ServerSession }) => {
 
       <section className="flex items-center gap-3">
         <Link href="/new" className={buttonVariants({ size: "sm" })}>
-          <HugeiconsIcon icon={QuillWrite01Icon} />
           New note
         </Link>
 

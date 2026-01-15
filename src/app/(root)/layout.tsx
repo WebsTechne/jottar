@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { FloatingButton } from "@/components/floating-button";
 
 export default async function Layout({ children }: { children: ReactNode }) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -10,5 +11,10 @@ export default async function Layout({ children }: { children: ReactNode }) {
     redirect("/welcome");
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <FloatingButton />
+    </>
+  );
 }
