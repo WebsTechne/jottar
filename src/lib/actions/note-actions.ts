@@ -42,6 +42,7 @@ export async function updateNote(id: string, content: string) {
   });
 
   revalidatePath(`/notes/${id}`);
+  revalidatePath("/");
 
   return { data: updatedNote };
 }
@@ -79,4 +80,3 @@ export async function updateNoteDetails(
     return { error: "Failed to update note details" };
   }
 }
-

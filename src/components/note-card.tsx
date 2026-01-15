@@ -1,12 +1,27 @@
+"use client";
+
 import { extractTextFromDoc } from "@/lib/helpers/extract-text";
 import { formatDateTime } from "@/lib/helpers/format-date-time";
 import { PinIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Note } from "@prisma/client";
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 
 const NoteCard = ({ note }: { note: Note }) => {
-  const content = JSON.parse(note.content);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsClient(true);
+  }, []);
+
+  const { date, time } = useMemo(() => {
+    if (!isClient) {
+      return { date: "", time: "" };
+    }
+    return formatDateTime(note.updatedAt.toString());
+  }, [isClient, note.updatedAt]);
 
   let preview = "";
   try {
@@ -19,8 +34,6 @@ const NoteCard = ({ note }: { note: Note }) => {
   } catch {
     preview = "";
   }
-
-  const { date, time } = formatDateTime(note.updatedAt.toString());
 
   return (
     <div className="bg-card corner-squircle relative w-full rounded-4xl border p-2">
