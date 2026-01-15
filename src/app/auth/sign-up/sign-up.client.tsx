@@ -21,7 +21,11 @@ import { Input } from "@/components/ui/input";
 import { Button, buttonVariants } from "@/components/ui/button";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ViewIcon, ViewOffSlashIcon } from "@hugeicons/core-free-icons";
+import {
+  SquareLock02Icon,
+  ViewIcon,
+  ViewOffSlashIcon,
+} from "@hugeicons/core-free-icons";
 import { GoogleIcon, AppleIcon } from "@/components/icons/social-icons";
 
 import { signInSocial } from "@/lib/actions/auth-actions";
@@ -331,6 +335,24 @@ export function SignUpClient() {
         <FieldSeparator className="*:data-[slot=field-separator-content]:bg-background my-2">
           Or continue with
         </FieldSeparator>
+
+        <Field className="w-full gap-4">
+          <Button
+            variant="secondary"
+            type="button"
+            disabled={true}
+            onClick={(e) => e.preventDefault()}
+            className="button pointer-events-auto! w-full cursor-not-allowed!"
+          >
+            <HugeiconsIcon
+              icon={SquareLock02Icon}
+              size={28}
+              color="currentColor"
+              strokeWidth={2}
+            />
+            Not available
+          </Button>
+        </Field>
 
         {/*<Field className="grid w-full grid-cols-2 gap-4">
           <Button

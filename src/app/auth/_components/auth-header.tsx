@@ -7,7 +7,7 @@ const AuthHeader = () => {
   return (
     <Field
       orientation="horizontal"
-      className="bg-background/80 sticky top-0 justify-between backdrop-blur-md"
+      className="bg-background sticky top-0 justify-between"
     >
       <Link href="/">
         {/*<Logo className="w-10" />*/}
