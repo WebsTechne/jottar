@@ -72,20 +72,20 @@ export function SignUpClient() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [error, setError] = useState("");
 
-  const handleSocialAuth = async (
-    provider: "google" | "apple",
-    callbackURL: string,
-  ) => {
-    setError("");
+  // const handleSocialAuth = async (
+  //   provider: "google" | "apple",
+  //   callbackURL: string,
+  // ) => {
+  //   setError("");
 
-    try {
-      await signInSocial({ provider, callbackURL });
-    } catch (err) {
-      const publicMsg = getPublicErrorMessage(err);
-      const ref = await reportErrorToServer(err);
-      setError(`${publicMsg} (ref: ${ref})`);
-    }
-  };
+  //   try {
+  //     await signInSocial({ provider, callbackURL });
+  //   } catch (err) {
+  //     const publicMsg = getPublicErrorMessage(err);
+  //     const ref = await reportErrorToServer(err);
+  //     setError(`${publicMsg} (ref: ${ref})`);
+  //   }
+  // };
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -332,7 +332,7 @@ export function SignUpClient() {
           Or continue with
         </FieldSeparator>
 
-        <Field className="grid w-full grid-cols-2 gap-4">
+        {/*<Field className="grid w-full grid-cols-2 gap-4">
           <Button
             variant="secondary"
             className="button w-full"
@@ -359,7 +359,7 @@ export function SignUpClient() {
             <AppleIcon size={28} fill={isDark ? "white" : "black"} />
             Apple
           </Button>
-        </Field>
+        </Field>*/}
 
         <div className="item-center text-foreground flex-center flex flex-wrap gap-1">
           Have an account?
