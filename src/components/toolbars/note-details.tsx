@@ -29,9 +29,7 @@ import { Button } from "@/components/ui/button";
 import capitalize from "@/lib/helpers/capitalize";
 import { type FolderWithNotes } from "@/lib/fetch/get-folders";
 import { type TagWithNoteTags } from "@/lib/fetch/get-tags";
-import { type NoteWithNoteTags } from "@/app/notes/[id]/page";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { PlusSignIcon } from "@hugeicons/core-free-icons";
+import { type NoteWithNoteTags } from "@/app/(notes)/notes/[id]/page";
 
 import { updateNoteDetails } from "@/lib/actions/note-actions";
 import { useRouter } from "next/navigation";
@@ -104,8 +102,8 @@ export function NoteDetails({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-			<DialogTrigger
-				nativeButton={false}
+      <DialogTrigger
+        nativeButton={false}
         render={(props) => cloneElement(children, props)}
       ></DialogTrigger>
       <DialogContent className="p-4! sm:max-w-125">
