@@ -8,7 +8,7 @@ export default function Loading() {
         icon={QuillWrite01FreeIcons}
         size={60}
         color="currentColor"
-        strokeWidth={2}
+        strokeWidth={1.8}
         className="animate-pulse"
       />
     </div>

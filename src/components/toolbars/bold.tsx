@@ -30,7 +30,7 @@ const BoldToolbar = React.forwardRef<
             size="icon"
             className={cn(
               "h-8 w-8",
-              editor?.isActive("bold") && "bg-accent",
+              editor?.isActive("bold") && "bg-accent! active",
               className,
             )}
             onClick={(e) => {

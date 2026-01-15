@@ -30,7 +30,7 @@ const CodeBlockToolbar = React.forwardRef<
             size="icon"
             className={cn(
               "h-8 w-8",
-              editor?.isActive("codeBlock") && "bg-accent",
+              editor?.isActive("codeBlock") && "bg-accent! active",
               className,
             )}
             onClick={(e) => {

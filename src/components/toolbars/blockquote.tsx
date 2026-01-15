@@ -30,7 +30,7 @@ const BlockquoteToolbar = React.forwardRef<
             size="icon"
             className={cn(
               "h-8 w-8",
-              editor?.isActive("blockquote") && "bg-accent",
+              editor?.isActive("blockquote") && "bg-accent! active",
               className,
             )}
             onClick={(e) => {

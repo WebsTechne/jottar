@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { useEditor, type Extension } from "@tiptap/react";
+import { useEditor, type Extension, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { toast } from "sonner";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 import { updateNote } from "@/lib/actions/note-actions";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { type FolderWithNotes } from "@/lib/fetch/get-folders";
@@ -86,7 +85,7 @@ const NotePageClient = ({ note, folders, tags }: NotePageClientProps) => {
       return;
     }
 
-    let initialContent: any;
+    let initialContent: JSONContent | string = "";
     let unsaved = false;
 
     const localDraftRaw = localStorage.getItem(`draft:note:${note.id}`);
@@ -118,6 +117,18 @@ const NotePageClient = ({ note, folders, tags }: NotePageClientProps) => {
     editor.commands.setContent(initialContent, { emitUpdate: false });
     setHasUnsavedChanges(unsaved);
   }, [editor, note]);
+
+  const [, setTick] = useState(0);
+  const forceUpdate = useCallback(() => setTick((tick) => tick + 1), []);
+
+  useEffect(() => {
+    if (!editor) return;
+    editor.on("selectionUpdate", forceUpdate);
+
+    return () => {
+      editor.off("selectionUpdate", forceUpdate);
+    };
+  }, [editor, forceUpdate]);
 
   useEffect(() => {
     if (editor) {

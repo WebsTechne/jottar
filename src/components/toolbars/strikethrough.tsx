@@ -30,7 +30,7 @@ const StrikeThroughToolbar = React.forwardRef<
             size="icon"
             className={cn(
               "h-8 w-8",
-              editor?.isActive("strike") && "bg-accent",
+              editor?.isActive("strike") && "bg-accent! active",
               className,
             )}
             onClick={(e) => {

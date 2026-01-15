@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useEditor, type Extension } from "@tiptap/react";
@@ -12,7 +12,6 @@ import { createNote } from "@/lib/actions/note-actions";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
-import { cn } from "@/lib/utils";
 
 const Editor = dynamic(
   () => import("@/components/editor").then((mod) => mod.Editor),
@@ -102,6 +101,18 @@ const NewNotePage = () => {
       };
     }
   }, [editor]);
+
+  const [, setTick] = useState(0);
+  const forceUpdate = useCallback(() => setTick((tick) => tick + 1), []);
+
+  useEffect(() => {
+    if (editor) {
+      editor.on("selectionUpdate", forceUpdate);
+      return () => {
+        editor.off("selectionUpdate", forceUpdate);
+      };
+    }
+  }, [editor, forceUpdate]);
 
   const handleSave = async () => {
     if (!editor) return;
