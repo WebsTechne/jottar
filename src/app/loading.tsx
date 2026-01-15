@@ -9,6 +9,7 @@ export default function Loading() {
         size={60}
         color="currentColor"
         strokeWidth={2}
+        className="animate-pulse"
       />
     </div>
   );
