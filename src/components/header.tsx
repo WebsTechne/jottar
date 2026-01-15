@@ -16,15 +16,18 @@ const Header = ({ session }: { session: ServerSession }) => {
     pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
 
   return (
-    <header className="flex h-12 items-center justify-between border-b px-4">
-      <section className="flex items-center gap-0.5 text-lg font-semibold">
+    <header className="bg-background/90 sticky top-0 z-1000 flex h-12 items-center justify-between border-b px-4 backdrop-blur-lg">
+      <Link
+        href="/"
+        className="flex items-center gap-0.5 text-lg font-semibold"
+      >
         <HugeiconsIcon
           icon={QuillWrite01Icon}
           strokeWidth={2}
           className="size-6!"
         />
         Jottar
-      </section>
+      </Link>
 
       <section className="flex items-center gap-3">
         <Link href="/new" className={buttonVariants({ size: "sm" })}>
