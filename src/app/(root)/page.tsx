@@ -1,46 +1,51 @@
+import { headers } from "next/headers";
+import { Note } from "@prisma/client";
+import { auth } from "@/lib/auth";
+import { overviewNotes as notes } from "@/lib/fetch/get-notes";
 import { Header } from "@/components/header";
 import { NoteCard } from "@/components/note-card";
-import { auth } from "@/lib/auth";
-import { Note } from "@prisma/client";
-import { headers } from "next/headers";
-import { getNotes } from "../../lib/fetch/get-notes";
 import Link from "next/link";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowUpRight01Icon,
+  ArrowUpRight03Icon,
+} from "@hugeicons/core-free-icons";
 
 export default async function Page() {
   const session = await auth.api.getSession({ headers: await headers() });
-  const allNotes: Note[] = (await getNotes()) ?? [];
-
-  const activeNotes = allNotes.filter((n) => !n.archived);
-
-  const pinnedNotes = activeNotes
-    .filter((n) => n.isPinned)
-    .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-
-  const unpinnedNotes = activeNotes
-    .filter((n) => !n.isPinned)
-    .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+  const overviewNotes: Note[] = (await notes()) ?? [];
 
   return (
     <>
       <Header session={session} />
 
       <main>
-        <section className="mb-5 border-b px-4 py-4">
-          <h1 className="mb-2 text-2xl font-extrabold md:text-3xl">Notes</h1>
+        {/* Notes */}
+        <section className="section">
+          <h1 className="heading">Notes</h1>
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {pinnedNotes.map((n) => (
+          <div className="container">
+            {overviewNotes.map((n) => (
               <NoteCard key={n.id} note={n} />
             ))}
 
-            {unpinnedNotes.map((n) => (
-              <NoteCard key={n.id} note={n} />
-            ))}
-
-            {pinnedNotes.length === 0 && unpinnedNotes.length === 0 && (
-              <p>No notes found</p>
-            )}
+            {overviewNotes.length === 0 && <p>No notes found</p>}
           </div>
+
+          <div className="footing">
+            <Link
+              href="/notes"
+              className="flex items-center gap-1 hover:underline"
+            >
+              View all notes
+              <HugeiconsIcon icon={ArrowUpRight03Icon} size={16} />
+            </Link>
+          </div>
+        </section>
+
+        {/* Folders */}
+        <section className="section">
+          <h1 className="heading">Folders</h1>
         </section>
       </main>
 

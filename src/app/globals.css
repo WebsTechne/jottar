@@ -220,3 +220,21 @@ h3.tiptap-heading + h2.tiptap-heading {
   margin: 1.5rem 0;
   padding-left: 1rem;
 }
+
+@layer components {
+  .section {
+    @apply mb-5 flex flex-col gap-2 border-b px-4 py-4;
+
+    .heading {
+      @apply text-2xl font-extrabold md:text-3xl;
+    }
+
+    .container {
+      @apply grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+    }
+
+    .footing {
+      @apply flex items-center justify-end text-sm;
+    }
+  }
+}

@@ -58,8 +58,7 @@ export function NoteDetails({
   const [tagInputValue, setTagInputValue] = useState("");
   const [folderInputValue, setFolderInputValue] = useState("");
 
-  const resetState = (e) => {
-    e.preventDefault();
+  const resetState = () => {
     setTitle(note.title || "");
     setSelectedFolderId(note.folderId);
     setSelectedTagIds(initialSelectedTagIds);
@@ -205,7 +204,10 @@ export function NoteDetails({
               <Button
                 variant="secondary"
                 className="h-11! w-full"
-                onClick={resetState}
+                onClick={(e) => {
+                  e.preventDefault();
+                  resetState;
+                }}
               >
                 Close
               </Button>
