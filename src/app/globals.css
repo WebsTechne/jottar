@@ -223,7 +223,7 @@ h3.tiptap-heading + h2.tiptap-heading {
 
 @layer components {
   .overlay {
-    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 fixed inset-0 isolate z-1001 bg-black/70 duration-100 supports-backdrop-filter:backdrop-blur-[2px];
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-background/70 fixed inset-0 isolate z-1001 duration-100 supports-backdrop-filter:backdrop-blur-[2px];
   }
 
   .section {
