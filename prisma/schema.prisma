@@ -23,7 +23,7 @@ model User {
   accounts       Account[]
   sessions       Session[]
   notes          Note[]
-  categories     Folder[]
+  folders        Folder[]
   tags           Tag[]
 
   @@map("user")
@@ -85,7 +85,7 @@ model Note {
   content   String    @db.Text
 
   folderId  String?   @db.Uuid
-  folder    Folder?   @relation(fields: [folderId], references: [id])
+  folder    Folder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
 
   userId    String    @db.Uuid
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -101,11 +101,12 @@ model Note {
 
   @@index([userId])
   @@index([folderId])
+  @@index([userId, folderId])
   @@map("note")
 }
 
 ////////////////////
-// CATEGORY (aka Folder)
+// Folder
 ////////////////////
 
 model Folder {
