@@ -20,11 +20,14 @@ import { toast } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ComputerIcon,
+  Archive03Icon,
+  StarIcon,
   LogoutSquare01Icon,
   Moon01Icon,
   Settings02Icon,
   Sun03Icon,
 } from "@hugeicons/core-free-icons";
+import { Spinner } from "./ui/spinner";
 
 const signOutAndRedirect = async ({
   returnTo,
@@ -56,7 +59,16 @@ function AccountButton({
   const { theme = "system", setTheme } = useTheme();
   const user = session?.user;
 
-  if (!user) return <span className="bg-muted size-9 rounded-full">null</span>;
+  if (!user)
+    return (
+      <span
+        className="bg-muted size-6.5 rounded-full"
+        aria-label="Loading account"
+        role="status"
+      >
+        <Spinner className="size-4" />
+      </span>
+    );
 
   const { name, image } = user;
   const { initials } = getInitials(name);
@@ -65,27 +77,52 @@ function AccountButton({
     <DropdownMenu>
       <DropdownMenuTrigger
         nativeButton={false}
+        aria-label="Open account menu"
         render={
           <span className="flex-center inline-flex size-9 rounded-full">
-            <Avatar className="ring-accent dark:ring-accent/50 size-6.5 duration-300 hover:ring-[6px]">
-              <AvatarImage src={image || ""} alt={name}></AvatarImage>
+            <Avatar className="ring-accent dark:ring-accent/50 size-6.5 duration-300 hover:ring-4">
+              <AvatarImage src={image || ""} alt={name} />
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
           </span>
         }
-      ></DropdownMenuTrigger>
-      <DropdownMenuContent className="min-w-40">
+      />
+      <DropdownMenuContent className="min-w-48" sideOffset={10}>
         <DropdownMenuGroup>
           {/* Settings */}
           <DropdownMenuItem
             nativeButton={false}
+            aria-label="Go to settings"
             render={
               <Link href="/settings">
-                {/*<HugeiconsIcon icon={Settings02Icon} strokeWidth={1.7} />{" "}*/}
+                <HugeiconsIcon icon={Settings02Icon} strokeWidth={1.7} />{" "}
                 Settings
               </Link>
             }
-          ></DropdownMenuItem>
+          />
+
+          {/* Favorites */}
+          <DropdownMenuItem
+            nativeButton={false}
+            aria-label="View favorites"
+            render={
+              <Link href="/favorites">
+                <HugeiconsIcon icon={StarIcon} strokeWidth={1.7} /> Favorites
+              </Link>
+            }
+          />
+
+          {/* Archives */}
+          <DropdownMenuItem
+            nativeButton={false}
+            aria-label="View archived notes"
+            render={
+              <Link href="/archives">
+                <HugeiconsIcon icon={Archive03Icon} strokeWidth={1.7} />{" "}
+                Archived notes
+              </Link>
+            }
+          />
         </DropdownMenuGroup>
 
         <DropdownMenuSeparator />
@@ -96,6 +133,7 @@ function AccountButton({
           <span className="flex items-center rounded-full bg-black/7 p-0.5 dark:bg-black/25">
             <DropdownMenuItem
               nativeButton={false}
+              aria-label="Switch to light theme"
               className={cn(
                 theme === "light" && "bg-muted!",
                 "grid size-6.5! place-items-center rounded-full p-0!",
@@ -106,6 +144,7 @@ function AccountButton({
             </DropdownMenuItem>
             <DropdownMenuItem
               nativeButton={false}
+              aria-label="Switch to dark theme"
               className={cn(
                 theme === "dark" && "bg-muted!",
                 "grid size-6.5! place-items-center rounded-full p-0!",
@@ -116,6 +155,7 @@ function AccountButton({
             </DropdownMenuItem>
             <DropdownMenuItem
               nativeButton={false}
+              aria-label="Use system theme"
               className={cn(
                 theme === "system" && "bg-muted!",
                 "grid size-6.5! place-items-center rounded-full p-0!",
@@ -133,9 +173,10 @@ function AccountButton({
           <DropdownMenuItem
             nativeButton={false}
             variant="destructive"
+            aria-label="Sign out of account"
             onClick={() => signOutAndRedirect({ returnTo, push })}
           >
-            {/*<HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={1.7} />*/}
+            <HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={1.7} />
             Sign out
           </DropdownMenuItem>
         </DropdownMenuGroup>

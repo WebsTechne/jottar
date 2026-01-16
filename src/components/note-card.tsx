@@ -161,12 +161,12 @@ const NoteCard = ({
               {note.favorite ? (
                 <>
                   <HugeiconsIcon icon={StarOffIcon} strokeWidth={2} />
-                  Remove from favourites
+                  Remove from favorites
                 </>
               ) : (
                 <>
                   <HugeiconsIcon icon={StarIcon} strokeWidth={2} />
-                  Add to favourites
+                  Add to favorites
                 </>
               )}
             </ContextMenuItem>
