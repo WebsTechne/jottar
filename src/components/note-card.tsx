@@ -8,8 +8,9 @@ import { formatDateTime } from "@/lib/helpers/format-date-time";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Archive03Icon,
+  Copy01Icon,
   Delete02Icon,
-  Pin02Icon,
+  Folder02Icon,
   PinIcon,
   PinOffIcon,
   StarIcon,
@@ -19,13 +20,27 @@ import {
 import {
   ContextMenu,
   ContextMenuContent,
+  ContextMenuGroup,
   ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-const NoteCard = ({ note }: { note: Note }) => {
+const NoteCard = ({
+  note,
+  folders,
+}: {
+  note: Note;
+  folders: { name: string; id: string }[];
+}) => {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(open); // controls actual DOM mount
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -92,7 +107,7 @@ const NoteCard = ({ note }: { note: Note }) => {
               )}
             >
               {note.isPinned && (
-                <span className="absolute top-1 right-1 inline-flex size-5 items-center justify-center rounded-full border">
+                <span className="absolute top-1 right-1 inline-flex size-5 items-center justify-center rounded-full">
                   <HugeiconsIcon
                     icon={PinIcon}
                     size={16}
@@ -125,43 +140,82 @@ const NoteCard = ({ note }: { note: Note }) => {
           }
         ></ContextMenuTrigger>
         <ContextMenuContent>
-          {/* /// pin notes /// */}
-          <ContextMenuItem>
-            {note.isPinned ? (
-              <>
-                <HugeiconsIcon icon={PinOffIcon} strokeWidth={2} />
-                Unpin note
-              </>
-            ) : (
-              <>
-                <HugeiconsIcon icon={PinIcon} strokeWidth={2} />
-                Pin note
-              </>
-            )}
-          </ContextMenuItem>
+          <ContextMenuGroup>
+            {/* /// pin note /// */}
+            <ContextMenuItem>
+              {note.isPinned ? (
+                <>
+                  <HugeiconsIcon icon={PinOffIcon} strokeWidth={2} />
+                  Unpin note
+                </>
+              ) : (
+                <>
+                  <HugeiconsIcon icon={PinIcon} strokeWidth={2} />
+                  Pin note
+                </>
+              )}
+            </ContextMenuItem>
 
-          {/* /// favorite notes /// */}
-          <ContextMenuItem>
-            {note.favorite ? (
-              <>
-                <HugeiconsIcon icon={StarOffIcon} strokeWidth={2} />
-                Remove to favourites
-              </>
-            ) : (
-              <>
-                <HugeiconsIcon icon={StarIcon} strokeWidth={2} />
-                Add to favourites
-              </>
-            )}
-          </ContextMenuItem>
+            {/* /// favorite note /// */}
+            <ContextMenuItem>
+              {note.favorite ? (
+                <>
+                  <HugeiconsIcon icon={StarOffIcon} strokeWidth={2} />
+                  Remove from favourites
+                </>
+              ) : (
+                <>
+                  <HugeiconsIcon icon={StarIcon} strokeWidth={2} />
+                  Add to favourites
+                </>
+              )}
+            </ContextMenuItem>
+          </ContextMenuGroup>
 
-          {/* /// archive notes /// */}
+          <ContextMenuSeparator />
+
+          {/* /// archive note /// */}
           <ContextMenuItem>
             <HugeiconsIcon icon={Archive03Icon} strokeWidth={2} />
-            Archive notes
+            Archive note
           </ContextMenuItem>
 
-          {/* /// delete notes /// */}
+          {/* /// duplicate note ///*/}
+          <ContextMenuItem>
+            <HugeiconsIcon icon={Copy01Icon} strokeWidth={2} />
+            Duplicate note
+          </ContextMenuItem>
+
+          {/* /// folder /// */}
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>
+              <HugeiconsIcon icon={Folder02Icon} strokeWidth={2} />
+              Move to folder
+            </ContextMenuSubTrigger>
+            <ContextMenuSubContent>
+              <ContextMenuGroup>
+                <ContextMenuLabel>My folders</ContextMenuLabel>
+                <ContextMenuRadioGroup defaultValue="none">
+                  <ContextMenuRadioItem value="none">None</ContextMenuRadioItem>
+                  {folders.length < 1 ? (
+                    <ContextMenuRadioItem value="none">
+                      No folders
+                    </ContextMenuRadioItem>
+                  ) : (
+                    folders.map((folder) => (
+                      <ContextMenuRadioItem key={folder.id} value={folder.id}>
+                        {folder.name}
+                      </ContextMenuRadioItem>
+                    ))
+                  )}
+                </ContextMenuRadioGroup>
+              </ContextMenuGroup>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+
+          <ContextMenuSeparator />
+
+          {/* /// delete note /// */}
           <ContextMenuItem
             variant="destructive"
             onClick={() =>

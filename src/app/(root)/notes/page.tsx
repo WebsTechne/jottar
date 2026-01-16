@@ -4,10 +4,17 @@ import { auth } from "@/lib/auth";
 import { Note } from "@prisma/client";
 import { headers } from "next/headers";
 import { getNotes } from "@/lib/fetch/get-notes";
+import { getFolders } from "@/lib/fetch/get-folders";
 
 export default async function NotesPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   const allNotes: Note[] = (await getNotes()) ?? [];
+
+  const folders = (await getFolders()) ?? [];
+  const folderDisplay = folders.map((folder) => ({
+    name: folder.name,
+    id: folder.id,
+  }));
 
   const activeNotes = allNotes.filter((n) => !n.archived);
 
@@ -29,11 +36,11 @@ export default async function NotesPage() {
 
           <div className="wrap">
             {pinnedNotes.map((n) => (
-              <NoteCard key={n.id} note={n} />
+              <NoteCard key={n.id} note={n} folders={folderDisplay} />
             ))}
 
             {unpinnedNotes.map((n) => (
-              <NoteCard key={n.id} note={n} />
+              <NoteCard key={n.id} note={n} folders={folderDisplay} />
             ))}
 
             {pinnedNotes.length === 0 && unpinnedNotes.length === 0 && (

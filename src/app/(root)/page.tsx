@@ -7,10 +7,17 @@ import { NoteCard } from "@/components/note-card";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowUpRight03Icon } from "@hugeicons/core-free-icons";
+import { getFolders } from "@/lib/fetch/get-folders";
 
 export default async function Page() {
   const session = await auth.api.getSession({ headers: await headers() });
   const overviewNotes: Note[] = (await notes()) ?? [];
+
+  const folders = (await getFolders()) ?? [];
+  const folderDisplay = folders.map((folder) => ({
+    name: folder.name,
+    id: folder.id,
+  }));
 
   return (
     <>
@@ -23,7 +30,7 @@ export default async function Page() {
 
           <div className="wrap">
             {overviewNotes.map((n) => (
-              <NoteCard key={n.id} note={n} />
+              <NoteCard key={n.id} note={n} folders={folderDisplay} />
             ))}
 
             {overviewNotes.length === 0 && <p>No notes found</p>}

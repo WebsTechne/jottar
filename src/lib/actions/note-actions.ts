@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
-export async function createNote(content: string) {
+async function createNote(content: string) {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
@@ -24,7 +24,7 @@ export async function createNote(content: string) {
   return { data: newNote };
 }
 
-export async function updateNote(id: string, content: string) {
+async function updateNote(id: string, content: string) {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
@@ -46,7 +46,7 @@ export async function updateNote(id: string, content: string) {
   return { data: updatedNote };
 }
 
-export async function updateNoteDetails(
+async function updateNoteDetails(
   id: string,
   data: {
     title?: string;
@@ -80,3 +80,4 @@ export async function updateNoteDetails(
   }
 }
 
+export { createNote, updateNote, updateNoteDetails };
