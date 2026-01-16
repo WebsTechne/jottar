@@ -6,7 +6,15 @@ import { Note } from "@prisma/client";
 import { extractTextFromDoc } from "@/lib/helpers/extract-text";
 import { formatDateTime } from "@/lib/helpers/format-date-time";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Delete02Icon, PinIcon } from "@hugeicons/core-free-icons";
+import {
+  Archive03Icon,
+  Delete02Icon,
+  Pin02Icon,
+  PinIcon,
+  PinOffIcon,
+  StarIcon,
+  StarOffIcon,
+} from "@hugeicons/core-free-icons";
 
 import {
   ContextMenu,
@@ -117,10 +125,43 @@ const NoteCard = ({ note }: { note: Note }) => {
           }
         ></ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem>Profile</ContextMenuItem>
-          <ContextMenuItem>Billing</ContextMenuItem>
-          <ContextMenuItem>Team</ContextMenuItem>
-          <ContextMenuItem>Subscription</ContextMenuItem>
+          {/* /// pin notes /// */}
+          <ContextMenuItem>
+            {note.isPinned ? (
+              <>
+                <HugeiconsIcon icon={PinOffIcon} strokeWidth={2} />
+                Unpin note
+              </>
+            ) : (
+              <>
+                <HugeiconsIcon icon={PinIcon} strokeWidth={2} />
+                Pin note
+              </>
+            )}
+          </ContextMenuItem>
+
+          {/* /// favorite notes /// */}
+          <ContextMenuItem>
+            {note.favorite ? (
+              <>
+                <HugeiconsIcon icon={StarOffIcon} strokeWidth={2} />
+                Remove to favourites
+              </>
+            ) : (
+              <>
+                <HugeiconsIcon icon={StarIcon} strokeWidth={2} />
+                Add to favourites
+              </>
+            )}
+          </ContextMenuItem>
+
+          {/* /// archive notes /// */}
+          <ContextMenuItem>
+            <HugeiconsIcon icon={Archive03Icon} strokeWidth={2} />
+            Archive notes
+          </ContextMenuItem>
+
+          {/* /// delete notes /// */}
           <ContextMenuItem
             variant="destructive"
             onClick={() =>
@@ -134,7 +175,7 @@ const NoteCard = ({ note }: { note: Note }) => {
               })
             }
           >
-            <HugeiconsIcon icon={Delete02Icon} />
+            <HugeiconsIcon icon={Delete02Icon} strokeWidth={2} />
             Delete
           </ContextMenuItem>
         </ContextMenuContent>
