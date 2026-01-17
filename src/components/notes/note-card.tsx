@@ -305,7 +305,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
 
           <ContextMenuItem
             variant="destructive"
-            onClick={handleDialogOpenChange}
+            onClick={() => handleDialogOpenChange(true)}
           >
             <HugeiconsIcon icon={Delete02Icon} strokeWidth={2} />
             Trash
