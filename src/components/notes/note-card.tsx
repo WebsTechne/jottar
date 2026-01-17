@@ -181,7 +181,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
           render={
             <div
               className={cn(
-                "bg-muted dark:bg-card! corner-squircle relative flex w-full flex-col rounded-4xl p-3 pb-2!",
+                "bg-muted dark:bg-card! corner-squircle relative flex w-full flex-col overflow-clip rounded-4xl p-3 pb-2!",
                 open && "z-1005",
               )}
             >
@@ -211,18 +211,18 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                 <p className="text-muted-foreground line-clamp-2 text-sm">
                   {preview}
                 </p>
-
-                {/* absolute clickable layer */}
-                <Link
-                  href={`/notes/${localNote.id}`}
-                  className="absolute inset-0 z-10"
-                />
               </div>
 
               <div className="flex items-center justify-end gap-2 font-mono">
                 <span className="text-muted-foreground text-xs">{date}</span>
                 <span className="text-muted-foreground text-xs">{time}</span>
               </div>
+
+              {/* absolute clickable layer */}
+              <Link
+                href={`/notes/${localNote.id}`}
+                className="absolute inset-0 z-10"
+              />
             </div>
           }
         />
