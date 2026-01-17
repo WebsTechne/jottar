@@ -1,5 +1,6 @@
+// app/notes/page.tsx
 import { Header } from "@/components/header";
-import { NoteCard } from "@/components/note-card";
+import { NotesList } from "./page.client";
 import { auth } from "@/lib/auth";
 import { Note } from "@prisma/client";
 import { headers } from "next/headers";
@@ -16,37 +17,29 @@ export default async function NotesPage() {
     id: folder.id,
   }));
 
+  // you were filtering out archived server-side — that's fine, but client can also prune
   const activeNotes = allNotes.filter((n) => !n.archived);
 
+  // order pinned first
   const pinnedNotes = activeNotes
     .filter((n) => n.isPinned)
     .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-
   const unpinnedNotes = activeNotes
     .filter((n) => !n.isPinned)
     .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+  const initialNotes = [...pinnedNotes, ...unpinnedNotes];
 
   return (
     <>
       <Header session={session} />
-
       <main>
         <section className="section">
           <h1 className="heading">Notes</h1>
-
-          <div className="wrap">
-            {pinnedNotes.map((n) => (
-              <NoteCard key={n.id} note={n} folders={folderDisplay} />
-            ))}
-
-            {unpinnedNotes.map((n) => (
-              <NoteCard key={n.id} note={n} folders={folderDisplay} />
-            ))}
-
-            {pinnedNotes.length === 0 && unpinnedNotes.length === 0 && (
-              <p>No notes found</p>
-            )}
-          </div>
+          <NotesList
+            initialNotes={initialNotes}
+            folders={folderDisplay}
+            showArchived={false}
+          />
         </section>
       </main>
     </>

@@ -1,21 +1,20 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
+import { getAuthedUser } from "@/lib/fetch/get-authed-user";
 
 // ///// CREATE
 async function createNote(content: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const user = await getAuthedUser();
 
-  if (!session) {
+  if (!user) {
     return { error: "Not authenticated" };
   }
 
   const newNote = await prisma.note.create({
     data: {
-      userId: session.user.id,
+      userId: user.id,
       content: content,
     },
   });
@@ -26,15 +25,15 @@ async function createNote(content: string) {
 }
 
 async function createTag(name: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const user = await getAuthedUser();
 
-  if (!session) {
+  if (!user) {
     return { error: "Not authenticated" };
   }
 
   const newTag = await prisma.tag.create({
     data: {
-      userId: session.user.id,
+      userId: user.id,
       name: name,
     },
   });
@@ -44,17 +43,109 @@ async function createTag(name: string) {
   return { data: newTag };
 }
 
-async function updateNote(id: string, content: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
+// ///// TOGGLE
+// faster toggle using one SQL statement
+async function togglePin(id: string) {
+  const user = await getAuthedUser();
+  if (!user) return { error: "Not authenticated" };
 
-  if (!session) {
+  try {
+    const rows: any[] = await prisma.$queryRaw`
+      UPDATE "note"
+      SET "isPinned" = NOT "isPinned", "updatedAt" = NOW()
+      WHERE id = ${id}::uuid AND "userId" = ${user.id}::uuid
+      RETURNING *;
+    `;
+
+    if (!rows || rows.length === 0) {
+      return { error: "Note not found or access denied" };
+    }
+
+    const updated = rows[0];
+    // revalidatePath(`/notes/${id}`);
+    // revalidatePath(`/`);
+
+    return { data: updated, message: updated.isPinned ? "Pinned" : "Unpinned" };
+  } catch (err: any) {
+    console.error("togglePin error:", err);
+    return { error: err.message || "Failed to toggle pin" };
+  }
+}
+
+async function toggleFavorite(id: string) {
+  const user = await getAuthedUser();
+  if (!user) return { error: "Not authenticated" };
+
+  try {
+    const rows: any[] = await prisma.$queryRaw`
+      UPDATE "note"
+      SET "favorite" = NOT "favorite", "updatedAt" = NOW()
+      WHERE id = ${id}::uuid AND "userId" = ${user.id}::uuid
+      RETURNING *;
+    `;
+
+    if (!rows || rows.length === 0) {
+      return { error: "Note not found or access denied" };
+    }
+
+    const updated = rows[0];
+    // revalidatePath(`/notes/${id}`);
+    // revalidatePath(`/`);
+
+    return {
+      data: updated,
+      message: updated.favorite
+        ? "Added to favorites"
+        : "Removed from favorites",
+    };
+  } catch (err: any) {
+    console.error("toggleFavorite error:", err);
+    return { error: err.message || "Failed to toggle favorite" };
+  }
+}
+
+async function toggleArchive(id: string) {
+  const user = await getAuthedUser();
+  if (!user) return { error: "Not authenticated" };
+
+  try {
+    const rows: any[] = await prisma.$queryRaw`
+      UPDATE "note"
+      SET "archived" = NOT "archived", "updatedAt" = NOW()
+      WHERE id = ${id}::uuid AND "userId" = ${user.id}::uuid
+      RETURNING *;
+    `;
+
+    if (!rows || rows.length === 0) {
+      return { error: "Note not found or access denied" };
+    }
+
+    const updated = rows[0];
+    // revalidatePath(`/notes/${id}`);
+    // revalidatePath(`/`);
+
+    return {
+      data: updated,
+      message: updated.archived ? "Archived" : "Unarchived",
+    };
+  } catch (err: any) {
+    console.error("toggleArchive error:", err);
+    return { error: err.message || "Failed to toggle archive" };
+  }
+}
+
+// ///// UPDATE
+async function updateNote(id: string, content: string) {
+  const user = await getAuthedUser();
+
+  if (!user) {
     return { error: "Not authenticated" };
   }
 
   const updatedNote = await prisma.note.update({
     where: {
       id: id,
-      userId: session.user.id,
+      userId: user.id,
     },
     data: {
       content: content,
@@ -73,8 +164,11 @@ async function updateNoteDetails(
     folderId?: string | null;
   },
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return { error: "Not authenticated" };
+  const user = await getAuthedUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
 
   if (data.title === undefined && data.folderId === undefined) {
     return { error: "Nothing to update: provide title, folderId, or both." };
@@ -86,7 +180,7 @@ async function updateNoteDetails(
 
   try {
     const updatedNote = await prisma.note.update({
-      where: { id, userId: session.user.id },
+      where: { id, userId: user.id },
       data: updateData,
     });
 
@@ -118,9 +212,9 @@ async function updateNoteDetails(
 }
 
 async function updateNoteFolder(id: string, folderId: string | null) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const user = await getAuthedUser();
 
-  if (!session) {
+  if (!user) {
     return { error: "Not authenticated" };
   }
 
@@ -128,7 +222,7 @@ async function updateNoteFolder(id: string, folderId: string | null) {
     const updatedNote = await prisma.note.update({
       where: {
         id,
-        userId: session.user.id,
+        userId: user.id,
       },
       data: {
         folderId: folderId,
@@ -148,6 +242,9 @@ async function updateNoteFolder(id: string, folderId: string | null) {
 export {
   createNote,
   createTag,
+  togglePin,
+  toggleFavorite,
+  toggleArchive,
   updateNote,
   updateNoteDetails,
   updateNoteFolder,

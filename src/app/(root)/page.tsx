@@ -1,9 +1,10 @@
+// app/page.tsx
 import { headers } from "next/headers";
 import { Note } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { overviewNotes as notes } from "@/lib/fetch/get-notes";
 import { Header } from "@/components/header";
-import { NoteCard } from "@/components/note-card";
+import { NotesList } from "./notes/page.client";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowUpRight03Icon } from "@hugeicons/core-free-icons";
@@ -24,17 +25,15 @@ export default async function Page() {
       <Header session={session} />
 
       <main>
-        {/* Notes */}
         <section className="section">
           <h1 className="heading">Notes</h1>
 
-          <div className="wrap">
-            {overviewNotes.map((n) => (
-              <NoteCard key={n.id} note={n} folders={folderDisplay} />
-            ))}
-
-            {overviewNotes.length === 0 && <p>No notes found</p>}
-          </div>
+          {/* client-side list handles updates and archived-removal */}
+          <NotesList
+            initialNotes={overviewNotes}
+            folders={folderDisplay}
+            showArchived={false}
+          />
 
           <div className="footing">
             <Link
@@ -45,11 +44,6 @@ export default async function Page() {
               <HugeiconsIcon icon={ArrowUpRight03Icon} size={16} />
             </Link>
           </div>
-        </section>
-
-        {/* Folders */}
-        <section className="section">
-          <h1 className="heading">Folders</h1>
         </section>
       </main>
     </>

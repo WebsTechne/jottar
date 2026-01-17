@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Note } from "@prisma/client";
 import { extractTextFromDoc } from "@/lib/helpers/extract-text";
@@ -38,14 +38,13 @@ import {
   togglePin,
 } from "@/lib/actions/note-actions";
 
-type Props = {
+const NoteCard = ({
+  note,
+  folders,
+}: {
   note: Note;
   folders: { name: string; id: string }[];
-  // optional callback to notify parent list about a server-updated note
-  onPatch?: (updated: Partial<Note> & { id: string }) => void;
-};
-
-const NoteCard = ({ note, folders, onPatch }: Props) => {
+}) => {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(open); // controls actual DOM mount
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -70,9 +69,11 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
     if (!open && mounted && overlayRef.current) {
       const el = overlayRef.current;
       const onAnimEnd = (e: AnimationEvent) => {
+        // ensure we respond to the overlay's animation
         if (e.target === el) setMounted(false);
       };
       el.addEventListener("animationend", onAnimEnd as EventListener);
+      // fallback: cleanup if unmounted unexpectedly
       return () =>
         el.removeEventListener("animationend", onAnimEnd as EventListener);
     }
@@ -85,24 +86,19 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
     return () => document.body.classList.remove("overflow");
   }, [mounted]);
 
-  // memoized preview extraction — avoids JSON.parse on every render
-  const preview = useMemo(() => {
-    try {
-      const parsed =
-        typeof localNote.content === "string"
-          ? JSON.parse(localNote.content)
-          : localNote.content;
-      return extractTextFromDoc(parsed).slice(0, 120);
-    } catch {
-      return "";
-    }
-  }, [localNote.content]);
+  let preview = "";
+  try {
+    const parsed =
+      typeof localNote.content === "string"
+        ? JSON.parse(localNote.content)
+        : localNote.content;
 
-  // memoize formatted date/time
-  const { date, time } = useMemo(
-    () => formatDateTime(localNote.updatedAt.toString()),
-    [localNote.updatedAt],
-  );
+    preview = extractTextFromDoc(parsed).slice(0, 120);
+  } catch {
+    preview = "";
+  }
+
+  const { date, time } = formatDateTime(localNote.updatedAt.toString());
 
   // optimistic handlers
   const optimisticToggle = async (
@@ -118,7 +114,6 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
 
     try {
       const res = await actionFn(localNote.id);
-
       if (res?.error) {
         // rollback
         setLocalNote(prev);
@@ -126,22 +121,13 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
         setInFlight(false);
         return;
       }
-
       if (res?.data) {
-        // merge server truth
+        // server might return updated row — merge it
         setLocalNote((s) => ({ ...s, ...res.data }));
-        // notify parent list (so it can remove archived notes or reorder)
-        onPatch?.(res.data);
-        // broadcast to other tabs
-        try {
-          const channel = new BroadcastChannel("notes");
-          channel.postMessage({ type: "patch", data: res.data });
-          channel.close();
-        } catch (e) {
-          // BroadcastChannel might not be available in every environment — ignore fallback
-        }
+        const channel = new BroadcastChannel("notes");
+        channel.postMessage({ type: "patch", data: res.data });
+        channel.close();
       }
-
       toast.success(res?.message ?? "Done");
     } catch (err: any) {
       setLocalNote(prev);
@@ -152,11 +138,12 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
   };
 
   return (
+    // Note Card
     <>
       {mounted && (
         <div
           ref={overlayRef}
-          data-state={open ? "open" : "closed"}
+          data-state={open ? "open" : "closed"} // <-- important
           className="overlay"
         />
       )}
@@ -166,7 +153,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
           render={
             <div
               className={cn(
-                "bg-card corner-squircle relative flex w-full flex-col rounded-4xl p-2",
+                "bg-card corner-squircle relative flex w-full flex-col rounded-4xl border p-2",
                 open && "z-1005",
               )}
             >
@@ -189,7 +176,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                   {preview}
                 </p>
 
-                {/* absolute clickable layer */}
+                {/*absolute*/}
                 <Link
                   href={`/notes/${localNote.id}`}
                   className="absolute inset-0 z-10"
@@ -202,9 +189,10 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
               </div>
             </div>
           }
-        />
-        <ContextMenuContent className="min-w-52!">
+        ></ContextMenuTrigger>
+        <ContextMenuContent>
           <ContextMenuGroup>
+            {/* /// pin note /// */}
             <ContextMenuItem
               onClick={() => optimisticToggle("isPinned", togglePin)}
             >
@@ -221,8 +209,9 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
               )}
             </ContextMenuItem>
 
+            {/* /// favorite note /// */}
             <ContextMenuItem
-              onClick={() => optimisticToggle("favorite", toggleFavorite)}
+              onClick={() => optimisticToggle("isPinned", toggleFavorite)}
             >
               {localNote.favorite ? (
                 <>
@@ -244,20 +233,21 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
 
           <ContextMenuSeparator />
 
+          {/* /// archive note /// */}
           <ContextMenuItem
-            onClick={() => optimisticToggle("archived", toggleArchive)}
+            onClick={() => optimisticToggle("isPinned", toggleArchive)}
           >
             <HugeiconsIcon icon={Archive03Icon} strokeWidth={2} />
-            {localNote.archived ? "Unarchive note" : "Archive note"}
+            Archive note
           </ContextMenuItem>
 
-          <ContextMenuSeparator />
-
+          {/* /// duplicate note ///*/}
           <ContextMenuItem>
             <HugeiconsIcon icon={Copy01Icon} strokeWidth={2} />
             Duplicate note
           </ContextMenuItem>
 
+          {/* /// folder /// */}
           <ContextMenuSub>
             <ContextMenuSubTrigger>
               <HugeiconsIcon icon={Folder02Icon} strokeWidth={2} />
@@ -266,9 +256,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
             <ContextMenuSubContent>
               <ContextMenuGroup>
                 <ContextMenuLabel>My folders</ContextMenuLabel>
-                <ContextMenuRadioGroup
-                  defaultValue={localNote.folderId ?? "none"}
-                >
+                <ContextMenuRadioGroup defaultValue="none">
                   <ContextMenuRadioItem value="none">None</ContextMenuRadioItem>
                   {folders.length < 1 ? (
                     <ContextMenuRadioItem value="none">
@@ -288,6 +276,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
 
           <ContextMenuSeparator />
 
+          {/* /// delete note /// */}
           <ContextMenuItem
             variant="destructive"
             onClick={() =>

@@ -223,7 +223,25 @@ h3.tiptap-heading + h2.tiptap-heading {
 
 @layer components {
   .overlay {
-    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-background/70 fixed inset-0 isolate z-1001 duration-100 supports-backdrop-filter:backdrop-blur-[2px];
+    @apply data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-background/70 fixed inset-0 isolate z-1001 duration-150 supports-backdrop-filter:backdrop-blur-[2px];
+    will-change: opacity, backdrop-filter, transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms linear;
+  }
+
+  /* when open */
+  .overlay[data-state="open"] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* when closed (keeps it in DOM until we unmount) */
+  .overlay[data-state="closed"] {
+    opacity: 0;
+    pointer-events: none;
   }
 
   .section {
