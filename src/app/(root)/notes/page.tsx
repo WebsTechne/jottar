@@ -2,14 +2,13 @@
 import { Header } from "@/components/header";
 import { NotesList } from "./page.client";
 import { auth } from "@/lib/auth";
-import { Note } from "@prisma/client";
 import { headers } from "next/headers";
 import { getNotes } from "@/lib/fetch/get-notes";
 import { getFolders } from "@/lib/fetch/get-folders";
 
 export default async function NotesPage() {
   const session = await auth.api.getSession({ headers: await headers() });
-  const allNotes: Note[] = (await getNotes()) ?? [];
+  const allNotes = (await getNotes()) ?? [];
 
   const folders = (await getFolders()) ?? [];
   const folderDisplay = folders.map((folder) => ({

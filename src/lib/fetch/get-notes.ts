@@ -1,6 +1,5 @@
 // lib/fetch/get-notes.ts
 import prisma from "@/lib/prisma";
-import { cache } from "react";
 import { getAuthedUser } from "./get-authed-user";
 
 const getNotes = async () => {
