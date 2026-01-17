@@ -6,7 +6,7 @@ const getNotes = async () => {
   const user = await getAuthedUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    throw new Error("Not authenticated");
   }
 
   return prisma.note.findMany({

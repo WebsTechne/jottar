@@ -8,7 +8,8 @@ import { getFolders } from "@/lib/fetch/get-folders";
 
 export default async function NotesPage() {
   const session = await auth.api.getSession({ headers: await headers() });
-  const allNotes = (await getNotes()) ?? [];
+  const result = await getNotes();
+  const allNotes = Array.isArray(result) ? result : [];
 
   const folders = (await getFolders()) ?? [];
   const folderDisplay = folders.map((folder) => ({

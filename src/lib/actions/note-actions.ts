@@ -9,7 +9,7 @@ async function createNote(content: string) {
   const user = await getAuthedUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    throw new Error("Not authenticated");
   }
 
   const newNote = await prisma.note.create({
@@ -28,7 +28,7 @@ async function createTag(name: string) {
   const user = await getAuthedUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    throw new Error("Not authenticated");
   }
 
   const newTag = await prisma.tag.create({
@@ -47,7 +47,7 @@ async function createTag(name: string) {
 // faster toggle using one SQL statement
 async function togglePin(id: string) {
   const user = await getAuthedUser();
-  if (!user) return { error: "Not authenticated" };
+  if (!user) throw new Error("Not authenticated");
 
   try {
     const rows: any[] = await prisma.$queryRaw`
@@ -74,7 +74,7 @@ async function togglePin(id: string) {
 
 async function toggleFavorite(id: string) {
   const user = await getAuthedUser();
-  if (!user) return { error: "Not authenticated" };
+  if (!user) throw new Error("Not authenticated");
 
   try {
     const rows: any[] = await prisma.$queryRaw`
@@ -106,7 +106,7 @@ async function toggleFavorite(id: string) {
 
 async function toggleArchive(id: string) {
   const user = await getAuthedUser();
-  if (!user) return { error: "Not authenticated" };
+  if (!user) throw new Error("Not authenticated");
 
   try {
     const rows: any[] = await prisma.$queryRaw`
@@ -139,7 +139,7 @@ async function updateNote(id: string, content: string) {
   const user = await getAuthedUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    throw new Error("Not authenticated");
   }
 
   const updatedNote = await prisma.note.update({
@@ -167,7 +167,7 @@ async function updateNoteDetails(
   const user = await getAuthedUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    throw new Error("Not authenticated");
   }
 
   if (data.title === undefined && data.folderId === undefined) {
@@ -215,7 +215,7 @@ async function updateNoteFolder(id: string, folderId: string | null) {
   const user = await getAuthedUser();
 
   if (!user) {
-    return { error: "Not authenticated" };
+    throw new Error("Not authenticated");
   }
 
   try {
