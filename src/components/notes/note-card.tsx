@@ -185,16 +185,24 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                 open && "z-1005",
               )}
             >
-              {localNote.isPinned && (
-                <span className="absolute top-1 right-1 inline-flex size-5 items-center justify-center rounded-full">
+              <span className="pointer-events-none absolute top-1 right-1 inline-flex h-5 min-w-5 flex-row items-center justify-center gap-0.75">
+                {localNote.isPinned && (
                   <HugeiconsIcon
                     icon={PinIcon}
                     size={16}
                     fill="var(--muted-foreground)"
                     className="text-muted-foreground"
                   />
-                </span>
-              )}
+                )}
+                {localNote.favorite && (
+                  <HugeiconsIcon
+                    icon={StarIcon}
+                    size={14}
+                    fill="var(--muted-foreground)"
+                    className="text-muted-foreground"
+                  />
+                )}
+              </span>
 
               <div className="relative h-max w-full flex-1">
                 <h3 className="line-clamp-1 text-base font-semibold tracking-tight">
