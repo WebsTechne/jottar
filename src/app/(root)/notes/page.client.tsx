@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Note } from "@prisma/client";
-import { NoteCard } from "@/components/note-card";
+import { NoteCard } from "@/components/notes/note-card";
 
 export function NotesList({
   initialNotes,

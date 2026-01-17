@@ -37,6 +37,7 @@ import {
   toggleFavorite,
   togglePin,
 } from "@/lib/actions/note-actions";
+import { DeleteNoteDialog } from "./delete-note-dialog";
 
 type Props = {
   note: Note;
@@ -49,6 +50,13 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(open); // controls actual DOM mount
   const overlayRef = useRef<HTMLDivElement | null>(null);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleDialogOpenChange = (value: boolean) => {
+    setDialogOpen(value);
+    if (value) setMounted(true); // mount immediately on open
+  };
 
   // local copy for optimistic updates
   const [localNote, setLocalNote] = useState<Note>(note);
@@ -161,12 +169,19 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
         />
       )}
 
+      <DeleteNoteDialog
+        id={note.id}
+        title={note.title ?? ""}
+        open={dialogOpen}
+        onOpenChange={handleDialogOpenChange}
+      />
+
       <ContextMenu open={open} onOpenChange={handleOpenChange}>
         <ContextMenuTrigger
           render={
             <div
               className={cn(
-                "bg-card corner-squircle relative flex w-full flex-col rounded-4xl p-2",
+                "bg-muted dark:bg-card! corner-squircle relative flex w-full flex-col rounded-4xl p-3 pb-2!",
                 open && "z-1005",
               )}
             >
@@ -290,19 +305,10 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
 
           <ContextMenuItem
             variant="destructive"
-            onClick={() =>
-              toast.warning("Are you sure you want to delete this note?", {
-                action: {
-                  label: "Delete",
-                  onClick: () => {
-                    toast.success("Note deleted successfully!");
-                  },
-                },
-              })
-            }
+            onClick={handleDialogOpenChange}
           >
             <HugeiconsIcon icon={Delete02Icon} strokeWidth={2} />
-            Delete
+            Trash
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
