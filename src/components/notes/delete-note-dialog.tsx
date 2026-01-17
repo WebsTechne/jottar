@@ -7,9 +7,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { cloneElement, ReactNode } from "react";
 
 const DeleteNoteDialog = ({
   id,
@@ -27,14 +25,23 @@ const DeleteNoteDialog = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Move note to trash?</AlertDialogTitle>
+          <div className="bg-muted text-muted-foreground line-clamp-1 rounded-md px-2 py-1 text-sm font-semibold">
+            {title}
+          </div>
           <AlertDialogDescription>
             This note will be moved to Trash and kept for 30 days. You can
-            restore it anytime from the Trash before it’s permanently deleted.
+            restore it before it’s permanently deleted.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={() => {}}>
+        <AlertDialogFooter className="flex-row!">
+          <AlertDialogCancel className="not-sm:flex-1">
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction
+            variant="destructive"
+            onClick={() => {}}
+            className="not-sm:flex-1"
+          >
             Trash note
           </AlertDialogAction>
         </AlertDialogFooter>
