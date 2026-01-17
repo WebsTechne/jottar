@@ -171,7 +171,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
 
       <DeleteNoteDialog
         id={note.id}
-        title={note.title ?? ""}
+        title={note.title ?? "Untitled note"}
         open={dialogOpen}
         onOpenChange={handleDialogOpenChange}
       />
@@ -185,7 +185,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                 open && "z-1005",
               )}
             >
-              <span className="pointer-events-none absolute top-1 right-1 inline-flex h-5 min-w-5 flex-row items-center justify-center gap-0.75">
+              <span className="pointer-events-none absolute top-1 right-1 inline-flex min-h-5 w-5 flex-col items-center justify-center gap-0.75">
                 {localNote.isPinned && (
                   <HugeiconsIcon
                     icon={PinIcon}
@@ -198,8 +198,8 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                   <HugeiconsIcon
                     icon={StarIcon}
                     size={14}
-                    fill="var(--muted-foreground)"
-                    className="text-muted-foreground"
+                    fill="var(--muted-foreground-60)"
+                    className="text-muted-foreground/60"
                   />
                 )}
               </span>

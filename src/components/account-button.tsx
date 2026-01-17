@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import getInitials from "@/lib/helpers/initials";
-import Link from "next/link";
 import type { ServerSession } from "@/app/layout";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -91,8 +90,17 @@ function AccountButton({
           </span>
         }
       />
-      <DropdownMenuContent className="min-w-48" sideOffset={10}>
+      <DropdownMenuContent className="min-w-50" sideOffset={10}>
         <DropdownMenuGroup>
+          <MenuLink
+            href="/settings"
+            icon={Settings02Icon}
+            label="Settings"
+            ariaLabel="Go to settings"
+          />
+
+          <DropdownMenuSeparator />
+
           <MenuLink
             href="/notes"
             icon={Note01Icon}
@@ -181,7 +189,7 @@ function AccountButton({
           <DropdownMenuItem
             nativeButton={false}
             variant="destructive"
-            aria-label="Sign out of account"
+            aria-label="Sign out of your account"
             onClick={() => signOutAndRedirect({ returnTo, push })}
           >
             <HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={1.7} />

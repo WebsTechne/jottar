@@ -1,4 +1,4 @@
-import { Link } from "next/link";
+import Link from "next/link";
 import { DropdownMenuItem } from "./ui/dropdown-menu";
 import { HugeiconsIcon } from "@hugeicons/react";
 
