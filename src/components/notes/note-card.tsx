@@ -13,6 +13,7 @@ import {
   Folder02Icon,
   PinIcon,
   PinOffIcon,
+  Share01Icon,
   StarIcon,
 } from "@hugeicons/core-free-icons";
 
@@ -181,7 +182,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
           render={
             <div
               className={cn(
-                "bg-muted dark:bg-card! corner-squircle relative flex w-full flex-col overflow-clip rounded-4xl p-3 pb-2!",
+                "bg-muted dark:bg-card! corner-squircle relative z-1 flex w-full flex-col overflow-clip rounded-4xl p-3 pb-2!",
                 open && "z-1005",
               )}
             >
@@ -198,8 +199,8 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                   <HugeiconsIcon
                     icon={StarIcon}
                     size={14}
-                    fill="var(--muted-foreground-60)"
-                    className="text-muted-foreground/60"
+                    fill="var(--muted-foreground-51)"
+                    className="text-muted-foreground/51"
                   />
                 )}
               </span>
@@ -308,6 +309,13 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
               </ContextMenuGroup>
             </ContextMenuSubContent>
           </ContextMenuSub>
+
+          <ContextMenuItem
+            onClick={() => toast("This feature isn't available yet")}
+          >
+            <HugeiconsIcon icon={Share01Icon} strokeWidth={2} />
+            Share note
+          </ContextMenuItem>
 
           <ContextMenuSeparator />
 

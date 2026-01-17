@@ -12,7 +12,7 @@ const FloatingButton = () => {
       href="/new"
       className={cn(
         buttonVariants({ size: "icon-xl" }),
-        "fixed right-4 bottom-4 shadow-lg",
+        "fixed right-4 bottom-4 z-1000 shadow-lg",
       )}
     >
       <HugeiconsIcon

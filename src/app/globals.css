@@ -30,7 +30,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
-  --color-muted-foreground-60: var(--muted-foreground-60);
+  --color-muted-foreground-51: var(--muted-foreground-51);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
@@ -65,9 +65,9 @@
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --muted-foreground-60: color-mix(
+  --muted-foreground-51: color-mix(
     in oklab,
-    var(--muted-foreground) 60%,
+    var(--muted-foreground) 51%,
     transparent
   );
   --accent: oklch(0.97 0 0);

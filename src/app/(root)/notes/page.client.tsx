@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Note } from "@prisma/client";
 import { NoteCard } from "@/components/notes/note-card";
+import { EmptyNote } from "@/components/notes/empty-note";
 
 export function NotesList({
   initialNotes,
@@ -75,7 +76,7 @@ export function NotesList({
         />
       ))}
 
-      {notes.length === 0 && <p>No notes found</p>}
+      {notes.length === 0 && <EmptyNote />}
     </div>
   );
 }
