@@ -26,8 +26,12 @@ import {
   Moon01Icon,
   Settings02Icon,
   Sun03Icon,
+  Folder02Icon,
+  Note01Icon,
+  TagsIcon,
 } from "@hugeicons/core-free-icons";
 import { Spinner } from "./ui/spinner";
+import { MenuLink } from "./menu-links";
 
 const signOutAndRedirect = async ({
   returnTo,
@@ -89,39 +93,41 @@ function AccountButton({
       />
       <DropdownMenuContent className="min-w-48" sideOffset={10}>
         <DropdownMenuGroup>
-          {/* Settings */}
-          <DropdownMenuItem
-            nativeButton={false}
-            aria-label="Go to settings"
-            render={
-              <Link href="/settings">
-                <HugeiconsIcon icon={Settings02Icon} strokeWidth={1.7} />{" "}
-                Settings
-              </Link>
-            }
+          <MenuLink
+            href="/notes"
+            icon={Note01Icon}
+            label="Notes"
+            ariaLabel="View all notes"
           />
 
-          {/* Favorites */}
-          <DropdownMenuItem
-            nativeButton={false}
-            aria-label="View favorites"
-            render={
-              <Link href="/favorites">
-                <HugeiconsIcon icon={StarIcon} strokeWidth={1.7} /> Favorites
-              </Link>
-            }
+          <MenuLink
+            href="/folders"
+            icon={Folder02Icon}
+            label="Folders"
+            ariaLabel="View all folders"
           />
 
-          {/* Archives */}
-          <DropdownMenuItem
-            nativeButton={false}
-            aria-label="View archived notes"
-            render={
-              <Link href="/archives">
-                <HugeiconsIcon icon={Archive03Icon} strokeWidth={1.7} />{" "}
-                Archived notes
-              </Link>
-            }
+          <MenuLink
+            href="/tags"
+            icon={TagsIcon}
+            label="Tags"
+            ariaLabel="View all tags"
+          />
+
+          <DropdownMenuSeparator />
+
+          <MenuLink
+            href="/favorites"
+            icon={StarIcon}
+            label="Favorites"
+            ariaLabel="View favorite notes"
+          />
+
+          <MenuLink
+            href="/archive"
+            icon={Archive03Icon}
+            label="Archived notes"
+            ariaLabel="View archived notes"
           />
         </DropdownMenuGroup>
 
@@ -142,6 +148,7 @@ function AccountButton({
             >
               <HugeiconsIcon icon={Sun03Icon} />
             </DropdownMenuItem>
+
             <DropdownMenuItem
               nativeButton={false}
               aria-label="Switch to dark theme"
@@ -153,6 +160,7 @@ function AccountButton({
             >
               <HugeiconsIcon icon={Moon01Icon} />
             </DropdownMenuItem>
+
             <DropdownMenuItem
               nativeButton={false}
               aria-label="Use system theme"
