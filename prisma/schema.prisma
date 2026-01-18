@@ -3,29 +3,25 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-////////////////////
-// AUTH / USER
-////////////////////
-
 model User {
-  id             String         @id @default(uuid()) @db.Uuid
-  email          String?        @unique @db.VarChar(255)
-  name           String?
-  image          String?
-  emailVerified  Boolean?       @default(false)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-
-  accounts       Account[]
-  sessions       Session[]
-  notes          Note[]
-  folders        Folder[]
-  tags           Tag[]
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String?   @unique @db.VarChar(255)
+  name          String?
+  image         String?
+  emailVerified Boolean?  @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  folders       Folder[]
+  copiedNotes   Note[]    @relation("NoteCopiedFromUser")
+  notes         Note[]
+  sessions      Session[]
+  tags          Tag[]
 
   @@map("user")
 }
@@ -35,7 +31,6 @@ model Account {
   accountId             String
   providerId            String
   userId                String    @db.Uuid
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -45,6 +40,7 @@ model Account {
   password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("account")
 }
@@ -76,29 +72,29 @@ model Verification {
   @@map("verification")
 }
 
-////////////////////
-// CORE NOTES
-////////////////////
-
 model Note {
-  id        String    @id @default(uuid()) @db.Uuid
-  title     String?   @db.VarChar(255)
-  content   String    @db.Text
-
-  folderId  String?   @db.Uuid
-  folder    Folder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
-
-  userId    String    @db.Uuid
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  noteTags  NoteTag[]
-
-  isPinned  Boolean   @default(false)
-  favorite  Boolean   @default(false)
-  archived Boolean @default(false)
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id               String        @id @default(uuid()) @db.Uuid
+  title            String?       @db.VarChar(255)
+  content          String
+  folderId         String?       @db.Uuid
+  userId           String        @db.Uuid
+  isPinned         Boolean       @default(false)
+  favorite         Boolean       @default(false)
+  archived         Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  allowCopy        Boolean       @default(false)
+  copiedFromNoteId String?       @db.Uuid
+  copiedFromUserId String?       @db.Uuid
+  shareLinkType    ShareLinkType @default(USERNAME)
+  shareable        Boolean       @default(false)
+  trashedAt        DateTime?     @db.Timestamp(6)
+  copiedFromNote   Note?         @relation("NoteCopies", fields: [copiedFromNoteId], references: [id])
+  copies           Note[]        @relation("NoteCopies")
+  copiedFromUser   User?         @relation("NoteCopiedFromUser", fields: [copiedFromUserId], references: [id])
+  folder           Folder?       @relation(fields: [folderId], references: [id])
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  noteTags         NoteTag[]
 
   @@index([userId])
   @@index([folderId])
@@ -106,38 +102,28 @@ model Note {
   @@map("note")
 }
 
-////////////////////
-// Folder
-////////////////////
-
 model Folder {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String   @db.VarChar(50)
-  description String? @db.VarChar(255)
-  userId    String   @db.Uuid
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  notes     Note[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @db.VarChar(50)
+  userId      String   @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String?  @db.VarChar(255)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notes       Note[]
 
   @@unique([userId, name])
   @@map("folder")
 }
 
-////////////////////
-// TAGS (many-to-many)
-////////////////////
-
 model Tag {
   id        String    @id @default(uuid()) @db.Uuid
   name      String    @db.VarChar(100)
   userId    String    @db.Uuid
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  noteTags  NoteTag[]
-
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  noteTags  NoteTag[]
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, name])
   @@map("tag")
@@ -147,13 +133,17 @@ model NoteTag {
   id        String   @id @default(uuid()) @db.Uuid
   noteId    String   @db.Uuid
   tagId     String   @db.Uuid
+  createdAt DateTime @default(now())
   note      Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
   tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
 
   @@unique([noteId, tagId])
   @@index([noteId])
   @@index([tagId])
   @@map("note_tag")
+}
+
+enum ShareLinkType {
+  USERNAME
+  TOKEN
 }

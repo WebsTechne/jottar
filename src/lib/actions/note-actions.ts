@@ -239,13 +239,54 @@ async function updateNoteFolder(id: string, folderId: string | null) {
   }
 }
 
+// ///// TRASH
+async function trashNote(id: string) {
+  const user = await getAuthedUser();
+
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const updatedNote = await prisma.note.update({
+    where: {
+      id,
+      userId: user.id,
+    },
+    data: {
+      trashedAt: new Date(),
+    },
+  });
+
+  revalidatePath(`/notes/${id}`);
+
+  return { data: updatedNote };
+}
+
+async function restoreNote(id: string) {
+  const user = await getAuthedUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const updatedNote = await prisma.note.update({
+    where: { id, userId: user.id },
+    data: { trashedAt: null },
+  });
+
+  revalidatePath(`/notes/${id}`);
+  return { data: updatedNote };
+}
+
 export {
   createNote,
   createTag,
+  //
   togglePin,
   toggleFavorite,
   toggleArchive,
+  //
   updateNote,
   updateNoteDetails,
   updateNoteFolder,
+  //
+  trashNote,
+  restoreNote,
 };

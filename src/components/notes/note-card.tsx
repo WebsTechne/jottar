@@ -37,6 +37,7 @@ import {
   toggleArchive,
   toggleFavorite,
   togglePin,
+  trashNote,
 } from "@/lib/actions/note-actions";
 import { DeleteNoteDialog } from "./delete-note-dialog";
 
@@ -72,6 +73,52 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
   const handleOpenChange = (value: boolean) => {
     setOpen(value);
     if (value) setMounted(true); // mount immediately on open
+  };
+
+  const handleTrashConfirm = async (id: string) => {
+    if (inFlight) return;
+    setInFlight(true);
+
+    const prev = { ...localNote };
+
+    // optimistic update: mark trashed now
+    setLocalNote((s) => ({ ...s, trashedAt: new Date() }));
+
+    try {
+      const res = await trashNote(id);
+
+      if (res?.error) {
+        // rollback
+        setLocalNote(prev);
+        toast.error(res.error);
+        return;
+      }
+
+      if (res?.data) {
+        // merge server truth
+        setLocalNote((s) => ({ ...s, ...res.data }));
+        onPatch?.(res.data);
+
+        // broadcast patch to other tabs (same pattern as optimisticToggle)
+        try {
+          const channel = new BroadcastChannel("notes");
+          channel.postMessage({ type: "patch", data: res.data });
+          channel.close();
+        } catch (e) {
+          // ignore if unavailable
+        }
+      }
+
+      toast.success(res?.message ?? "Moved to Trash");
+      // close dialog / menu
+      setDialogOpen(false);
+      setOpen(false);
+    } catch (err: any) {
+      setLocalNote(prev);
+      toast.error(err?.message ?? "Network error");
+    } finally {
+      setInFlight(false);
+    }
   };
 
   // when closing -> wait for animation end before unmounting
@@ -175,6 +222,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
         title={note.title ?? "Untitled note"}
         open={dialogOpen}
         onOpenChange={handleDialogOpenChange}
+        onConfirm={() => handleTrashConfirm(note.id)}
       />
 
       <ContextMenu open={open} onOpenChange={handleOpenChange}>

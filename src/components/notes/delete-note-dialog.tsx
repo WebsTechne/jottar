@@ -14,11 +14,13 @@ const DeleteNoteDialog = ({
   title,
   open,
   onOpenChange,
+  onConfirm,
 }: {
   id: string;
   title: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onConfirm?: () => Promise<void> | void;
 }) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -39,7 +41,12 @@ const DeleteNoteDialog = ({
           </AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
-            onClick={() => {}}
+            onClick={async () => {
+              // call parent confirm handler; parent manages UI/close/optimistic updates
+              await onConfirm?.();
+              // close dialog locally — parent may also close on success
+              onOpenChange(false);
+            }}
             className="not-sm:flex-1"
           >
             Trash note

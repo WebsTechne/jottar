@@ -138,6 +138,10 @@ export function SignUpClient() {
 
       // No error means sign-up was accepted
       toast.success("Account created. You can sign in now.");
+      await fetch("/api/me/default-folders", {
+        method: "POST",
+        credentials: "include",
+      });
       replace(`/auth/sign-in?returnTo=${returnTo}`);
     } catch (err) {
       // This is for network / unexpected errors only
