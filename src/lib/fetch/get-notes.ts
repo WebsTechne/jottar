@@ -22,6 +22,13 @@ const getNotes = async () => {
       createdAt: true,
       updatedAt: true,
       noteTags: true,
+      // new fields
+      trashedAt: true,
+      allowCopy: true,
+      copiedFromNoteId: true,
+      copiedFromUserId: true,
+      shareLinkType: true,
+      shareable: true,
     },
     where: { userId: { equals: user.id } },
   });
@@ -48,6 +55,13 @@ const getNote = async (id: string) => {
       createdAt: true,
       updatedAt: true,
       noteTags: true,
+      // new fields
+      trashedAt: true,
+      allowCopy: true,
+      copiedFromNoteId: true,
+      copiedFromUserId: true,
+      shareLinkType: true,
+      shareable: true,
     },
     where: { id, userId: user.id },
   });
