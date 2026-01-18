@@ -200,7 +200,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                     icon={StarIcon}
                     size={14}
                     fill="var(--muted-foreground-51)"
-                    className="text-muted-foreground/51"
+                    className="text-transparent"
                   />
                 )}
               </span>
