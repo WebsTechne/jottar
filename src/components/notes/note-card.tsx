@@ -109,7 +109,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
         }
       }
 
-      toast.success(res?.message ?? "Moved to Trash");
+      toast.success("Moved to Trash");
       // close dialog / menu
       setDialogOpen(false);
       setOpen(false);
@@ -198,7 +198,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
         }
       }
 
-      toast.success(res?.message ?? "Done");
+      toast.success("Done");
     } catch (err: any) {
       setLocalNote(prev);
       toast.error(err?.message ?? "Network error");
