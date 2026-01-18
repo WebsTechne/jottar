@@ -99,6 +99,7 @@ model Note {
   @@index([userId])
   @@index([folderId])
   @@index([userId, folderId])
+  @@index([trashedAt])
   @@map("note")
 }
 
