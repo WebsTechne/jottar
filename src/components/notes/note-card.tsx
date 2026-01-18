@@ -40,6 +40,7 @@ import {
   trashNote,
 } from "@/lib/actions/note-actions";
 import { DeleteNoteDialog } from "./delete-note-dialog";
+import { Skeleton } from "../ui/skeleton";
 
 type Props = {
   note: Note;
@@ -380,4 +381,12 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
   );
 };
 
-export { NoteCard };
+const NoteCardSkeleton = () => {
+  return (
+    <div className="corner-squircle flex-center h-25 w-full overflow-clip rounded-4xl">
+      <Skeleton className="size-full" />
+    </div>
+  );
+};
+
+export { NoteCard, NoteCardSkeleton };

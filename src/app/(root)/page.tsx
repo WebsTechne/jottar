@@ -2,23 +2,20 @@
 import { headers } from "next/headers";
 import { Note } from "@prisma/client";
 import { auth } from "@/lib/auth";
-import { overviewNotes as notes } from "@/lib/fetch/get-notes";
 import { Header } from "@/components/header";
-import { NotesList } from "./notes/page.client";
+import { NotesListSkeleton } from "./notes/page.client";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowUpRight03Icon } from "@hugeicons/core-free-icons";
 import { getFolders } from "@/lib/fetch/get-folders";
+import NotesListServer from "./notes/page.server";
+import { Suspense } from "react";
 
 export default async function Page() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  const overviewNotes: Note[] = (await notes()) ?? [];
-
-  const folders = (await getFolders()) ?? [];
-  const folderDisplay = folders.map((folder) => ({
-    name: folder.name,
-    id: folder.id,
-  }));
+  const [session, folders] = await Promise.all([
+    auth.api.getSession({ headers: await headers() }),
+    getFolders(),
+  ]);
 
   return (
     <>
@@ -28,12 +25,9 @@ export default async function Page() {
         <section className="section">
           <h1 className="heading">Notes</h1>
 
-          {/* client-side list handles updates and archived-removal */}
-          <NotesList
-            initialNotes={overviewNotes}
-            folders={folderDisplay}
-            showArchived={false}
-          />
+          <Suspense fallback={<NotesListSkeleton />}>
+            <NotesListServer type="overview" />
+          </Suspense>
 
           <div className="footing">
             <Link

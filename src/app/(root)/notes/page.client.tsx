@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Note } from "@prisma/client";
-import { NoteCard } from "@/components/notes/note-card";
+import { NoteCard, NoteCardSkeleton } from "@/components/notes/note-card";
 import { EmptyNote } from "@/components/notes/empty-note";
 
-export function NotesList({
+function NotesList({
   initialNotes,
   folders,
   showArchived = false,
@@ -95,3 +95,15 @@ export function NotesList({
     </div>
   );
 }
+
+function NotesListSkeleton() {
+  return (
+    <div className="wrap">
+      {[...Array(3)].map((_, i) => (
+        <NoteCardSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
+
+export { NotesList, NotesListSkeleton };
