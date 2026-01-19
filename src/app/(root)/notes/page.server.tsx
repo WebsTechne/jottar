@@ -67,6 +67,7 @@ export async function NotesListServer({
   const preparedNotes = prepareNotes(allNotes, {
     limit: type === "overview" ? 3 : undefined,
     showArchived,
+    showTrashed,
   });
 
   return (

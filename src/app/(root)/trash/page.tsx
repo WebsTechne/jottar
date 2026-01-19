@@ -1,4 +1,4 @@
-// app/archive/page.tsx
+// app/trash/page.tsx
 import { Suspense } from "react";
 import { Header } from "@/components/header";
 import { auth } from "@/lib/auth";
@@ -14,10 +14,10 @@ export default async function NotesPage() {
       <Header session={session} />
       <main>
         <section className="section">
-          <h1 className="heading">Archived notes</h1>
+          <h1 className="heading">Trashed notes</h1>
 
           <Suspense fallback={<NotesListSkeleton />}>
-            <NotesListServer type="all" showArchived={true} />
+            <NotesListServer type="all" showTrashed={true} />
           </Suspense>
         </section>
       </main>

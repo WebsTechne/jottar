@@ -42,6 +42,7 @@ import {
   toggleFavorite,
   togglePin,
   trashNote,
+  restoreNote,
 } from "@/lib/actions/note-actions";
 import { DeleteNoteDialog } from "./delete-note-dialog";
 import { Skeleton } from "../ui/skeleton";
@@ -118,6 +119,49 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
       toast.success("Moved to Trash");
       // close dialog / menu
       setDialogOpen(false);
+      setOpen(false);
+    } catch (err: any) {
+      setLocalNote(prev);
+      toast.error(err?.message ?? "Network error");
+    } finally {
+      setInFlight(false);
+    }
+  };
+
+  const handleRestore = async (id: string) => {
+    if (inFlight) return;
+    setInFlight(true);
+
+    const prev = { ...localNote };
+
+    // optimistic update: restore immediately
+    setLocalNote((s) => ({ ...s, trashedAt: null }));
+
+    try {
+      const res = await restoreNote(id);
+
+      if (res?.error) {
+        // rollback
+        setLocalNote(prev);
+        toast.error(res.error);
+        return;
+      }
+
+      if (res?.data) {
+        setLocalNote((s) => ({ ...s, ...res.data }));
+        onPatch?.(res.data);
+
+        // sync other tabs
+        try {
+          const channel = new BroadcastChannel("notes");
+          channel.postMessage({ type: "patch", data: res.data });
+          channel.close();
+        } catch {
+          // ignore
+        }
+      }
+
+      toast.success("Restored");
       setOpen(false);
     } catch (err: any) {
       setLocalNote(prev);
@@ -420,9 +464,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
           <ContextMenuSeparator />
 
           {localNote.trashedAt && (
-            <ContextMenuItem
-              onClick={() => toast("This feature isn't available yet")}
-            >
+            <ContextMenuItem onClick={() => handleRestore(localNote.id)}>
               <HugeiconsIcon icon={ReloadIcon} strokeWidth={2} />
               Restore from trash
             </ContextMenuItem>
