@@ -316,7 +316,7 @@ export function SignInClient() {
             href="/auth/sign-up"
             className={cn(
               buttonVariants({ variant: "link" }),
-              "px-1! font-semibold!",
+              "px-1! font-semibold! underline",
             )}
           >
             Sign up

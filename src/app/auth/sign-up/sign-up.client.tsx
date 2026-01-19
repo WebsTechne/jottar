@@ -142,7 +142,8 @@ export function SignUpClient() {
         method: "POST",
         credentials: "include",
       });
-      replace(`/auth/sign-in?returnTo=${returnTo}`);
+      // replace(`/auth/sign-in?returnTo=${returnTo}`);
+      replace(decodeURIComponent(returnTo));
     } catch (err) {
       // This is for network / unexpected errors only
       setError(
@@ -393,7 +394,7 @@ export function SignUpClient() {
             href="/auth/sign-in"
             className={cn(
               buttonVariants({ variant: "link" }),
-              "px-1! font-semibold!",
+              "px-1! font-semibold! underline",
             )}
           >
             Sign in
