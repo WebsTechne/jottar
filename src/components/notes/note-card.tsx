@@ -8,11 +8,15 @@ import { formatDateTime } from "@/lib/helpers/format-date-time";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Archive03Icon,
+  ArchiveOff03Icon,
   Copy01Icon,
   Delete02Icon,
   Folder02Icon,
+  FolderAddIcon,
+  InformationCircleIcon,
   PinIcon,
   PinOffIcon,
+  ReloadIcon,
   Share01Icon,
   StarIcon,
 } from "@hugeicons/core-free-icons";
@@ -41,6 +45,7 @@ import {
 } from "@/lib/actions/note-actions";
 import { DeleteNoteDialog } from "./delete-note-dialog";
 import { Skeleton } from "../ui/skeleton";
+import { Button } from "../ui/button";
 
 type Props = {
   note: Note;
@@ -208,6 +213,13 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
     }
   };
 
+  const EXCLUDED_FOLDERS = new Set(["imported notes", "shared notes"]);
+
+  const usableFolders = folders.filter((folder) => {
+    const normalizedName = folder.name.trim().toLowerCase();
+    return !EXCLUDED_FOLDERS.has(normalizedName);
+  });
+
   return (
     <>
       {mounted && (
@@ -219,11 +231,11 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
       )}
 
       <DeleteNoteDialog
-        id={note.id}
-        title={note.title ?? "Untitled note"}
+        id={localNote.id}
+        title={localNote.title ?? "Untitled note"}
         open={dialogOpen}
         onOpenChange={handleDialogOpenChange}
-        onConfirm={() => handleTrashConfirm(note.id)}
+        onConfirm={() => handleTrashConfirm(localNote.id)}
       />
 
       <ContextMenu open={open} onOpenChange={handleOpenChange}>
@@ -277,104 +289,159 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
           }
         />
         <ContextMenuContent className="min-w-52!">
-          <ContextMenuGroup>
-            <ContextMenuItem
-              onClick={() => optimisticToggle("isPinned", togglePin)}
-            >
-              {localNote.isPinned ? (
-                <>
-                  <HugeiconsIcon icon={PinOffIcon} strokeWidth={2} />
-                  Unpin note
-                </>
-              ) : (
-                <>
-                  <HugeiconsIcon icon={PinIcon} strokeWidth={2} />
-                  Pin note
-                </>
-              )}
-            </ContextMenuItem>
+          {!localNote.archived && !localNote.trashedAt && (
+            <>
+              <ContextMenuGroup>
+                <ContextMenuItem
+                  onClick={() => optimisticToggle("isPinned", togglePin)}
+                >
+                  {localNote.isPinned ? (
+                    <>
+                      <HugeiconsIcon icon={PinOffIcon} strokeWidth={2} />
+                      Unpin note
+                    </>
+                  ) : (
+                    <>
+                      <HugeiconsIcon icon={PinIcon} strokeWidth={2} />
+                      Pin note
+                    </>
+                  )}
+                </ContextMenuItem>
 
-            <ContextMenuItem
-              onClick={() => optimisticToggle("favorite", toggleFavorite)}
-            >
-              {localNote.favorite ? (
-                <>
-                  <HugeiconsIcon
-                    icon={StarIcon}
-                    fill="currentColor"
-                    strokeWidth={2}
-                  />
-                  Remove from favorites
-                </>
-              ) : (
-                <>
-                  <HugeiconsIcon icon={StarIcon} strokeWidth={2} />
-                  Add to favorites
-                </>
-              )}
-            </ContextMenuItem>
-          </ContextMenuGroup>
+                <ContextMenuItem
+                  onClick={() => optimisticToggle("favorite", toggleFavorite)}
+                >
+                  {localNote.favorite ? (
+                    <>
+                      <HugeiconsIcon
+                        icon={StarIcon}
+                        fill="currentColor"
+                        strokeWidth={2}
+                      />
+                      Remove from favorites
+                    </>
+                  ) : (
+                    <>
+                      <HugeiconsIcon icon={StarIcon} strokeWidth={2} />
+                      Add to favorites
+                    </>
+                  )}
+                </ContextMenuItem>
+              </ContextMenuGroup>
 
-          <ContextMenuSeparator />
+              <ContextMenuSeparator />
+            </>
+          )}
 
           <ContextMenuItem
             onClick={() => optimisticToggle("archived", toggleArchive)}
           >
-            <HugeiconsIcon icon={Archive03Icon} strokeWidth={2} />
-            {localNote.archived ? "Unarchive note" : "Archive note"}
+            {localNote.archived && !localNote.trashedAt ? (
+              <>
+                <HugeiconsIcon icon={ArchiveOff03Icon} strokeWidth={2} />
+                Unarchive note
+              </>
+            ) : (
+              <>
+                <HugeiconsIcon icon={Archive03Icon} strokeWidth={2} />
+                Archive note
+              </>
+            )}
           </ContextMenuItem>
 
           <ContextMenuSeparator />
+          {!localNote.trashedAt && (
+            <>
+              <ContextMenuItem>
+                <HugeiconsIcon icon={Copy01Icon} strokeWidth={2} />
+                Duplicate note
+              </ContextMenuItem>
 
-          <ContextMenuItem>
-            <HugeiconsIcon icon={Copy01Icon} strokeWidth={2} />
-            Duplicate note
-          </ContextMenuItem>
+              <ContextMenuSub>
+                <ContextMenuSubTrigger>
+                  <HugeiconsIcon icon={Folder02Icon} strokeWidth={2} />
+                  Move to folder
+                </ContextMenuSubTrigger>
+                <ContextMenuSubContent>
+                  <ContextMenuGroup>
+                    <ContextMenuItem
+                      render={
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start!"
+                        >
+                          <HugeiconsIcon icon={FolderAddIcon} strokeWidth={2} />
+                          New folder
+                        </Button>
+                      }
+                    />
 
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>
-              <HugeiconsIcon icon={Folder02Icon} strokeWidth={2} />
-              Move to folder
-            </ContextMenuSubTrigger>
-            <ContextMenuSubContent>
-              <ContextMenuGroup>
-                <ContextMenuLabel>My folders</ContextMenuLabel>
-                <ContextMenuRadioGroup
-                  defaultValue={localNote.folderId ?? "none"}
-                >
-                  <ContextMenuRadioItem value="none">None</ContextMenuRadioItem>
-                  {folders.length < 1 ? (
-                    <ContextMenuRadioItem value="none">
-                      No folders
-                    </ContextMenuRadioItem>
-                  ) : (
-                    folders.map((folder) => (
-                      <ContextMenuRadioItem key={folder.id} value={folder.id}>
-                        {folder.name}
+                    {usableFolders.length > 0 && <ContextMenuSeparator />}
+
+                    <ContextMenuRadioGroup
+                      defaultValue={localNote.folderId ?? "none"}
+                    >
+                      <ContextMenuRadioItem value="none">
+                        None
                       </ContextMenuRadioItem>
-                    ))
-                  )}
-                </ContextMenuRadioGroup>
-              </ContextMenuGroup>
-            </ContextMenuSubContent>
-          </ContextMenuSub>
+                      {usableFolders.map((folder) => (
+                        <ContextMenuRadioItem key={folder.id} value={folder.id}>
+                          {folder.name}
+                        </ContextMenuRadioItem>
+                      ))}
+                    </ContextMenuRadioGroup>
+                  </ContextMenuGroup>
+                </ContextMenuSubContent>
+              </ContextMenuSub>
+
+              <ContextMenuSeparator />
+            </>
+          )}
+
+          {!localNote.archived && !localNote.trashedAt && (
+            <ContextMenuItem
+              onClick={() => toast("This feature isn't available yet")}
+            >
+              <HugeiconsIcon icon={Share01Icon} strokeWidth={2} />
+              Share note
+            </ContextMenuItem>
+          )}
 
           <ContextMenuItem
             onClick={() => toast("This feature isn't available yet")}
           >
-            <HugeiconsIcon icon={Share01Icon} strokeWidth={2} />
-            Share note
+            <HugeiconsIcon icon={InformationCircleIcon} strokeWidth={2} />
+            Info
           </ContextMenuItem>
 
           <ContextMenuSeparator />
 
-          <ContextMenuItem
-            variant="destructive"
-            onClick={() => handleDialogOpenChange(true)}
-          >
-            <HugeiconsIcon icon={Delete02Icon} strokeWidth={2} />
-            Trash
-          </ContextMenuItem>
+          {localNote.trashedAt && (
+            <ContextMenuItem
+              onClick={() => toast("This feature isn't available yet")}
+            >
+              <HugeiconsIcon icon={ReloadIcon} strokeWidth={2} />
+              Restore from trash
+            </ContextMenuItem>
+          )}
+
+          {!localNote.trashedAt ? (
+            <ContextMenuItem
+              variant="destructive"
+              onClick={() => handleDialogOpenChange(true)}
+            >
+              <HugeiconsIcon icon={Delete02Icon} strokeWidth={2} />
+              Trash
+            </ContextMenuItem>
+          ) : (
+            <ContextMenuItem
+              variant="destructive"
+              onClick={() => toast("This feature isn't available yet")}
+            >
+              <HugeiconsIcon icon={Delete02Icon} strokeWidth={2} />
+              Delete permanently
+            </ContextMenuItem>
+          )}
         </ContextMenuContent>
       </ContextMenu>
     </>
