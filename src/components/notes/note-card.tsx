@@ -160,7 +160,13 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
         }
       }
 
-      toast.success("Restored");
+      toast.success("Restored", {
+        action: {
+          label: "Undo",
+          actionButtonStyle: { borderRadius: "var(--radius-lg)" },
+          onClick: () => handleTrashConfirm(id),
+        },
+      });
       setOpen(false);
     } catch (err: any) {
       setLocalNote(prev);
@@ -301,7 +307,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                     className="text-muted-foreground"
                   />
                 )}
-                {localNote.favorite && (
+                {localNote.favorite && !isInactive && (
                   <HugeiconsIcon
                     icon={StarIcon}
                     size={14}
