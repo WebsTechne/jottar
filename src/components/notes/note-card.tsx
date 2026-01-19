@@ -26,7 +26,6 @@ import {
   ContextMenuContent,
   ContextMenuGroup,
   ContextMenuItem,
-  ContextMenuLabel,
   ContextMenuRadioGroup,
   ContextMenuRadioItem,
   ContextMenuSeparator,
@@ -379,23 +378,28 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
             </>
           )}
 
-          <ContextMenuItem
-            onClick={() => optimisticToggle("archived", toggleArchive)}
-          >
-            {localNote.archived && !localNote.trashedAt ? (
-              <>
-                <HugeiconsIcon icon={ArchiveOff03Icon} strokeWidth={2} />
-                Unarchive note
-              </>
-            ) : (
-              <>
-                <HugeiconsIcon icon={Archive03Icon} strokeWidth={2} />
-                Archive note
-              </>
-            )}
-          </ContextMenuItem>
+          {!localNote.trashedAt && (
+            <>
+              <ContextMenuItem
+                onClick={() => optimisticToggle("archived", toggleArchive)}
+              >
+                {localNote.archived ? (
+                  <>
+                    <HugeiconsIcon icon={ArchiveOff03Icon} strokeWidth={2} />
+                    Unarchive note
+                  </>
+                ) : (
+                  <>
+                    <HugeiconsIcon icon={Archive03Icon} strokeWidth={2} />
+                    Archive note
+                  </>
+                )}
+              </ContextMenuItem>
 
-          <ContextMenuSeparator />
+              <ContextMenuSeparator />
+            </>
+          )}
+
           {!localNote.trashedAt && (
             <>
               <ContextMenuItem>

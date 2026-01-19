@@ -14,7 +14,7 @@ export default async function NotesPage() {
       <Header session={session} />
       <main>
         <section className="section">
-          <h1 className="heading">Trashed notes</h1>
+          <h1 className="heading">Trash</h1>
 
           <Suspense fallback={<NotesListSkeleton />}>
             <NotesListServer type="all" showTrashed={true} />
