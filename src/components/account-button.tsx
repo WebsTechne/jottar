@@ -32,6 +32,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Spinner } from "./ui/spinner";
 import { MenuLink } from "./menu-links";
+import { useState } from "react";
 
 const signOutAndRedirect = async ({
   returnTo,
@@ -52,6 +53,23 @@ const signOutAndRedirect = async ({
   });
 };
 
+function UserAvatar({
+  name,
+  image,
+  initials,
+}: {
+  name: string;
+  image?: string | null;
+  initials: string;
+}) {
+  return (
+    <Avatar className="ring-accent dark:ring-accent/50 size-6.5 duration-300 hover:ring-4">
+      <AvatarImage src={image || ""} alt={name} />
+      <AvatarFallback>{initials}</AvatarFallback>
+    </Avatar>
+  );
+}
+
 function AccountButton({
   returnTo,
   session,
@@ -62,6 +80,8 @@ function AccountButton({
   const { push } = useRouter();
   const { theme = "system", setTheme } = useTheme();
   const user = session?.user;
+
+  const [open, setOpen] = useState(false);
 
   if (!user)
     return (
@@ -78,47 +98,48 @@ function AccountButton({
   const { initials } = getInitials(name);
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         nativeButton={false}
         aria-label="Open account menu"
         render={
           <span className="flex-center inline-flex size-9 rounded-full">
-            <Avatar className="ring-accent dark:ring-accent/50 size-6.5 duration-300 hover:ring-4">
-              <AvatarImage src={image || ""} alt={name} />
-              <AvatarFallback>{initials}</AvatarFallback>
-            </Avatar>
+            <span className={cn("menu", open && "active")}>
+              <span className="bar" />
+              <span className="bar" />
+            </span>
           </span>
         }
       />
       <DropdownMenuContent className="min-w-50" sideOffset={10}>
         <DropdownMenuGroup>
           <MenuLink
-            href="/settings"
-            icon={Settings02Icon}
-            label="Settings"
-            ariaLabel="Go to settings"
+            href="/account"
+            // icon={Settings02Icon}
+            icon={<UserAvatar initials={initials} name={name} image={image} />}
+            label="Account"
+            ariaLabel="Go to account"
           />
 
           <DropdownMenuSeparator />
 
           <MenuLink
             href="/notes"
-            icon={Note01Icon}
+            icon={<HugeiconsIcon icon={Note01Icon} strokeWidth={1.7} />}
             label="Notes"
             ariaLabel="View all notes"
           />
 
           <MenuLink
             href="/folders"
-            icon={Folder02Icon}
+            icon={<HugeiconsIcon icon={Folder02Icon} strokeWidth={1.7} />}
             label="Folders"
             ariaLabel="View all folders"
           />
 
           <MenuLink
             href="/tags"
-            icon={TagsIcon}
+            icon={<HugeiconsIcon icon={TagsIcon} strokeWidth={1.7} />}
             label="Tags"
             ariaLabel="View all tags"
           />
@@ -127,21 +148,21 @@ function AccountButton({
 
           <MenuLink
             href="/favorites"
-            icon={StarIcon}
+            icon={<HugeiconsIcon icon={StarIcon} strokeWidth={1.7} />}
             label="Favorites"
             ariaLabel="View favorite notes"
           />
 
           <MenuLink
             href="/archive"
-            icon={Archive03Icon}
+            icon={<HugeiconsIcon icon={Archive03Icon} strokeWidth={1.7} />}
             label="Archived notes"
             ariaLabel="View archived notes"
           />
 
           <MenuLink
             href="/trash"
-            icon={Delete02Icon}
+            icon={<HugeiconsIcon icon={Delete02Icon} strokeWidth={1.7} />}
             label="Trashed notes"
             ariaLabel="View trashed notes"
           />

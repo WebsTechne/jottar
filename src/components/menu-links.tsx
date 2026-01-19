@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import Link from "next/link";
 import { DropdownMenuItem } from "./ui/dropdown-menu";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -9,7 +10,7 @@ const MenuLink = ({
   ariaLabel,
 }: {
   href: string;
-  icon: any;
+  icon?: ReactNode;
   label: string;
   ariaLabel: string;
 }) => {
@@ -19,7 +20,7 @@ const MenuLink = ({
       aria-label={ariaLabel}
       render={
         <Link href={href}>
-          <HugeiconsIcon icon={icon} strokeWidth={1.7} />
+          {icon}
           {label}
         </Link>
       }

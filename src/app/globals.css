@@ -266,3 +266,27 @@ h3.tiptap-heading + h2.tiptap-heading {
     }
   }
 }
+
+.menu {
+  @apply ring-accent dark:ring-accent/50 hover:bg-accent relative size-6.5 rounded-full bg-transparent transition-shadow duration-300 hover:ring-4;
+
+  .bar {
+    @apply bg-foreground absolute top-1/2 left-1/2 block h-[1.5px] w-6 rounded-sm duration-250;
+  }
+
+  .bar:first-child {
+    transform: translateX(-50%) translateY(-4px);
+  }
+  .bar:last-child {
+    transform: translateX(-50%) translateY(4px);
+  }
+}
+
+.menu.active {
+  .bar:first-child {
+    transform: translateX(-50%) rotate(45deg);
+  }
+  .bar:last-child {
+    transform: translateX(-50%) rotate(-45deg);
+  }
+}
