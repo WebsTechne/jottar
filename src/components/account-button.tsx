@@ -28,6 +28,7 @@ import {
   Folder02Icon,
   Note01Icon,
   TagsIcon,
+  Delete02Icon,
 } from "@hugeicons/core-free-icons";
 import { Spinner } from "./ui/spinner";
 import { MenuLink } from "./menu-links";
@@ -136,6 +137,13 @@ function AccountButton({
             icon={Archive03Icon}
             label="Archived notes"
             ariaLabel="View archived notes"
+          />
+
+          <MenuLink
+            href="/trash"
+            icon={Delete02Icon}
+            label="Trashed notes"
+            ariaLabel="View trashed notes"
           />
         </DropdownMenuGroup>
 
