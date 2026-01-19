@@ -16,21 +16,25 @@ function NotesList({
   showArchived?: boolean;
   showTrashed?: boolean;
 }) {
-  const [notes, setNotes] = useState<Note[]>(
-    initialNotes.filter(
-      (n) =>
-        (showArchived ? true : !n.archived) &&
-        (showTrashed ? true : !n.trashedAt),
-    ),
-  );
+  const [notes, setNotes] = useState<Note[]>(initialNotes);
 
   const patchAndMaybeReorder = useCallback(
     (updated: Partial<Note> & { id: string }) => {
       setNotes((prev) => {
         const found = prev.find((p) => p.id === updated.id);
 
+        // if unarchived while on archive page, remove it
+        if (updated.archived === false && showArchived) {
+          return prev.filter((p) => p.id !== updated.id);
+        }
+
         // remove if archived (when not showing archived)
         if (updated.archived === true && !showArchived) {
+          return prev.filter((p) => p.id !== updated.id);
+        }
+
+        // if restored from trash while on trash page, remove it
+        if (updated.trashedAt === null && showTrashed) {
           return prev.filter((p) => p.id !== updated.id);
         }
 
@@ -49,8 +53,8 @@ function NotesList({
           p.id === updated.id ? { ...p, ...updated } : p,
         );
 
-        // pinned-first stable ordering
-        if (updated.isPinned !== undefined) {
+        // pinned-first ordering ONLY for active notes view
+        if (updated.isPinned !== undefined && !showArchived && !showTrashed) {
           const pinned = replaced.filter((r) => r.isPinned);
           const others = replaced.filter((r) => !r.isPinned);
           return [...pinned, ...others];

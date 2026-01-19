@@ -220,6 +220,8 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
     return !EXCLUDED_FOLDERS.has(normalizedName);
   });
 
+  const isInactive = localNote.archived || localNote.trashedAt;
+
   return (
     <>
       {mounted && (
@@ -248,7 +250,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
               )}
             >
               <span className="pointer-events-none absolute top-1 right-1 inline-flex min-h-5 w-5 flex-col items-center justify-center gap-0.75">
-                {localNote.isPinned && (
+                {localNote.isPinned && !isInactive && (
                   <HugeiconsIcon
                     icon={PinIcon}
                     size={16}
@@ -365,6 +367,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                 <ContextMenuSubContent>
                   <ContextMenuGroup>
                     <ContextMenuItem
+                      nativeButton={true}
                       render={
                         <Button
                           variant="outline"

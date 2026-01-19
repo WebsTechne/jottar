@@ -8,31 +8,42 @@ function prepareNotes(
   {
     limit,
     showArchived,
+    showTrashed,
   }: {
     limit?: number;
     showArchived?: boolean;
+    showTrashed?: boolean;
   },
 ) {
   let result = notes;
 
-  if (!showArchived) {
-    result = result.filter((n) => !n.archived);
+  // showTrashed takes precedence: show all trashed notes (including archived)
+  if (showTrashed) {
+    result = result.filter((n) => n.trashedAt != null);
+  } else if (showArchived) {
+    // only archived notes (exclude trashed ones)
+    result = result.filter((n) => n.archived && n.trashedAt == null);
+  } else {
+    // default: exclude archived and trashed notes from the normal list
+    result = result.filter((n) => !n.archived && n.trashedAt == null);
   }
 
-  const pinned = result
-    .filter((n) => n.isPinned)
-    .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-
-  const unpinned = result
-    .filter((n) => !n.isPinned)
-    .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-
-  const ordered = [...pinned, ...unpinned];
+  const ordered =
+    showArchived || showTrashed
+      ? result.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+      : [
+          ...result
+            .filter((n) => n.isPinned)
+            .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
+          ...result
+            .filter((n) => !n.isPinned)
+            .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
+        ];
 
   return limit ? ordered.slice(0, limit) : ordered;
 }
 
-export default async function NotesListServer({
+export async function NotesListServer({
   type,
   showArchived = false,
   showTrashed = false,

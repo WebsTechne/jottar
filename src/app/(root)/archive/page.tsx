@@ -1,11 +1,11 @@
-// app/notes/page.tsx
+// app/archive/page.tsx
+import { Suspense } from "react";
 import { Header } from "@/components/header";
-import { NotesListSkeleton } from "./page.client";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getFolders } from "@/lib/fetch/get-folders";
-import { Suspense } from "react";
-import { NotesListServer } from "./page.server";
+import { NotesListSkeleton } from "../notes/page.client";
+import { NotesListServer } from "../notes/page.server";
 
 export default async function NotesPage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -21,10 +21,10 @@ export default async function NotesPage() {
       <Header session={session} />
       <main>
         <section className="section">
-          <h1 className="heading">Notes</h1>
+          <h1 className="heading">Archived notes</h1>
 
           <Suspense fallback={<NotesListSkeleton />}>
-            <NotesListServer type="all" />
+            <NotesListServer type="all" showArchived={true} />
           </Suspense>
         </section>
       </main>
