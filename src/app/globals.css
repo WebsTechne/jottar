@@ -271,7 +271,7 @@ h3.tiptap-heading + h2.tiptap-heading {
   @apply ring-accent dark:ring-accent/50 hover:bg-accent relative size-6.5 rounded-full bg-transparent transition-shadow duration-300 hover:ring-4;
 
   .bar {
-    @apply bg-foreground absolute top-1/2 left-1/2 block h-[1.5px] w-6 rounded-sm duration-250;
+    @apply bg-foreground absolute top-1/2 left-1/2 block h-0.75 w-6 rounded-sm duration-250;
   }
 
   .bar:first-child {
