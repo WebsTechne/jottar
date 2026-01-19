@@ -30,15 +30,15 @@ const Header = ({ session }: { session: ServerSession }) => {
       </Link>
 
       <section className="flex items-center gap-3">
-        <Link href="/new" className={buttonVariants({ size: "sm" })}>
+        {/*<Link href="/new" className={buttonVariants({ size: "sm" })}>
           New note
-        </Link>
+        </Link>*/}
 
         <Button
           variant="ghost"
           size="icon-sm"
           onClick={() => toast("Nothing here yet...")}
-          className="hidden p-0! px-0! py-0! sm:inline-flex"
+          // className="p-0! px-0! py-0!"
         >
           <HugeiconsIcon icon={Search01Icon} className="size-6!" />
         </Button>

@@ -33,6 +33,7 @@ import {
 import { Spinner } from "./ui/spinner";
 import { MenuLink } from "./menu-links";
 import { useState } from "react";
+import { buttonVariants } from "./ui/button";
 
 const signOutAndRedirect = async ({
   returnTo,
@@ -103,7 +104,12 @@ function AccountButton({
         nativeButton={false}
         aria-label="Open account menu"
         render={
-          <span className="flex-center inline-flex size-9 rounded-full">
+          <span
+            className={cn(
+              buttonVariants({ size: "icon-sm", variant: "ghost" }),
+              "flex-center inline-flex rounded-full",
+            )}
+          >
             <span className={cn("menu", open && "active")}>
               <span className="bar" />
               <span className="bar" />
