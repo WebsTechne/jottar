@@ -264,8 +264,8 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
           render={
             <div
               className={cn(
-                "bg-muted dark:bg-card! corner-squircle relative z-1 flex w-full flex-col overflow-clip rounded-4xl p-3 pb-2!",
-                isOpen && "z-1005",
+                "bg-muted dark:bg-card! corner-squircle relative z-1 flex w-full flex-col overflow-clip rounded-4xl p-3 pb-2! transition-shadow duration-300",
+                isOpen && "z-1005 shadow-sm",
               )}
             >
               <span className="pointer-events-none absolute top-1 right-1 inline-flex min-h-5 w-5 flex-col items-center justify-center gap-0.75">
