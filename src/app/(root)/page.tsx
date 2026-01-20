@@ -1,7 +1,4 @@
 // app/page.tsx
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import { Header } from "@/components/header";
 import { NotesListSkeleton } from "./notes/page.client";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -10,14 +7,8 @@ import { NotesListServer } from "./notes/page.server";
 import { Suspense } from "react";
 
 export default async function Page() {
-  const [session] = await Promise.all([
-    auth.api.getSession({ headers: await headers() }),
-  ]);
-
   return (
     <>
-      <Header session={session} />
-
       <main>
         <section className="section">
           <h1 className="heading">Notes</h1>

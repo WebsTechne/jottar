@@ -66,9 +66,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast: "cn-toast",
-        },
-        actionButtonStyle: {
-          borderRadius: "var(--radius-lg)",
+          actionButton: "rounded-lg!",
         },
       }}
       {...props}

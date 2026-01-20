@@ -23,7 +23,6 @@ import {
   StarIcon,
   LogoutSquare01Icon,
   Moon01Icon,
-  Settings02Icon,
   Sun03Icon,
   Folder02Icon,
   Note01Icon,
@@ -32,8 +31,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Spinner } from "./ui/spinner";
 import { MenuLink } from "./menu-links";
-import { useState } from "react";
 import { buttonVariants } from "./ui/button";
+import { useOverlay } from "@/context/overlay-context";
 
 const signOutAndRedirect = async ({
   returnTo,
@@ -82,7 +81,8 @@ function AccountButton({
   const { theme = "system", setTheme } = useTheme();
   const user = session?.user;
 
-  const [open, setOpen] = useState(false);
+  const { active, open, close } = useOverlay();
+  const isOpen = active === "menu";
 
   if (!user)
     return (
@@ -99,140 +99,147 @@ function AccountButton({
   const { initials } = getInitials(name);
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger
-        nativeButton={false}
-        aria-label="Open account menu"
-        render={
-          <span
-            className={cn(
-              buttonVariants({ size: "icon-sm", variant: "ghost" }),
-              "flex-center inline-flex rounded-full",
-            )}
-          >
-            <span className={cn("menu", open && "active")}>
-              <span className="bar" />
-              <span className="bar" />
+    <>
+      <DropdownMenu
+        open={isOpen}
+        onOpenChange={(v) => (v ? open("menu") : close())}
+      >
+        <DropdownMenuTrigger
+          nativeButton={false}
+          aria-label="Open account menu"
+          render={
+            <span
+              className={cn(
+                buttonVariants({ size: "icon-lg", variant: "ghost" }),
+                "flex-center inline-flex size-9! rounded-full",
+              )}
+            >
+              <span className={cn("menu", isOpen && "active")}>
+                <span className="bar" />
+                <span className="bar" />
+              </span>
             </span>
-          </span>
-        }
-      />
-      <DropdownMenuContent className="min-w-50" sideOffset={10}>
-        <DropdownMenuGroup>
-          <MenuLink
-            href="/account"
-            // icon={Settings02Icon}
-            icon={<UserAvatar initials={initials} name={name} image={image} />}
-            label="Account"
-            ariaLabel="Go to account"
-          />
+          }
+        />
+        <DropdownMenuContent className="z-1002! min-w-50" sideOffset={10}>
+          <DropdownMenuGroup>
+            <MenuLink
+              href="/account"
+              // icon={Settings02Icon}
+              icon={
+                <UserAvatar initials={initials} name={name} image={image} />
+              }
+              label="Account"
+              ariaLabel="Go to account"
+            />
+
+            <DropdownMenuSeparator />
+
+            <MenuLink
+              href="/notes"
+              icon={<HugeiconsIcon icon={Note01Icon} strokeWidth={1.7} />}
+              label="Notes"
+              ariaLabel="View all notes"
+            />
+
+            <MenuLink
+              href="/folders"
+              icon={<HugeiconsIcon icon={Folder02Icon} strokeWidth={1.7} />}
+              label="Folders"
+              ariaLabel="View all folders"
+            />
+
+            <MenuLink
+              href="/tags"
+              icon={<HugeiconsIcon icon={TagsIcon} strokeWidth={1.7} />}
+              label="Tags"
+              ariaLabel="View all tags"
+            />
+
+            <DropdownMenuSeparator />
+
+            <MenuLink
+              href="/favorites"
+              icon={<HugeiconsIcon icon={StarIcon} strokeWidth={1.7} />}
+              label="Favorites"
+              ariaLabel="View favorite notes"
+            />
+
+            <MenuLink
+              href="/archive"
+              icon={<HugeiconsIcon icon={Archive03Icon} strokeWidth={1.7} />}
+              label="Archived notes"
+              ariaLabel="View archived notes"
+            />
+
+            <MenuLink
+              href="/trash"
+              icon={<HugeiconsIcon icon={Delete02Icon} strokeWidth={1.7} />}
+              label="Trashed notes"
+              ariaLabel="View trashed notes"
+            />
+          </DropdownMenuGroup>
 
           <DropdownMenuSeparator />
 
-          <MenuLink
-            href="/notes"
-            icon={<HugeiconsIcon icon={Note01Icon} strokeWidth={1.7} />}
-            label="Notes"
-            ariaLabel="View all notes"
-          />
+          {/* Theme */}
+          <DropdownMenuGroup className="text-muted-foreground flex flex-row! items-center justify-between gap-2 p-1">
+            Theme
+            <span className="flex items-center rounded-full bg-black/7 p-0.5 dark:bg-black/25">
+              <DropdownMenuItem
+                nativeButton={false}
+                aria-label="Switch to light theme"
+                className={cn(
+                  theme === "light" && "bg-muted!",
+                  "grid size-6.5! place-items-center rounded-full p-0!",
+                )}
+                onClick={() => setTheme("light")}
+              >
+                <HugeiconsIcon icon={Sun03Icon} />
+              </DropdownMenuItem>
 
-          <MenuLink
-            href="/folders"
-            icon={<HugeiconsIcon icon={Folder02Icon} strokeWidth={1.7} />}
-            label="Folders"
-            ariaLabel="View all folders"
-          />
+              <DropdownMenuItem
+                nativeButton={false}
+                aria-label="Switch to dark theme"
+                className={cn(
+                  theme === "dark" && "bg-muted!",
+                  "grid size-6.5! place-items-center rounded-full p-0!",
+                )}
+                onClick={() => setTheme("dark")}
+              >
+                <HugeiconsIcon icon={Moon01Icon} />
+              </DropdownMenuItem>
 
-          <MenuLink
-            href="/tags"
-            icon={<HugeiconsIcon icon={TagsIcon} strokeWidth={1.7} />}
-            label="Tags"
-            ariaLabel="View all tags"
-          />
+              <DropdownMenuItem
+                nativeButton={false}
+                aria-label="Use system theme"
+                className={cn(
+                  theme === "system" && "bg-muted!",
+                  "grid size-6.5! place-items-center rounded-full p-0!",
+                )}
+                onClick={() => setTheme("system")}
+              >
+                <HugeiconsIcon icon={ComputerIcon} />
+              </DropdownMenuItem>
+            </span>
+          </DropdownMenuGroup>
 
           <DropdownMenuSeparator />
 
-          <MenuLink
-            href="/favorites"
-            icon={<HugeiconsIcon icon={StarIcon} strokeWidth={1.7} />}
-            label="Favorites"
-            ariaLabel="View favorite notes"
-          />
-
-          <MenuLink
-            href="/archive"
-            icon={<HugeiconsIcon icon={Archive03Icon} strokeWidth={1.7} />}
-            label="Archived notes"
-            ariaLabel="View archived notes"
-          />
-
-          <MenuLink
-            href="/trash"
-            icon={<HugeiconsIcon icon={Delete02Icon} strokeWidth={1.7} />}
-            label="Trashed notes"
-            ariaLabel="View trashed notes"
-          />
-        </DropdownMenuGroup>
-
-        <DropdownMenuSeparator />
-
-        {/* Theme */}
-        <DropdownMenuGroup className="text-muted-foreground flex flex-row! items-center justify-between gap-2 p-1">
-          Theme
-          <span className="flex items-center rounded-full bg-black/7 p-0.5 dark:bg-black/25">
+          <DropdownMenuGroup>
             <DropdownMenuItem
               nativeButton={false}
-              aria-label="Switch to light theme"
-              className={cn(
-                theme === "light" && "bg-muted!",
-                "grid size-6.5! place-items-center rounded-full p-0!",
-              )}
-              onClick={() => setTheme("light")}
+              variant="destructive"
+              aria-label="Sign out of your account"
+              onClick={() => signOutAndRedirect({ returnTo, push })}
             >
-              <HugeiconsIcon icon={Sun03Icon} />
+              <HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={1.7} />
+              Sign out
             </DropdownMenuItem>
-
-            <DropdownMenuItem
-              nativeButton={false}
-              aria-label="Switch to dark theme"
-              className={cn(
-                theme === "dark" && "bg-muted!",
-                "grid size-6.5! place-items-center rounded-full p-0!",
-              )}
-              onClick={() => setTheme("dark")}
-            >
-              <HugeiconsIcon icon={Moon01Icon} />
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              nativeButton={false}
-              aria-label="Use system theme"
-              className={cn(
-                theme === "system" && "bg-muted!",
-                "grid size-6.5! place-items-center rounded-full p-0!",
-              )}
-              onClick={() => setTheme("system")}
-            >
-              <HugeiconsIcon icon={ComputerIcon} />
-            </DropdownMenuItem>
-          </span>
-        </DropdownMenuGroup>
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            nativeButton={false}
-            variant="destructive"
-            aria-label="Sign out of your account"
-            onClick={() => signOutAndRedirect({ returnTo, push })}
-          >
-            <HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={1.7} />
-            Sign out
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 }
 

@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { ReactNode } from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { FloatingButton } from "@/components/floating-button";
-import Link from "next/link";
+import { Header } from "@/components/header";
+import { OverlayProvider } from "@/context/overlay-context";
 
 export default async function Layout({ children }: { children: ReactNode }) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -13,8 +15,11 @@ export default async function Layout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <>
-      {children}
+    <OverlayProvider>
+      <Header session={session} />
+
+      <main>{children}</main>
+
       <FloatingButton />
 
       <footer className="text-muted-foreground p-4 text-sm">
@@ -37,6 +42,6 @@ export default async function Layout({ children }: { children: ReactNode }) {
           </li>
         </ul>
       </footer>
-    </>
+    </OverlayProvider>
   );
 }

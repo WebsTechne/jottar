@@ -1,15 +1,10 @@
 // app/notes/page.tsx
-import { Header } from "@/components/header";
 import { NotesListSkeleton } from "./page.client";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { getFolders } from "@/lib/fetch/get-folders";
 import { Suspense } from "react";
 import { NotesListServer } from "./page.server";
 
 export default async function NotesPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
-
   const folders = (await getFolders()) ?? [];
   const folderDisplay = folders.map((folder) => ({
     name: folder.name,
@@ -18,7 +13,6 @@ export default async function NotesPage() {
 
   return (
     <>
-      <Header session={session} />
       <main>
         <section className="section">
           <h1 className="heading">Notes</h1>

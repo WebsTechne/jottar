@@ -46,6 +46,7 @@ import {
 import { DeleteNoteDialog } from "./delete-note-dialog";
 import { Skeleton } from "../ui/skeleton";
 import { Button } from "../ui/button";
+import { useOverlay } from "@/context/overlay-context";
 
 type Props = {
   note: Note;
@@ -55,15 +56,9 @@ type Props = {
 };
 
 const NoteCard = ({ note, folders, onPatch }: Props) => {
-  const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(open); // controls actual DOM mount
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-
   const [dialogOpen, setDialogOpen] = useState(false);
-
   const handleDialogOpenChange = (value: boolean) => {
     setDialogOpen(value);
-    if (value) setMounted(true); // mount immediately on open
   };
 
   // local copy for optimistic updates
@@ -76,10 +71,9 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
     setLocalNote(note);
   }, [note]);
 
-  const handleOpenChange = (value: boolean) => {
-    setOpen(value);
-    if (value) setMounted(true); // mount immediately on open
-  };
+  const { active, open, close } = useOverlay();
+  const owner = `note-context:${localNote.id}` as const;
+  const isOpen = active === owner;
 
   const handleTrashConfirm = async (id: string) => {
     if (inFlight) return;
@@ -118,7 +112,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
       toast.success("Moved to Trash");
       // close dialog / menu
       setDialogOpen(false);
-      setOpen(false);
+      close();
     } catch (err: any) {
       setLocalNote(prev);
       toast.error(err?.message ?? "Network error");
@@ -161,13 +155,14 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
       }
 
       toast.success("Restored", {
+        classNames: { actionButton: "rounded-lg!" },
         action: {
           label: "Undo",
           actionButtonStyle: { borderRadius: "var(--radius-lg)" },
           onClick: () => handleTrashConfirm(id),
         },
       });
-      setOpen(false);
+      close();
     } catch (err: any) {
       setLocalNote(prev);
       toast.error(err?.message ?? "Network error");
@@ -175,26 +170,6 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
       setInFlight(false);
     }
   };
-
-  // when closing -> wait for animation end before unmounting
-  useEffect(() => {
-    if (!open && mounted && overlayRef.current) {
-      const el = overlayRef.current;
-      const onAnimEnd = (e: AnimationEvent) => {
-        if (e.target === el) setMounted(false);
-      };
-      el.addEventListener("animationend", onAnimEnd as EventListener);
-      return () =>
-        el.removeEventListener("animationend", onAnimEnd as EventListener);
-    }
-  }, [open, mounted]);
-
-  // control body scroll while overlay is visible (mounted), not while `open` is true
-  useEffect(() => {
-    if (mounted) document.body.classList.add("overflow");
-    else document.body.classList.remove("overflow");
-    return () => document.body.classList.remove("overflow");
-  }, [mounted]);
 
   // memoized preview extraction — avoids JSON.parse on every render
   const preview = useMemo(() => {
@@ -273,14 +248,6 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
 
   return (
     <>
-      {mounted && (
-        <div
-          ref={overlayRef}
-          data-state={open ? "open" : "closed"}
-          className="overlay"
-        />
-      )}
-
       <DeleteNoteDialog
         id={localNote.id}
         title={localNote.title ?? "Untitled note"}
@@ -289,13 +256,16 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
         onConfirm={() => handleTrashConfirm(localNote.id)}
       />
 
-      <ContextMenu open={open} onOpenChange={handleOpenChange}>
+      <ContextMenu
+        open={isOpen}
+        onOpenChange={(v) => (v ? open(owner) : close())}
+      >
         <ContextMenuTrigger
           render={
             <div
               className={cn(
                 "bg-muted dark:bg-card! corner-squircle relative z-1 flex w-full flex-col overflow-clip rounded-4xl p-3 pb-2!",
-                open && "z-1005",
+                isOpen && "z-1005",
               )}
             >
               <span className="pointer-events-none absolute top-1 right-1 inline-flex min-h-5 w-5 flex-col items-center justify-center gap-0.75">
