@@ -4,7 +4,7 @@ import { QuillWrite01Icon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 
 const EmptyNotes = () => (
-  <div className="text-card-foreground bg-card corner-squircle flex h-25 w-full flex-col items-center justify-between gap-1 rounded-4xl border border-dashed p-3">
+  <div className="text-card-foreground bg-card corner-squircle flex h-25 w-full flex-col items-center justify-center gap-1.5 rounded-4xl border border-dashed p-3">
     You do not have any notes yet.
     <Link href="/new" className={buttonVariants({ size: "sm" })}>
       <HugeiconsIcon icon={QuillWrite01Icon} strokeWidth={2} />
@@ -14,7 +14,7 @@ const EmptyNotes = () => (
 );
 
 const EmptyArchive = () => (
-  <div className="text-card-foreground bg-card corner-squircle flex h-25 w-full flex-col items-center justify-between gap-1 rounded-4xl border border-dashed p-3">
+  <div className="text-card-foreground bg-card corner-squircle flex h-25 w-full flex-col items-center justify-center gap-1.5 rounded-4xl border border-dashed p-3">
     You do not have any archived notes.
     <Link href="/notes" className={buttonVariants({ size: "sm" })}>
       Go to Notes
@@ -23,7 +23,7 @@ const EmptyArchive = () => (
 );
 
 const EmptyTrash = () => (
-  <div className="text-card-foreground bg-card corner-squircle flex h-25 w-full flex-col items-center justify-between gap-1 rounded-4xl border border-dashed p-3">
+  <div className="text-card-foreground bg-card corner-squircle flex h-25 w-full flex-col items-center justify-center gap-1.5 rounded-4xl border border-dashed p-3">
     You do not have any notes in the trash.
     <Link href="/notes" className={buttonVariants({ size: "sm" })}>
       Go to Notes
