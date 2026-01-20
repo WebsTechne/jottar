@@ -232,6 +232,7 @@ function AccountButton({
               variant="destructive"
               aria-label="Sign out of your account"
               onClick={() => signOutAndRedirect({ returnTo, push })}
+              className="text-base!"
             >
               <HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={1.7} />
               Sign out

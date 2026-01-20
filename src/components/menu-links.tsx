@@ -18,7 +18,7 @@ const MenuLink = ({
       nativeButton={false}
       aria-label={ariaLabel}
       render={
-        <Link href={href}>
+        <Link href={href} className="text-base!">
           {icon}
           {label}
         </Link>
