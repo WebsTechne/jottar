@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Note } from "@prisma/client";
 import { NoteCard, NoteCardSkeleton } from "@/components/notes/note-card";
-import { EmptyNote } from "@/components/notes/empty-note";
+import {
+  EmptyArchive,
+  EmptyNotes,
+  EmptyTrash,
+} from "@/components/notes/empty-note";
 
 function NotesList({
   initialNotes,
@@ -95,7 +99,14 @@ function NotesList({
         />
       ))}
 
-      {notes.length === 0 && <EmptyNote />}
+      {notes.length === 0 &&
+        (showArchived ? (
+          <EmptyArchive />
+        ) : showTrashed ? (
+          <EmptyTrash />
+        ) : (
+          <EmptyNotes />
+        ))}
     </div>
   );
 }
