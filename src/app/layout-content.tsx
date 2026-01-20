@@ -16,7 +16,7 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
               "absolute right-0! top-0! size-6! rounded-full text-gray-500",
           },
           closeButton: true,
-          duration: 200000,
+          duration: 2000,
         }}
       />
     </ThemeProvider>
