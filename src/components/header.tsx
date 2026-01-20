@@ -37,7 +37,7 @@ const Header = ({ session }: { session: ServerSession }) => {
         <Button
           variant="ghost"
           size="icon-sm"
-          onClick={() => toast("Nothing here yet...")}
+          onClick={() => toast("This feature isn't available yet")}
           // className="p-0! px-0! py-0!"
         >
           <HugeiconsIcon icon={Search01Icon} className="size-6!" />

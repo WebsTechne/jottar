@@ -109,7 +109,12 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
         }
       }
 
-      toast.success("Moved to Trash");
+      toast.success("Moved to Trash", {
+        action: {
+          label: "Undo",
+          onClick: () => handleTrashConfirm(id),
+        },
+      });
       // close dialog / menu
       setDialogOpen(false);
       close();
@@ -155,10 +160,8 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
       }
 
       toast.success("Restored", {
-        classNames: { actionButton: "rounded-lg!" },
         action: {
           label: "Undo",
-          actionButtonStyle: { borderRadius: "var(--radius-lg)" },
           onClick: () => handleTrashConfirm(id),
         },
       });
@@ -194,8 +197,11 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
   const optimisticToggle = async (
     key: "isPinned" | "favorite" | "archived",
     actionFn: (id: string) => Promise<any>,
+    { force = false, showUndo = false } = {},
   ) => {
-    if (inFlight) return; // guard
+    const id = localNote.id;
+
+    if (inFlight && !force) return; // guard
     setInFlight(true);
 
     const prev = { ...localNote };
@@ -203,13 +209,12 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
     setLocalNote((s) => ({ ...s, [key]: !s[key] }));
 
     try {
-      const res = await actionFn(localNote.id);
+      const res = await actionFn(id);
 
       if (res?.error) {
         // rollback
         setLocalNote(prev);
         toast.error(res.error);
-        setInFlight(false);
         return;
       }
 
@@ -228,7 +233,16 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
         }
       }
 
-      toast.success("Done");
+      if (showUndo) {
+        toast.success("Done", {
+          action: {
+            label: "Undo",
+            onClick: () => optimisticToggle(key, actionFn, { force: true }),
+          },
+        });
+      } else {
+        toast.success("Done");
+      }
     } catch (err: any) {
       setLocalNote(prev);
       toast.error(err?.message ?? "Network error");
@@ -357,7 +371,11 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
           {!localNote.trashedAt && (
             <>
               <ContextMenuItem
-                onClick={() => optimisticToggle("archived", toggleArchive)}
+                onClick={() =>
+                  optimisticToggle("archived", toggleArchive, {
+                    showUndo: true,
+                  })
+                }
               >
                 {localNote.archived ? (
                   <>
@@ -378,7 +396,9 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
 
           {!localNote.trashedAt && (
             <>
-              <ContextMenuItem>
+              <ContextMenuItem
+                onClick={() => toast("This feature isn't available yet")}
+              >
                 <HugeiconsIcon icon={Copy01Icon} strokeWidth={2} />
                 Duplicate note
               </ContextMenuItem>
@@ -396,6 +416,9 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                         <Button
                           variant="outline"
                           className="w-full justify-start!"
+                          onClick={() =>
+                            toast("This feature isn't available yet")
+                          }
                         >
                           <HugeiconsIcon icon={FolderAddIcon} strokeWidth={2} />
                           New folder
