@@ -137,21 +137,21 @@ function AccountButton({
 
             <MenuLink
               href="/notes"
-              icon={<HugeiconsIcon icon={Note01Icon} strokeWidth={1.7} />}
+              icon={<HugeiconsIcon icon={Note01Icon} strokeWidth={2} />}
               label="Notes"
               ariaLabel="View all notes"
             />
 
             <MenuLink
               href="/folders"
-              icon={<HugeiconsIcon icon={Folder02Icon} strokeWidth={1.7} />}
+              icon={<HugeiconsIcon icon={Folder02Icon} strokeWidth={2} />}
               label="Folders"
               ariaLabel="View all folders"
             />
 
             <MenuLink
               href="/tags"
-              icon={<HugeiconsIcon icon={TagsIcon} strokeWidth={1.7} />}
+              icon={<HugeiconsIcon icon={TagsIcon} strokeWidth={2} />}
               label="Tags"
               ariaLabel="View all tags"
             />
@@ -160,21 +160,21 @@ function AccountButton({
 
             <MenuLink
               href="/favorites"
-              icon={<HugeiconsIcon icon={StarIcon} strokeWidth={1.7} />}
+              icon={<HugeiconsIcon icon={StarIcon} strokeWidth={2} />}
               label="Favorites"
               ariaLabel="View favorite notes"
             />
 
             <MenuLink
               href="/archive"
-              icon={<HugeiconsIcon icon={Archive03Icon} strokeWidth={1.7} />}
+              icon={<HugeiconsIcon icon={Archive03Icon} strokeWidth={2} />}
               label="Archived notes"
               ariaLabel="View archived notes"
             />
 
             <MenuLink
               href="/trash"
-              icon={<HugeiconsIcon icon={Delete02Icon} strokeWidth={1.7} />}
+              icon={<HugeiconsIcon icon={Delete02Icon} strokeWidth={2} />}
               label="Trashed notes"
               ariaLabel="View trashed notes"
             />
@@ -234,7 +234,7 @@ function AccountButton({
               onClick={() => signOutAndRedirect({ returnTo, push })}
               className="text-base!"
             >
-              <HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={1.7} />
+              <HugeiconsIcon icon={LogoutSquare01Icon} strokeWidth={2} />
               Sign out
             </DropdownMenuItem>
           </DropdownMenuGroup>
