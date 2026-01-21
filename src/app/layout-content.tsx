@@ -15,7 +15,7 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
             closeButton:
               "absolute right-0! top-0! size-6! rounded-full text-gray-500",
           },
-          closeButton: true,
+          // closeButton: true,
           duration: 2000,
         }}
       />
