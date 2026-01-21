@@ -11,7 +11,7 @@ export default async function NotesPage() {
           <h1 className="heading">Trash</h1>
 
           <Suspense fallback={<NotesListSkeleton />}>
-            <NotesListServer type="all" showTrashed={true} />
+            <NotesListServer type="all" view="trash" />
           </Suspense>
         </section>
       </main>

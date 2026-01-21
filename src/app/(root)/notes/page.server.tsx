@@ -3,54 +3,59 @@ import { getNotes, overviewNotes } from "@/lib/fetch/get-notes";
 import { getFolders } from "@/lib/fetch/get-folders";
 import { Note } from "@prisma/client";
 
+export type NotesView = "active" | "favorites" | "archived" | "trash";
+
 function prepareNotes(
   notes: Note[],
   {
     limit,
-    showArchived,
-    showTrashed,
+    view,
   }: {
     limit?: number;
-    showArchived?: boolean;
-    showTrashed?: boolean;
+    view: NotesView;
   },
 ) {
   let result = notes;
 
-  // showTrashed takes precedence: show all trashed notes (including archived)
-  if (showTrashed) {
-    result = result.filter((n) => n.trashedAt != null);
-  } else if (showArchived) {
-    // only archived notes (exclude trashed ones)
-    result = result.filter((n) => n.archived && n.trashedAt == null);
-  } else {
-    // default: exclude archived and trashed notes from the normal list
-    result = result.filter((n) => !n.archived && n.trashedAt == null);
+  switch (view) {
+    case "trash":
+      result = notes.filter((n) => n.trashedAt != null);
+      break;
+
+    case "archived":
+      result = notes.filter((n) => n.archived && n.trashedAt == null);
+      break;
+
+    case "favorites":
+      result = notes.filter((n) => n.favorite && n.trashedAt == null);
+      break;
+
+    case "active":
+    default:
+      result = notes.filter((n) => !n.archived && n.trashedAt == null);
   }
 
   const ordered =
-    showArchived || showTrashed
-      ? result.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-      : [
+    view === "active"
+      ? [
           ...result
             .filter((n) => n.isPinned)
             .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
           ...result
             .filter((n) => !n.isPinned)
             .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
-        ];
+        ]
+      : result.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
   return limit ? ordered.slice(0, limit) : ordered;
 }
 
 export async function NotesListServer({
   type,
-  showArchived = false,
-  showTrashed = false,
+  view,
 }: {
   type: "overview" | "all";
-  showArchived?: boolean;
-  showTrashed?: boolean;
+  view: NotesView;
 }) {
   const [folders, notes] = await Promise.all([
     getFolders(),
@@ -66,16 +71,14 @@ export async function NotesListServer({
 
   const preparedNotes = prepareNotes(allNotes, {
     limit: type === "overview" ? 3 : undefined,
-    showArchived,
-    showTrashed,
+    view,
   });
 
   return (
     <NotesList
       initialNotes={preparedNotes}
       folders={folderDisplay}
-      showArchived={showArchived}
-      showTrashed={showTrashed}
+      view={view}
     />
   );
 }

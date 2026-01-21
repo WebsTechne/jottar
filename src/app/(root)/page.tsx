@@ -14,7 +14,7 @@ export default async function Page() {
           <h1 className="heading">Notes</h1>
 
           <Suspense fallback={<NotesListSkeleton />}>
-            <NotesListServer type="overview" />
+            <NotesListServer type="overview" view="active" />
           </Suspense>
 
           <div className="footing">

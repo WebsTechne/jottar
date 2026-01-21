@@ -18,7 +18,7 @@ export default async function NotesPage() {
           <h1 className="heading">Notes</h1>
 
           <Suspense fallback={<NotesListSkeleton />}>
-            <NotesListServer type="all" />
+            <NotesListServer type="all" view="active" />
           </Suspense>
         </section>
       </main>

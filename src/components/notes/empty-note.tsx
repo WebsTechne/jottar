@@ -13,6 +13,15 @@ const EmptyNotes = () => (
   </div>
 );
 
+const EmptyFavorites = () => (
+  <div className="text-card-foreground bg-card corner-squircle flex h-25 w-full flex-col items-center justify-center gap-1.5 rounded-4xl border border-dashed p-3">
+    You do not have any favorite notes.
+    <Link href="/notes" className={buttonVariants({ size: "sm" })}>
+      Go to Notes
+    </Link>
+  </div>
+);
+
 const EmptyArchive = () => (
   <div className="text-card-foreground bg-card corner-squircle flex h-25 w-full flex-col items-center justify-center gap-1.5 rounded-4xl border border-dashed p-3">
     You do not have any archived notes.
@@ -31,4 +40,4 @@ const EmptyTrash = () => (
   </div>
 );
 
-export { EmptyNotes, EmptyArchive, EmptyTrash };
+export { EmptyNotes, EmptyFavorites, EmptyArchive, EmptyTrash };

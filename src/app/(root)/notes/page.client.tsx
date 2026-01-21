@@ -5,51 +5,61 @@ import { Note } from "@prisma/client";
 import { NoteCard, NoteCardSkeleton } from "@/components/notes/note-card";
 import {
   EmptyArchive,
+  EmptyFavorites,
   EmptyNotes,
   EmptyTrash,
 } from "@/components/notes/empty-note";
+import { NotesView } from "./page.server";
 
 function NotesList({
   initialNotes,
   folders,
-  showArchived = false,
-  showTrashed = false,
+  //
+  view,
 }: {
   initialNotes: Note[];
   folders: { id: string; name: string }[];
-  showArchived?: boolean;
-  showTrashed?: boolean;
+  //
+  view: NotesView;
 }) {
   const [notes, setNotes] = useState<Note[]>(initialNotes);
 
-  const patchAndMaybeReorder = useCallback(
+  const applyPatchToList = useCallback(
     (updated: Partial<Note> & { id: string }) => {
       setNotes((prev) => {
         const found = prev.find((p) => p.id === updated.id);
 
-        // if unarchived while on archive page, remove it
-        if (updated.archived === false && showArchived) {
-          return prev.filter((p) => p.id !== updated.id);
-        }
+        if (found) {
+          // if not favorite while on favorite page, remove it
+          if (updated.favorite === false && view === "favorites") {
+            return prev.filter((p) => p.id !== updated.id);
+          }
 
-        // remove if archived (when not showing archived)
-        if (updated.archived === true && !showArchived) {
-          return prev.filter((p) => p.id !== updated.id);
-        }
+          // if unarchived while on archive page, remove it
+          if (updated.archived === false && view === "archived") {
+            return prev.filter((p) => p.id !== updated.id);
+          }
 
-        // if restored from trash while on trash page, remove it
-        if (updated.trashedAt === null && showTrashed) {
-          return prev.filter((p) => p.id !== updated.id);
-        }
+          // remove if archived (when not showing archived)
+          if (updated.archived === true && !(view === "archived")) {
+            return prev.filter((p) => p.id !== updated.id);
+          }
 
-        // remove if trashed
-        if (updated.trashedAt && !showTrashed) {
-          return prev.filter((p) => p.id !== updated.id);
+          // if restored from trash while on trash page, remove it
+          if (updated.trashedAt === null && view === "trash") {
+            return prev.filter((p) => p.id !== updated.id);
+          }
+
+          // remove if trashed
+          if (updated.trashedAt && !(view === "trash")) {
+            return prev.filter((p) => p.id !== updated.id);
+          }
         }
 
         if (!found) {
-          // if not found and not archived, add to top
-          if (updated.archived === true && !showArchived) return prev;
+          if (view === "favorites" && updated.favorite !== true) return prev;
+          if (updated.archived === true && !(view === "archived")) return prev;
+          if (updated.trashedAt && !(view === "trash")) return prev;
           return [updated as Note, ...prev];
         }
 
@@ -58,7 +68,12 @@ function NotesList({
         );
 
         // pinned-first ordering ONLY for active notes view
-        if (updated.isPinned !== undefined && !showArchived && !showTrashed) {
+        if (
+          updated.isPinned !== undefined &&
+          !(view === "favorites") &&
+          !(view === "archived") &&
+          !(view === "trash")
+        ) {
           const pinned = replaced.filter((r) => r.isPinned);
           const others = replaced.filter((r) => !r.isPinned);
           return [...pinned, ...others];
@@ -67,7 +82,7 @@ function NotesList({
         return replaced;
       });
     },
-    [showArchived, showTrashed],
+    [view],
   );
 
   // BroadcastChannel listener for cross-tab sync
@@ -77,7 +92,7 @@ function NotesList({
       channel = new BroadcastChannel("notes");
       channel.onmessage = (ev) => {
         if (ev.data?.type === "patch") {
-          patchAndMaybeReorder(ev.data.data);
+          applyPatchToList(ev.data.data);
         }
       };
     } catch (e) {
@@ -86,7 +101,7 @@ function NotesList({
     return () => {
       if (channel) channel.close();
     };
-  }, [patchAndMaybeReorder]);
+  }, [applyPatchToList]);
 
   return (
     <div className="wrap">
@@ -95,14 +110,16 @@ function NotesList({
           key={n.id}
           note={n}
           folders={folders}
-          onPatch={(u) => patchAndMaybeReorder(u)}
+          onPatch={(u) => applyPatchToList(u)}
         />
       ))}
 
       {notes.length === 0 &&
-        (showArchived ? (
+        (view === "favorites" ? (
+          <EmptyFavorites />
+        ) : view === "archived" ? (
           <EmptyArchive />
-        ) : showTrashed ? (
+        ) : view === "trash" ? (
           <EmptyTrash />
         ) : (
           <EmptyNotes />

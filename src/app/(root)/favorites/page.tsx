@@ -1,4 +1,4 @@
-// app/archive/page.tsx
+// app/favorites/page.tsx
 import { Suspense } from "react";
 import { NotesListSkeleton } from "../notes/page.client";
 import { NotesListServer } from "../notes/page.server";
@@ -8,10 +8,10 @@ export default async function NotesPage() {
     <>
       <main>
         <section className="section">
-          <h1 className="heading">Archive</h1>
+          <h1 className="heading">Favorites</h1>
 
           <Suspense fallback={<NotesListSkeleton />}>
-            <NotesListServer type="all" view="archived" />
+            <NotesListServer type="all" view="favorites" />
           </Suspense>
         </section>
       </main>
