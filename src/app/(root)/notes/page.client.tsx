@@ -14,12 +14,10 @@ import { NotesView } from "./page.server";
 function NotesList({
   initialNotes,
   folders,
-  //
   view,
 }: {
   initialNotes: Note[];
   folders: { id: string; name: string }[];
-  //
   view: NotesView;
 }) {
   const [notes, setNotes] = useState<Note[]>(initialNotes);
@@ -111,6 +109,7 @@ function NotesList({
           note={n}
           folders={folders}
           onPatch={(u) => applyPatchToList(u)}
+          view={view}
         />
       ))}
 

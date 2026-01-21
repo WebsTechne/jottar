@@ -47,15 +47,17 @@ import { DeleteNoteDialog } from "./delete-note-dialog";
 import { Skeleton } from "../ui/skeleton";
 import { Button } from "../ui/button";
 import { useOverlay } from "@/context/overlay-context";
+import { NotesView } from "@/app/(root)/notes/page.server";
 
 type Props = {
   note: Note;
   folders: { name: string; id: string }[];
   // optional callback to notify parent list about a server-updated note
   onPatch?: (updated: Partial<Note> & { id: string }) => void;
+  view: NotesView;
 };
 
-const NoteCard = ({ note, folders, onPatch }: Props) => {
+const NoteCard = ({ note, folders, onPatch, view }: Props) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const handleDialogOpenChange = (value: boolean) => {
     setDialogOpen(value);
@@ -259,6 +261,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
   });
 
   const isInactive = localNote.archived || localNote.trashedAt;
+  const noPin = localNote.favorite || isInactive;
 
   return (
     <>
@@ -283,7 +286,7 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
               )}
             >
               <span className="pointer-events-none absolute top-1 right-1 inline-flex min-h-5 w-5 flex-col items-center justify-center gap-0.75">
-                {localNote.isPinned && !isInactive && (
+                {localNote.isPinned && view === "active" && (
                   <HugeiconsIcon
                     icon={PinIcon}
                     size={16}
@@ -291,14 +294,15 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
                     className="text-muted-foreground"
                   />
                 )}
-                {localNote.favorite && !isInactive && (
-                  <HugeiconsIcon
-                    icon={StarIcon}
-                    size={14}
-                    fill="var(--muted-foreground-51)"
-                    className="text-transparent"
-                  />
-                )}
+                {localNote.favorite &&
+                  (view === "active" || view === "favorites") && (
+                    <HugeiconsIcon
+                      icon={StarIcon}
+                      size={14}
+                      fill="var(--muted-foreground-51)"
+                      className="text-transparent"
+                    />
+                  )}
               </span>
 
               <div className="relative h-max w-full flex-1">
@@ -327,21 +331,23 @@ const NoteCard = ({ note, folders, onPatch }: Props) => {
           {!localNote.archived && !localNote.trashedAt && (
             <>
               <ContextMenuGroup>
-                <ContextMenuItem
-                  onClick={() => optimisticToggle("isPinned", togglePin)}
-                >
-                  {localNote.isPinned ? (
-                    <>
-                      <HugeiconsIcon icon={PinOffIcon} strokeWidth={2} />
-                      Unpin note
-                    </>
-                  ) : (
-                    <>
-                      <HugeiconsIcon icon={PinIcon} strokeWidth={2} />
-                      Pin note
-                    </>
-                  )}
-                </ContextMenuItem>
+                {view === "active" && (
+                  <ContextMenuItem
+                    onClick={() => optimisticToggle("isPinned", togglePin)}
+                  >
+                    {localNote.isPinned ? (
+                      <>
+                        <HugeiconsIcon icon={PinOffIcon} strokeWidth={2} />
+                        Unpin note
+                      </>
+                    ) : (
+                      <>
+                        <HugeiconsIcon icon={PinIcon} strokeWidth={2} />
+                        Pin note
+                      </>
+                    )}
+                  </ContextMenuItem>
+                )}
 
                 <ContextMenuItem
                   onClick={() => optimisticToggle("favorite", toggleFavorite)}
