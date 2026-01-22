@@ -130,7 +130,7 @@ export default function PageContent() {
         </div>
       </section>
 
-      <ScrollTest />
+      {/*<ScrollTest />*/}
 
       <footer className="text-muted-foreground p-4 text-sm">
         <ul>
