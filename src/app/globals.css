@@ -147,6 +147,10 @@
   @apply flex items-center justify-center;
 }
 
+@utility scrollbar-width-none {
+  scrollbar-width: none;
+}
+
 @layer components {
   .input-group {
     &:has(input:focus) .input-label {
@@ -262,7 +266,7 @@ h3.tiptap-heading + h2.tiptap-heading {
     }
 
     .wrap-flex {
-      @apply flex flex-wrap gap-2 overflow-x-scroll overflow-y-clip md:gap-3;
+      @apply scrollbar-width-none flex flex-wrap gap-2 overflow-x-scroll overflow-y-clip md:gap-3;
     }
 
     .footing {
