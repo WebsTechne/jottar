@@ -5,10 +5,11 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowUpRight03Icon } from "@hugeicons/core-free-icons";
 import { NotesListServer } from "./notes/page.server";
 import { Suspense } from "react";
-import { getFoldersOverview } from "@/lib/fetch/get-folders";
+import { Skeleton } from "@/components/ui/skeleton";
+import { FoldersOverviewServer } from "./folders/page.server";
 
 export default async function Page() {
-  const foldersOverlay = await getFoldersOverview();
+  const widths = [144.34, 160.13, 92.55];
 
   return (
     <>
@@ -35,25 +36,23 @@ export default async function Page() {
         <section className="section">
           <h1 className="heading">Folders</h1>
 
-          <div className="wrap-flex">
-            <Suspense fallback={<></>}>
-              {foldersOverlay.length < 1 && (
-                <div className="bg-card corner-squircle max-w-max! shrink-0 rounded-4xl border border-dashed p-3">
-                  No folders found
-                </div>
-              )}
-              {foldersOverlay.map((folder) => (
-                <Link
-                  key={folder.id}
-                  href={`/folders/${folder.slug}`}
-                  className="bg-card corner-squircle flex max-w-max! shrink-0 items-center gap-2 rounded-4xl border p-2"
-                >
-                  {folder.name}
-                  <span>({folder._count.notes})</span>
-                </Link>
-              ))}
-            </Suspense>
-          </div>
+          <Suspense
+            fallback={
+              <div className="wrap-flex">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="corner-squircle relative h-10.5 overflow-clip rounded-4xl border-1"
+                    style={{ width: widths[i] }}
+                  >
+                    <Skeleton className="absolute inset-0 z-10" />
+                  </div>
+                ))}
+              </div>
+            }
+          >
+            <FoldersOverviewServer />
+          </Suspense>
 
           <div className="footing">
             <Link

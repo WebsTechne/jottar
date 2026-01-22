@@ -23,6 +23,41 @@ const _getFoldersOverview = async () => {
   });
 };
 
+type FolderOverview = Prisma.FolderGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    slug: true;
+    updatedAt: true;
+    _count: {
+      select: {
+        notes: true;
+      };
+    };
+  };
+}>;
+
+const _getFoldersForDropdown = async () => {
+  const user = await getAuthedUser();
+  if (!user) return [];
+
+  return prisma.folder.findMany({
+    where: { userId: user.id },
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+};
+
+type FolderDropdownItem = Prisma.FolderGetPayload<{
+  select: {
+    id: true;
+    name: true;
+  };
+}>;
+
 const _getFolders = async () => {
   const user = await getAuthedUser();
 
@@ -56,6 +91,22 @@ const _getFoldersList = async () => {
     },
   });
 };
+
+type FolderListItem = Prisma.FolderGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    slug: true;
+    description: true;
+    createdAt: true;
+    updatedAt: true;
+    _count: {
+      select: {
+        notes: true;
+      };
+    };
+  };
+}>;
 
 export const getFolderWithNotes = async (
   folderId: string,
@@ -106,12 +157,51 @@ export const getFolderWithNotes = async (
   });
 };
 
-export const getFolders = cache(_getFolders);
-export const getFoldersOverview = cache(_getFoldersOverview);
-export const getFoldersList = cache(_getFoldersList);
-
-export type FolderWithNotes = Prisma.FolderGetPayload<{
-  include: {
-    notes: true;
+type FolderWithNotes = Prisma.FolderGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    slug: true;
+    description: true;
+    createdAt: true;
+    updatedAt: true;
+    _count: {
+      select: {
+        notes: true;
+      };
+    };
+    notes: {
+      select: {
+        id: true;
+        title: true;
+        content: true;
+        folderId: true;
+        userId: true;
+        isPinned: true;
+        favorite: true;
+        archived: true;
+        createdAt: true;
+        updatedAt: true;
+        trashedAt: true;
+        allowCopy: true;
+        copiedFromNoteId: true;
+        copiedFromUserId: true;
+        shareLinkType: true;
+        shareable: true;
+        noteTags: true;
+      };
+    };
   };
 }>;
+
+export const getFolders = cache(_getFolders);
+export const getFoldersOverview = cache(_getFoldersOverview);
+export const getFoldersForDropdown = cache(_getFoldersForDropdown);
+export const getFoldersList = cache(_getFoldersList);
+
+export type {
+  FolderOverview,
+  FolderDropdownItem,
+  FolderListItem,
+  FolderWithNotes,
+};

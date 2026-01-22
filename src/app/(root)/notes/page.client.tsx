@@ -9,7 +9,7 @@ import {
   EmptyNotes,
   EmptyTrash,
 } from "@/components/notes/empty-note";
-import { NotesView } from "./page.server";
+import type { NotesView } from "./page.server";
 
 function NotesList({
   initialNotes,

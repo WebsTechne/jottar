@@ -48,10 +48,11 @@ import { Skeleton } from "../ui/skeleton";
 import { Button } from "../ui/button";
 import { useOverlay } from "@/context/overlay-context";
 import { NotesView } from "@/app/(root)/notes/page.server";
+import { FolderDropdownItem } from "@/lib/fetch/get-folders";
 
 type Props = {
   note: Note;
-  folders: { name: string; id: string }[];
+  folders: FolderDropdownItem[];
   // optional callback to notify parent list about a server-updated note
   onPatch?: (updated: Partial<Note> & { id: string }) => void;
   view: NotesView;
@@ -264,9 +265,6 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
     const normalizedName = folder.name.trim().toLowerCase();
     return !EXCLUDED_FOLDERS.has(normalizedName);
   });
-
-  const isInactive = localNote.archived || localNote.trashedAt;
-  const noPin = localNote.favorite || isInactive;
 
   return (
     <>

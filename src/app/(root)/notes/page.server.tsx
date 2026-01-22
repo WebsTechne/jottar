@@ -1,6 +1,6 @@
 import { NotesList } from "./page.client";
 import { getNotes, overviewNotes } from "@/lib/fetch/get-notes";
-import { getFolders } from "@/lib/fetch/get-folders";
+import { getFoldersForDropdown } from "@/lib/fetch/get-folders";
 import { Note } from "@prisma/client";
 
 export type NotesView = "active" | "favorites" | "archived" | "trash";
@@ -58,7 +58,7 @@ export async function NotesListServer({
   view: NotesView;
 }) {
   const [folders, notes] = await Promise.all([
-    getFolders(),
+    getFoldersForDropdown(),
     type === "overview" ? overviewNotes() : getNotes(),
   ]);
 
