@@ -45,7 +45,7 @@ export default async function Page() {
               {foldersOverlay.map((folder) => (
                 <Link
                   key={folder.id}
-                  href={`/folders/${folder.id}`}
+                  href={`/folders/${folder.slug}`}
                   className="bg-card corner-squircle max-w-max! shrink-0 rounded-4xl border p-2"
                 >
                   {folder.name}
