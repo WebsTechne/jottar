@@ -28,8 +28,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import capitalize from "@/lib/helpers/capitalize";
-import { type FolderWithNotes } from "@/lib/fetch/get-folders";
-import { type TagWithNoteTags } from "@/lib/fetch/get-tags";
+// import { type FolderWithNotes } from "@/lib/fetch/get-folders";
+// import { type TagWithNoteTags } from "@/lib/fetch/get-tags";
 import { type NoteWithNoteTags } from "@/app/(notes)/notes/[id]/page";
 
 import { createTag, updateNoteDetails } from "@/lib/actions/note-actions";
@@ -40,8 +40,8 @@ import { Spinner } from "../ui/spinner";
 interface NoteDetailsProps {
   children: ReactElement;
   note: NoteWithNoteTags;
-  folders: FolderWithNotes[];
-  tags: TagWithNoteTags[];
+  // folders: FolderWithNotes[];
+  // tags: TagWithNoteTags[];
 }
 
 type FormValues = {
@@ -53,8 +53,8 @@ type FormValues = {
 export function NoteDetails({
   children,
   note,
-  folders,
-  tags,
+  // folders,
+  // tags,
 }: NoteDetailsProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
