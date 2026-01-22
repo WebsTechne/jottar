@@ -43,12 +43,13 @@ export default async function Page() {
                 </div>
               )}
               {foldersOverlay.map((folder) => (
-                <div
+                <Link
                   key={folder.id}
-                  className="bg-card corner-squircle max-w-max! shrink-0 rounded-4xl border p-3"
+                  href={`/folders/${folder.id}`}
+                  className="bg-card corner-squircle max-w-max! shrink-0 rounded-4xl border p-2"
                 >
                   {folder.name}
-                </div>
+                </Link>
               ))}
             </Suspense>
           </div>
