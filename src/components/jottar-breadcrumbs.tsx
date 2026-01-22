@@ -43,14 +43,17 @@ export default function MonicxBreadcrumbs({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                       {item.children.map((child, i) => (
-                        <DropdownMenuItem key={i} asChild>
-                          <Link
-                            href={child.href}
-                            className="text-foreground hover:text-secondary underline-offset-4 hover:underline"
-                          >
-                            {child.name}
-                          </Link>
-                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          key={i}
+                          render={
+                            <Link
+                              href={child.href}
+                              className="text-foreground hover:text-secondary underline-offset-4 hover:underline"
+                            >
+                              {child.name}
+                            </Link>
+                          }
+                        />
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -59,14 +62,16 @@ export default function MonicxBreadcrumbs({
                     {item.name}
                   </BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink asChild>
-                    <Link
-                      href={item.href || "#"}
-                      className="text-foreground hover:text-muted-foreground/90 underline-offset-4 hover:underline"
-                    >
-                      {item.name}
-                    </Link>
-                  </BreadcrumbLink>
+                  <BreadcrumbLink
+                    render={
+                      <Link
+                        href={item.href || "#"}
+                        className="text-foreground hover:text-muted-foreground/90 underline-offset-4 hover:underline"
+                      >
+                        {item.name}
+                      </Link>
+                    }
+                  />
                 )}
               </BreadcrumbItem>
 
