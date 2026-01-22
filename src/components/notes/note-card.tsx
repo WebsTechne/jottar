@@ -243,7 +243,12 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
           },
         });
       } else {
-        toast.success("Done");
+        toast.success("Done", {
+          action: {
+            label: "Undo",
+            onClick: () => optimisticToggle(key, actionFn, { force: true }),
+          },
+        });
       }
     } catch (err: any) {
       setLocalNote(prev);

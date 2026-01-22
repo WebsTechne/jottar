@@ -257,6 +257,7 @@ async function trashNote(id: string) {
     },
   });
 
+  revalidatePath("/");
   revalidatePath(`/notes/${id}`);
 
   return { data: updatedNote };
@@ -271,7 +272,11 @@ async function restoreNote(id: string) {
     data: { trashedAt: null },
   });
 
+  revalidatePath("/");
   revalidatePath(`/notes/${id}`);
+  revalidatePath("/favorites");
+  revalidatePath("/archive");
+  revalidatePath("/trash");
   return { data: updatedNote };
 }
 

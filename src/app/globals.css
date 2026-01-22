@@ -261,6 +261,10 @@ h3.tiptap-heading + h2.tiptap-heading {
       @apply grid w-full grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
     }
 
+    .wrap-flex {
+      @apply flex flex-wrap gap-2 overflow-clip md:gap-3;
+    }
+
     .footing {
       @apply flex items-center justify-end text-sm;
     }
