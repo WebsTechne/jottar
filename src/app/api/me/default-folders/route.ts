@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   const folders = await prisma.folder.findMany({
     where: {
       userId,
-      name: { in: ["Shared Notes", "Imported Notes"] },
+      slug: { in: ["shared-notes", "imported-notes"] },
     },
   });
 
@@ -31,6 +31,7 @@ export async function POST(req: Request) {
       prisma.folder.create({
         data: {
           name: "Shared Notes",
+          slug: "shared-notes",
           description: "Notes you made available to others",
           userId,
         },
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
       prisma.folder.create({
         data: {
           name: "Imported Notes",
+          slug: "imported-notes",
           description: "Notes you added from other people's shared notes",
           userId,
         },
