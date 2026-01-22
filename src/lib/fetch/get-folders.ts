@@ -15,6 +15,7 @@ const _getFoldersOverview = async () => {
     select: {
       id: true,
       name: true,
+      slug: true,
       description: true,
       updatedAt: true,
       _count: { select: { notes: true } },
@@ -47,6 +48,7 @@ const _getFoldersList = async () => {
     select: {
       id: true,
       name: true,
+      slug: true,
       description: true,
       createdAt: true,
       updatedAt: true,
@@ -70,6 +72,7 @@ export const getFolderWithNotes = async (
     select: {
       id: true,
       name: true,
+      slug: true,
       description: true,
       createdAt: true,
       updatedAt: true,
