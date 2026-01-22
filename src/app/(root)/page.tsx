@@ -46,9 +46,10 @@ export default async function Page() {
                 <Link
                   key={folder.id}
                   href={`/folders/${folder.slug}`}
-                  className="bg-card corner-squircle max-w-max! shrink-0 rounded-4xl border p-2"
+                  className="bg-card corner-squircle flex max-w-max! shrink-0 items-center gap-2 rounded-4xl border p-2"
                 >
                   {folder.name}
+                  <span>({folder._count.notes})</span>
                 </Link>
               ))}
             </Suspense>
