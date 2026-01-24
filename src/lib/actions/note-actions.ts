@@ -211,34 +211,6 @@ async function updateNoteDetails(
   }
 }
 
-async function updateNoteFolder(id: string, folderId: string | null) {
-  const user = await getAuthedUser();
-
-  if (!user) {
-    return { error: "Not authenticated" };
-  }
-
-  try {
-    const updatedNote = await prisma.note.update({
-      where: {
-        id,
-        userId: user.id,
-      },
-      data: {
-        folderId: folderId,
-      },
-    });
-
-    revalidatePath(`/notes/${id}`);
-    revalidatePath(`/`);
-
-    return { data: updatedNote };
-  } catch (error) {
-    console.error("Failed to update note folder:", error);
-    return { error: "Failed to update note folder" };
-  }
-}
-
 // ///// TRASH
 async function trashNote(id: string) {
   const user = await getAuthedUser();
@@ -290,7 +262,6 @@ export {
   //
   updateNote,
   updateNoteDetails,
-  updateNoteFolder,
   //
   trashNote,
   restoreNote,

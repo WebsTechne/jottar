@@ -1,0 +1,58 @@
+"use server";
+
+import prisma from "@/lib/prisma";
+import { revalidateTag } from "next/cache";
+import { getAuthedUser } from "@/lib/fetch/get-authed-user";
+
+async function updateNoteFolder(
+  noteId: string,
+  folderId: string | null, // allow null to "remove from folder"
+) {
+  const user = await getAuthedUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  try {
+    // If assigning to a folder, verify ownership
+    if (folderId) {
+      const folderExists = await prisma.folder.findFirst({
+        where: {
+          id: folderId,
+          userId: user.id,
+        },
+        select: { id: true },
+      });
+
+      if (!folderExists) {
+        return { error: "Folder not found" };
+      }
+    }
+
+    const result = await prisma.note.updateMany({
+      where: {
+        id: noteId,
+        userId: user.id,
+        trashedAt: null,
+      },
+      data: {
+        folderId,
+      },
+    });
+
+    if (result.count === 0) {
+      return { error: "Note not found or not allowed" };
+    }
+
+    // Cache hygiene
+    revalidateTag("notes", "max");
+    revalidateTag("folders", "max");
+
+    return { success: true };
+  } catch (err) {
+    console.error("Failed to update note folder:", err);
+    return { error: "Failed to update note folder" };
+  }
+}
+
+export { updateNoteFolder };

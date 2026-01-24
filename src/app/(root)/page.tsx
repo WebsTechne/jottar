@@ -45,7 +45,7 @@ export default async function Page() {
                     className="corner-squircle relative h-10.5 overflow-clip rounded-4xl border-1"
                     style={{ width: widths[i] }}
                   >
-                    <Skeleton className="absolute inset-0 z-10" />
+                    <Skeleton className="corner-squircle size-full rounded-[inherit]" />
                   </div>
                 ))}
               </div>

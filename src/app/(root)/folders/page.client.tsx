@@ -13,7 +13,7 @@ function FoldersList({ folders }: { folders: FolderListItem[] }) {
 
 function FoldersListSkeleton() {
   return (
-    <div className="wrap">
+    <div className="xs:grid-cols-2 grid w-full gap-3 md:grid-cols-3 lg:grid-cols-4">
       {[...Array(3)].map((_, i) => (
         <FolderCardSkeleton key={i} />
       ))}

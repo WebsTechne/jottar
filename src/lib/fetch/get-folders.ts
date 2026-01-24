@@ -108,18 +108,32 @@ type FolderListItem = Prisma.FolderGetPayload<{
   };
 }>;
 
-export const getFolderWithNotes = async (
-  folderId: string,
-  opts?: { take?: number; skip?: number },
-) => {
+export const getFolderWithNotes = async ({
+  folderId,
+  folderSlug,
+  opts,
+}: {
+  folderId?: string;
+  folderSlug?: string;
+  opts?: { take?: number; skip?: number };
+}) => {
   const user = await getAuthedUser();
+  console.log("FETCH getAuthedUser returned:", user);
+
   if (!user) return null;
+
+  if (!folderId && !folderSlug) {
+    throw new Error("Either folderId or folderSlug must be provided");
+  }
 
   const take = opts?.take ?? undefined; // use undefined to avoid implicit limit
   const skip = opts?.skip ?? undefined;
 
   return prisma.folder.findFirst({
-    where: { id: folderId, userId: user.id },
+    where: {
+      userId: user.id,
+      ...(folderId ? { id: folderId } : { slug: folderSlug }),
+    },
     select: {
       id: true,
       name: true,
@@ -129,7 +143,7 @@ export const getFolderWithNotes = async (
       updatedAt: true,
       _count: { select: { notes: true } },
       notes: {
-        where: {}, // you could filter archived/trashed here if desired
+        where: { archived: false, trashedAt: null }, // you could filter archived/trashed here if desired
         orderBy: { updatedAt: "desc" },
         take,
         skip,
