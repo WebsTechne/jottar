@@ -1,7 +1,7 @@
 "use client";
 
 import { ServerSession } from "@/app/layout";
-import { AccountButton } from "./account-button";
+import { MenuButton } from "./menu-button";
 import { usePathname, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { QuillWrite01Icon, Search01Icon } from "@hugeicons/core-free-icons";
@@ -43,7 +43,7 @@ const Header = ({ session }: { session: ServerSession }) => {
           <HugeiconsIcon icon={Search01Icon} className="size-6!" />
         </Button>
 
-        <AccountButton session={session} returnTo={returnTo} />
+        <MenuButton session={session} returnTo={returnTo} />
       </section>
     </header>
   );

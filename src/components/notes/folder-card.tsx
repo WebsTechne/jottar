@@ -50,9 +50,11 @@ function FolderCard({ folder }: { folder: FolderListItem }) {
             )}
           >
             <div className="relative h-max w-full flex-1">
-              <h3 className="line-clamp-1 flex items-center justify-between text-base font-semibold tracking-tight">
-                {localFolder.name}{" "}
-                <span className="bg-muted text-muted-foreground font-sm rounded-lg px-2">
+              <h3 className="line-clamp-1 flex items-center justify-between gap-1 text-base font-semibold tracking-tight">
+                <span className="line-clamp-1 flex-1 text-sm">
+                  {localFolder.name}
+                </span>
+                <span className="bg-muted text-muted-foreground font-sm shrink-0 rounded-lg px-2">
                   {folder._count.notes}
                 </span>
               </h3>

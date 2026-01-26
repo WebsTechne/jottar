@@ -1,4 +1,3 @@
-import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
@@ -14,17 +13,9 @@ interface FolderPageProps {
 export default async function FolderPage({ params }: FolderPageProps) {
   const awaitedParams = await params;
   const slug = awaitedParams.slug;
-  // const { slug } = params;
-  console.log("Page params.slug:", slug);
 
   const session = await auth.api.getSession({ headers: await headers() });
-  console.log("Session:", !!session, session?.user?.id, session?.user?.email);
-  console.log("PAGE session.user:", session?.user);
 
-  // if (!session) {
-  //   // render sign-in message or notFound depending on UX
-  //   return notFound();
-  // }
   if (!session)
     return (
       <p className="font-mono">
@@ -36,7 +27,6 @@ export default async function FolderPage({ params }: FolderPageProps) {
   const folder: FolderWithNotes | null = await getFolderWithNotes({
     folderSlug: slug,
   });
-  console.log(`Folder info: ${folder}`);
   if (!folder)
     return (
       <p className="font-mono">

@@ -31,7 +31,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Spinner } from "./ui/spinner";
 import { MenuLink } from "./menu-links";
-import { buttonVariants } from "./ui/button";
+import { Button } from "./ui/button";
 import { useOverlay } from "@/context/overlay-context";
 
 const signOutAndRedirect = async ({
@@ -70,7 +70,7 @@ function UserAvatar({
   );
 }
 
-function AccountButton({
+function MenuButton({
   returnTo,
   session,
 }: {
@@ -105,20 +105,19 @@ function AccountButton({
         onOpenChange={(v) => (v ? open("menu") : close())}
       >
         <DropdownMenuTrigger
-          nativeButton={false}
+          // nativeButton={false}
           aria-label="Open account menu"
           render={
-            <span
-              className={cn(
-                buttonVariants({ size: "icon-lg", variant: "ghost" }),
-                "flex-center inline-flex size-9! rounded-full",
-              )}
+            <Button
+              size="icon-lg"
+              variant="ghost"
+              className="flex-center inline-flex size-9! rounded-full"
             >
               <span className={cn("menu", isOpen && "active")}>
                 <span className="bar" />
                 <span className="bar" />
               </span>
-            </span>
+            </Button>
           }
         />
         <DropdownMenuContent className="z-1002! min-w-50" sideOffset={10}>
@@ -244,4 +243,4 @@ function AccountButton({
   );
 }
 
-export { AccountButton, signOutAndRedirect };
+export { MenuButton, signOutAndRedirect };

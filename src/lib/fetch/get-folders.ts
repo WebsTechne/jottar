@@ -118,7 +118,6 @@ export const getFolderWithNotes = async ({
   opts?: { take?: number; skip?: number };
 }) => {
   const user = await getAuthedUser();
-  console.log("FETCH getAuthedUser returned:", user);
 
   if (!user) return null;
 
