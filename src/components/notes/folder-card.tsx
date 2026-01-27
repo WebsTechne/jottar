@@ -45,7 +45,7 @@ function FolderCard({ folder }: { folder: FolderListItem }) {
         render={
           <div
             className={cn(
-              "bg-muted dark:bg-card! corner-squircle relative z-1 flex w-full flex-col overflow-clip rounded-4xl p-3 pb-2! transition-shadow duration-300",
+              "bg-muted dark:bg-card! corner-squircle relative z-1 flex h-21 w-full flex-col overflow-clip rounded-4xl p-3 pb-2! transition-shadow duration-300",
               isOpen && "z-1005 shadow-sm",
             )}
           >
@@ -59,7 +59,7 @@ function FolderCard({ folder }: { folder: FolderListItem }) {
                 </span>
               </h3>
               <p className="text-muted-foreground line-clamp-2 text-sm">
-                {localFolder.description}
+                {localFolder.description || "No description"}
               </p>
             </div>
 

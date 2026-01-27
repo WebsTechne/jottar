@@ -79,6 +79,8 @@ export function NewFolderClient({ userId }: { userId: string }) {
       if (result.error) {
         setError(result.error);
       }
+
+      form.reset();
       toast.success(`Folder '${name}' has been created successfully!`);
     } catch (err) {
       setError(
