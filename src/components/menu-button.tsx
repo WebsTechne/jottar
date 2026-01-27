@@ -105,7 +105,6 @@ function MenuButton({
         onOpenChange={(v) => (v ? open("menu") : close())}
       >
         <DropdownMenuTrigger
-          // nativeButton={false}
           aria-label="Open account menu"
           render={
             <Button

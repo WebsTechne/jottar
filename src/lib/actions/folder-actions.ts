@@ -4,6 +4,34 @@ import prisma from "@/lib/prisma";
 import { revalidateTag } from "next/cache";
 import { getAuthedUser } from "@/lib/fetch/get-authed-user";
 
+async function createFolder({
+  name,
+  slug,
+  description,
+  userId,
+}: {
+  name: string;
+  slug: string;
+  description?: string;
+  userId: string;
+}) {
+  const user = await getAuthedUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  try {
+    const result = await prisma.folder.create({
+      data: { name, slug, description, userId },
+    });
+
+    return { data: result };
+  } catch (err) {
+    console.error("Failed to create Folder:", err);
+    return { error: "There was an error creating your folder." };
+  }
+}
+
 async function updateNoteFolder(
   noteId: string,
   folderId: string | null, // allow null to "remove from folder"
@@ -55,4 +83,4 @@ async function updateNoteFolder(
   }
 }
 
-export { updateNoteFolder };
+export { createFolder, updateNoteFolder };
