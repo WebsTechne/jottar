@@ -151,6 +151,10 @@
   scrollbar-width: none;
 }
 
+@utility btn {
+  @apply transition-all duration-250 ease-in-out active:scale-95; /* hover:scale-105 */
+}
+
 @layer components {
   .input-group {
     &:has(input:focus) .input-label {
@@ -255,7 +259,7 @@ h3.tiptap-heading + h2.tiptap-heading {
   }
 
   .section {
-    @apply mb-5 flex flex-col gap-2 border-b px-4 py-4;
+    @apply mb-5 flex flex-col gap-2 border-b p-4;
 
     .heading {
       @apply text-2xl font-extrabold md:text-3xl;

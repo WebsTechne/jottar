@@ -8,9 +8,9 @@ export default async function NewFolderPage() {
 
   return (
     <>
-      <section className="section">
+      {/*<section className="section">
         <h1 className="heading">New folder</h1>
-      </section>
+      </section>*/}
 
       <NewFolderClient userId={userId} />
     </>
