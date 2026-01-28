@@ -67,6 +67,7 @@ const _getFolders = async () => {
 
   return prisma.folder.findMany({
     where: { userId: { equals: user.id } },
+    orderBy: { updatedAt: "desc" },
     include: {
       notes: true,
     },
