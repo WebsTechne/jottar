@@ -12,7 +12,7 @@ export default async function NewFolderPage() {
         <h1 className="heading">New folder</h1>
       </section>*/}
 
-      <NewFolderClient userId={userId} />
+      <NewFolderClient userId={userId} session={session} />
     </>
   );
 }

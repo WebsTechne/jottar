@@ -2,15 +2,17 @@
 
 import { EmptyFolder } from "@/components/notes/empty-note";
 import { FolderHeader } from "../folder-header";
-import { FolderWithNotes } from "@/lib/fetch/get-folders";
+import { FolderDropdownItem, FolderWithNotes } from "@/lib/fetch/get-folders";
 import { ServerSession } from "@/app/layout";
 import { NoteCard } from "@/components/notes/note-card";
 
 export default function FolderPageClient({
   folder,
+  folders,
   session,
 }: {
   folder: FolderWithNotes;
+  folders: FolderDropdownItem[];
   session: ServerSession;
 }) {
   return (
@@ -26,7 +28,12 @@ export default function FolderPageClient({
           {folder.notes.length === 0 && <EmptyFolder />}
 
           {folder.notes.map((note) => (
-            <NoteCard key={note.id} note={note} view="folder" folders={[]} />
+            <NoteCard
+              key={note.id}
+              note={note}
+              view="folder"
+              folders={folders}
+            />
           ))}
         </section>
       </section>

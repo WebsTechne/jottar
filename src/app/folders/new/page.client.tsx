@@ -32,6 +32,8 @@ import {
 import { ReloadIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Spinner } from "@/components/ui/spinner";
+import { FolderHeader } from "../folder-header";
+import { ServerSession } from "@/app/layout";
 
 const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -54,7 +56,13 @@ const formSchema = z.object({
 });
 type FormValues = z.infer<typeof formSchema>;
 
-export function NewFolderClient({ userId }: { userId: string }) {
+export function NewFolderClient({
+  userId,
+  session,
+}: {
+  userId: string;
+  session: ServerSession;
+}) {
   const [error, setError] = useState("");
 
   const form = useForm<FormValues>({
@@ -98,133 +106,147 @@ export function NewFolderClient({ userId }: { userId: string }) {
   }, [form]);
 
   return (
-    <FieldSet className="mx-auto flex w-full max-w-115 flex-col items-center gap-5 p-4">
-      <section className="flex w-full flex-col gap-3.5">
-        <FieldTitle className="m-0! w-full text-2xl leading-tight font-extrabold! md:text-3xl">
-          New folder
-        </FieldTitle>
-        <FieldDescription className="m-0! w-full leading-tight">
-          Create a new folder to group notes with similar ideas, themes or
-          purposes.
-        </FieldDescription>
-      </section>
+    <>
+      <FolderHeader session={session} back={true}>
+        <span></span>
+      </FolderHeader>
+      <FieldSet className="mx-auto flex w-full max-w-115 flex-col items-center gap-5 p-4">
+        <section className="flex w-full flex-col gap-3.5">
+          <FieldTitle className="m-0! w-full text-2xl leading-tight font-extrabold! md:text-3xl">
+            New folder
+          </FieldTitle>
+          <FieldDescription className="m-0! w-full leading-tight">
+            Create a new folder to group notes with similar ideas, themes or
+            purposes.
+          </FieldDescription>
+        </section>
 
-      <FieldGroup>
-        <form
-          className="contents"
-          onSubmit={form.handleSubmit(onSubmit)}
-          role="form"
-          aria-labelledby="new-form-heading"
-        >
-          {/* Name */}
-          <Controller
-            name="name"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid} className="input-group">
-                <FieldLabel htmlFor={field.name} className="input-label">
-                  Name
-                </FieldLabel>
-                <Input
-                  {...field}
-                  id={field.name}
-                  type="text"
-                  placeholder="Folder name"
-                  aria-invalid={fieldState.invalid}
-                  className="input required"
-                />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-
-          {/* Slug */}
-          <Controller
-            name="slug"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid} className="input-group">
-                <FieldLabel htmlFor={field.name} className="input-label">
-                  Slug
-                </FieldLabel>
-                <InputGroup className="input text-foreground! h-11! shadow-none! dark:border-0!">
-                  <InputGroupInput
+        <FieldGroup>
+          <form
+            className="contents"
+            onSubmit={form.handleSubmit(onSubmit)}
+            role="form"
+            aria-labelledby="new-form-heading"
+          >
+            {/* Name */}
+            <Controller
+              name="name"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  className="input-group"
+                >
+                  <FieldLabel htmlFor={field.name} className="input-label">
+                    Name
+                  </FieldLabel>
+                  <Input
                     {...field}
                     id={field.name}
                     type="text"
-                    placeholder="folder-slug"
+                    placeholder="Folder name"
                     aria-invalid={fieldState.invalid}
-                    className="required"
+                    className="input required"
                   />
-                  <InputGroupAddon align="inline-end">
-                    <Button
-                      size="icon-sm"
-                      variant="ghost"
-                      onClick={() => generateSlug()}
-                      className="btn"
-                    >
-                      <HugeiconsIcon icon={ReloadIcon} />
-                    </Button>
-                  </InputGroupAddon>
-                </InputGroup>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-
-          {/* Description */}
-          <Controller
-            name="description"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid} className="input-group">
-                <FieldLabel htmlFor={field.name} className="input-label">
-                  Description
-                </FieldLabel>
-                <Textarea
-                  {...field}
-                  id={field.name}
-                  placeholder="Brief description..."
-                  aria-invalid={fieldState.invalid}
-                  className="input max-h-30.5"
-                />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
-
-          {/* Buttons*/}
-          <Field orientation="horizontal" className="input-group">
-            <Button
-              variant="secondary"
-              onClick={() => form.reset()}
-              className="button flex-1"
-            >
-              Clear form
-            </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="button flex-1"
-            >
-              {isSubmitting ? (
-                <>
-                  <Spinner />
-                  Creating
-                </>
-              ) : (
-                <>Create folder</>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
               )}
-            </Button>
-          </Field>
-        </form>
-      </FieldGroup>
-    </FieldSet>
+            />
+
+            {/* Slug */}
+            <Controller
+              name="slug"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  className="input-group"
+                >
+                  <FieldLabel htmlFor={field.name} className="input-label">
+                    Slug
+                  </FieldLabel>
+                  <InputGroup className="input text-foreground! h-11! shadow-none! dark:border-0!">
+                    <InputGroupInput
+                      {...field}
+                      id={field.name}
+                      type="text"
+                      placeholder="folder-slug"
+                      aria-invalid={fieldState.invalid}
+                      className="required"
+                    />
+                    <InputGroupAddon align="inline-end">
+                      <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={() => generateSlug()}
+                        className="btn"
+                      >
+                        <HugeiconsIcon icon={ReloadIcon} />
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            {/* Description */}
+            <Controller
+              name="description"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  className="input-group"
+                >
+                  <FieldLabel htmlFor={field.name} className="input-label">
+                    Description
+                  </FieldLabel>
+                  <Textarea
+                    {...field}
+                    id={field.name}
+                    placeholder="Brief description..."
+                    aria-invalid={fieldState.invalid}
+                    className="input max-h-30.5"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            {/* Buttons*/}
+            <Field orientation="horizontal" className="input-group">
+              <Button
+                variant="secondary"
+                onClick={() => form.reset()}
+                className="button flex-1"
+              >
+                Clear form
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="button flex-1"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Spinner />
+                    Creating
+                  </>
+                ) : (
+                  <>Create folder</>
+                )}
+              </Button>
+            </Field>
+          </form>
+        </FieldGroup>
+      </FieldSet>
+    </>
   );
 }

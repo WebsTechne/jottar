@@ -48,7 +48,7 @@ import { updateNoteFolder } from "@/lib/actions/folder-actions";
 import { FolderDropdownItem } from "@/lib/fetch/get-folders";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { DeleteNoteDialog } from "./delete-note-dialog";
 
@@ -212,6 +212,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
         }
 
         toast.success("Folder updated");
+        close();
       }
     } catch (err: any) {
       setLocalNote((s) => ({ ...s, folderId: prevFolderId }));
@@ -233,6 +234,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
       }
       if (res?.data) {
         toast.success("Note duplicated");
+        close();
       }
     } catch (err: any) {
       toast.error(err?.message ?? "Network error");
@@ -362,7 +364,9 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
                   />
                 )}
                 {localNote.favorite &&
-                  (view === "active" || view === "favorites") && (
+                  (view === "active" ||
+                    view === "folder" ||
+                    view === "favorites") && (
                     <HugeiconsIcon
                       icon={StarIcon}
                       size={14}
@@ -484,20 +488,20 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
                 <ContextMenuSubContent>
                   <ContextMenuGroup>
                     <ContextMenuItem
-                      nativeButton={true}
+                      nativeButton={false}
                       render={
-                        <Button
-                          variant="outline"
-                          className="w-full justify-start!"
-                          onClick={() =>
-                            toast("This feature isn't available yet")
-                          }
-                        >
-                          <HugeiconsIcon icon={FolderAddIcon} strokeWidth={2} />
-                          New folder
-                        </Button>
+                        <Link
+                          href="/folders/new"
+                          className={cn(
+                            buttonVariants({ variant: "outline" }),
+                            "w-full justify-start!",
+                          )}
+                        ></Link>
                       }
-                    />
+                    >
+                      <HugeiconsIcon icon={FolderAddIcon} strokeWidth={2} />
+                      New folder
+                    </ContextMenuItem>
 
                     {usableFolders.length > 0 && <ContextMenuSeparator />}
 

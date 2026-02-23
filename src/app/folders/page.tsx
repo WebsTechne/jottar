@@ -6,6 +6,7 @@ import { FolderHeader } from "./folder-header";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { NewFolderLink } from "./new-folder-link";
+import { MenuButton } from "@/components/menu-button";
 
 export default async function NotesPage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -14,6 +15,11 @@ export default async function NotesPage() {
       <main className="mx-auto w-full max-w-400">
         <FolderHeader session={session}>
           <NewFolderLink />
+
+          <MenuButton
+            session={session}
+            returnTo={encodeURIComponent("/folders")}
+          />
         </FolderHeader>
 
         <section className="section">

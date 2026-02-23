@@ -1,6 +1,10 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { FolderWithNotes, getFolderWithNotes } from "@/lib/fetch/get-folders";
+import {
+  FolderWithNotes,
+  getFolderWithNotes,
+  getFoldersForDropdown,
+} from "@/lib/fetch/get-folders";
 import { NoteCard } from "@/components/notes/note-card";
 import { FolderHeader } from "../folder-header";
 import { EmptyFolder } from "@/components/notes/empty-note";
@@ -28,9 +32,11 @@ export default async function FolderPage({ params }: FolderPageProps) {
       </p>
     );
 
-  const folder: FolderWithNotes | null = await getFolderWithNotes({
-    folderSlug: slug,
-  });
+  const [folder, folders] = await Promise.all([
+    getFolderWithNotes({ folderSlug: slug }),
+    getFoldersForDropdown(),
+  ]);
+
   if (!folder)
     return (
       <p className="p-4 font-mono">
@@ -41,5 +47,7 @@ export default async function FolderPage({ params }: FolderPageProps) {
       </p>
     );
 
-  return <FolderPageClient folder={folder} session={session} />;
+  return (
+    <FolderPageClient folder={folder} session={session} folders={folders} />
+  );
 }
