@@ -8,15 +8,27 @@ import { QuillWrite01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-const Header = ({ session }: { session: ServerSession }) => {
+const Header = ({
+  className,
+  session,
+}: {
+  className?: string;
+  session: ServerSession;
+}) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const returnTo =
     pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
 
   return (
-    <header className="bg-background/90 sticky top-0 z-1000 flex h-12 items-center justify-between overflow-y-visible border-b px-4 backdrop-blur-lg">
+    <header
+      className={cn(
+        "bg-background/90 sticky top-0 z-1000 flex h-12 items-center justify-between overflow-y-visible border-b px-4 backdrop-blur-lg",
+        className,
+      )}
+    >
       <Link
         href="/"
         className="flex items-center gap-0.5 text-lg font-semibold"
@@ -30,10 +42,6 @@ const Header = ({ session }: { session: ServerSession }) => {
       </Link>
 
       <section className="flex items-center gap-3">
-        {/*<Link href="/new" className={buttonVariants({ size: "sm" })}>
-          New note
-        </Link>*/}
-
         <Button
           variant="ghost"
           size="icon-sm"

@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { FolderWithNotes, getFolderWithNotes } from "@/lib/fetch/get-folders";
 import { NoteCard } from "@/components/notes/note-card";
+import { FolderHeader } from "../folder-header";
 
 interface FolderPageProps {
   params: {
@@ -36,6 +36,8 @@ export default async function FolderPage({ params }: FolderPageProps) {
 
   return (
     <>
+      <FolderHeader session={session} back={true}></FolderHeader>
+
       {/*Metadata and options*/}
       <section className="section">
         <h1 className="heading">{folder.name}</h1>

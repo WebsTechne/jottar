@@ -16,13 +16,13 @@ export default async function Layout({ children }: { children: ReactNode }) {
 
   return (
     <OverlayProvider>
-      <Header session={session} />
+      <Header className="mx-auto w-full max-w-300" session={session} />
 
-      <main>{children}</main>
+      <main className="mx-auto w-full max-w-300">{children}</main>
 
       <FloatingButton />
 
-      <footer className="text-muted-foreground p-4 text-sm">
+      <footer className="text-muted-foreground mx-auto w-full max-w-300 p-4 text-sm">
         <ul>
           <li>
             <Link

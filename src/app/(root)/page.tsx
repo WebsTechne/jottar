@@ -6,7 +6,7 @@ import { ArrowUpRight03Icon } from "@hugeicons/core-free-icons";
 import { NotesListServer } from "./notes/page.server";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FoldersOverviewServer } from "./folders/page.server";
+import { FoldersOverviewServer } from "../folders/page.server";
 
 export default async function Page() {
   const widths = [144.34, 160.13, 92.55];

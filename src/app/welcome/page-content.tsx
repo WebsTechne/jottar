@@ -110,7 +110,8 @@ export default function PageContent() {
               ></span>
             </h1>
             <p className="text-sm sm:text-lg">
-            Jot things down as they come. Jottar keeps your thoughts organized, searchable, and easy to return to.
+              Jot things down as they come. Jottar keeps your thoughts
+              organized, searchable, and easy to return to.
             </p>
             <div className="mt-5">
               <Link
@@ -129,8 +130,6 @@ export default function PageContent() {
           </div>
         </div>
       </section>
-
-      {/*<ScrollTest />*/}
 
       <footer className="text-muted-foreground p-4 text-sm">
         <ul>

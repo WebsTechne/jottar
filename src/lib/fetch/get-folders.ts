@@ -58,22 +58,6 @@ type FolderDropdownItem = Prisma.FolderGetPayload<{
   };
 }>;
 
-const _getFolders = async () => {
-  const user = await getAuthedUser();
-
-  if (!user) {
-    return;
-  }
-
-  return prisma.folder.findMany({
-    where: { userId: { equals: user.id } },
-    orderBy: { updatedAt: "desc" },
-    include: {
-      notes: true,
-    },
-  });
-};
-
 const _getFoldersList = async () => {
   const user = await getAuthedUser();
   if (!user) return [];
@@ -208,7 +192,6 @@ type FolderWithNotes = Prisma.FolderGetPayload<{
   };
 }>;
 
-export const getFolders = cache(_getFolders);
 export const getFoldersOverview = cache(_getFoldersOverview);
 export const getFoldersForDropdown = cache(_getFoldersForDropdown);
 export const getFoldersList = cache(_getFoldersList);

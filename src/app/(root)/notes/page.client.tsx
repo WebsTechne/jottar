@@ -22,6 +22,10 @@ function NotesList({
 }) {
   const [notes, setNotes] = useState<Note[]>(initialNotes);
 
+  useEffect(() => {
+    setNotes(initialNotes);
+  }, [initialNotes]);
+
   const applyPatchToList = useCallback(
     (updated: Partial<Note> & { id: string }) => {
       setNotes((prev) => {

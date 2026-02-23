@@ -1,11 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
-import { Note } from "@prisma/client";
 import { extractTextFromDoc } from "@/lib/helpers/extract-text";
 import { formatDateTime } from "@/lib/helpers/format-date-time";
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Archive03Icon,
   ArchiveOff03Icon,
@@ -20,7 +16,12 @@ import {
   Share01Icon,
   StarIcon,
 } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Note } from "@prisma/client";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 
+import { NotesView } from "@/app/(root)/notes/page.server";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -34,21 +35,22 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { useOverlay } from "@/context/overlay-context";
 import {
+  duplicateNote,
+  restoreNote,
   toggleArchive,
   toggleFavorite,
   togglePin,
   trashNote,
-  restoreNote,
 } from "@/lib/actions/note-actions";
-import { DeleteNoteDialog } from "./delete-note-dialog";
-import { Skeleton } from "../ui/skeleton";
-import { Button } from "../ui/button";
-import { useOverlay } from "@/context/overlay-context";
-import { NotesView } from "@/app/(root)/notes/page.server";
+import { updateNoteFolder } from "@/lib/actions/folder-actions";
 import { FolderDropdownItem } from "@/lib/fetch/get-folders";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
+import { DeleteNoteDialog } from "./delete-note-dialog";
 
 type Props = {
   note: Note;
@@ -177,6 +179,26 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
     }
   };
 
+  const handleDuplicateNote = async (noteId: string) => {
+    if (inFlight) return;
+    setInFlight(true);
+
+    try {
+      const res = await duplicateNote(noteId);
+      if (res?.error) {
+        toast.error(res.error);
+        return;
+      }
+      if (res?.data) {
+        toast.success("Note duplicated");
+      }
+    } catch (err: any) {
+      toast.error(err?.message ?? "Network error");
+    } finally {
+      setInFlight(false);
+    }
+  };
+
   // memoized preview extraction — avoids JSON.parse on every render
   const preview = useMemo(() => {
     try {
@@ -198,7 +220,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
 
   // optimistic handlers
   const optimisticToggle = async (
-    key: "isPinned" | "favorite" | "archived",
+    key: "isPinned" | "favorite" | "archived" | "folderId",
     actionFn: (id: string) => Promise<any>,
     { force = false, showUndo = false } = {},
   ) => {
@@ -406,7 +428,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
           {!localNote.trashedAt && (
             <>
               <ContextMenuItem
-                onClick={() => toast("This feature isn't available yet")}
+                onClick={() => handleDuplicateNote(localNote.id)}
               >
                 <HugeiconsIcon icon={Copy01Icon} strokeWidth={2} />
                 Duplicate note
@@ -444,7 +466,13 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
                         None
                       </ContextMenuRadioItem>
                       {usableFolders.map((folder) => (
-                        <ContextMenuRadioItem key={folder.id} value={folder.id}>
+                        <ContextMenuRadioItem
+                          key={folder.id}
+                          value={folder.id}
+                          onClick={() =>
+                            optimisticToggle("folderId", toggleFavorite)
+                          }
+                        >
                           {folder.name}
                         </ContextMenuRadioItem>
                       ))}

@@ -7,11 +7,9 @@ import { getAuthedUser } from "@/lib/fetch/get-authed-user";
 // ///// CREATE
 async function createNote(content: string) {
   const user = await getAuthedUser();
-
   if (!user) {
     return { error: "Not authenticated" };
   }
-
   const newNote = await prisma.note.create({
     data: {
       userId: user.id,
@@ -24,22 +22,56 @@ async function createNote(content: string) {
   return { data: newNote };
 }
 
-async function createTag(name: string) {
+async function duplicateNote(id: string) {
   const user = await getAuthedUser();
-
   if (!user) {
     return { error: "Not authenticated" };
   }
+  const note = await prisma.note.findFirst({
+    where: { id: id, userId: user.id },
+    include: { noteTags: true },
+  });
+  if (!note) {
+    return { error: "Note not found" };
+  }
 
+  // Handle title: default to "Untitled" if null, truncate to fit " (Copy)"
+  const baseTitle = note.title ?? "Untitled";
+  // " (Copy)" is 7 chars. 255 - 7 = 248 max length for base.
+  const truncatedTitle = baseTitle.substring(0, 248);
+  const newTitle = `${truncatedTitle} (Copy)`;
+
+  const newNote = await prisma.note.create({
+    data: {
+      userId: user.id,
+      content: note.content,
+      folderId: note.folderId,
+      title: newTitle,
+      // Copy existing tags to the new note
+      noteTags: {
+        create: note.noteTags.map((nt) => ({
+          tagId: nt.tagId,
+        })),
+      },
+    },
+  });
+  revalidatePath("/");
+  revalidatePath("/notes");
+  return { data: newNote };
+}
+
+async function createTag(name: string) {
+  const user = await getAuthedUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
   const newTag = await prisma.tag.create({
     data: {
       userId: user.id,
       name: name,
     },
   });
-
   revalidatePath("/");
-
   return { data: newTag };
 }
 
@@ -254,6 +286,7 @@ async function restoreNote(id: string) {
 
 export {
   createNote,
+  duplicateNote,
   createTag,
   //
   togglePin,

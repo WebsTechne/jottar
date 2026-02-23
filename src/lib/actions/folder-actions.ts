@@ -1,7 +1,6 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidateTag } from "next/cache";
 import { getAuthedUser } from "@/lib/fetch/get-authed-user";
 
 async function createFolder({
@@ -73,8 +72,8 @@ async function updateNoteFolder(
     }
 
     // Cache hygiene
-    revalidateTag("notes", "max");
-    revalidateTag("folders", "max");
+    revalidatePath("/");
+    revalidatePath("/notes");
 
     return { success: true };
   } catch (err) {
