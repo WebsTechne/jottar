@@ -13,6 +13,17 @@ const EmptyNotes = () => (
   </div>
 );
 
+const EmptyFolder = () => (
+  <div className="text-card-foreground bg-background corner-squircle flex min-h-25 w-full flex-col items-center justify-center gap-1.5 rounded-4xl border-2 border-dashed p-3">
+    <p className="text-center text-sm">
+      You do not have any notes in this folder. You can add notes to this folder
+      from the notes page.
+    </p>
+    <Link href="/notes" className={buttonVariants({ size: "sm" })}>
+      Explore Notes
+    </Link>
+  </div>
+);
 const EmptyFavorites = () => (
   <div className="text-card-foreground bg-card corner-squircle flex h-25 w-full flex-col items-center justify-center gap-1.5 rounded-4xl border border-dashed p-3">
     You do not have any favorite notes.
@@ -40,4 +51,4 @@ const EmptyTrash = () => (
   </div>
 );
 
-export { EmptyNotes, EmptyFavorites, EmptyArchive, EmptyTrash };
+export { EmptyNotes, EmptyFolder, EmptyFavorites, EmptyArchive, EmptyTrash };

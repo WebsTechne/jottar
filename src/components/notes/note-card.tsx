@@ -179,6 +179,48 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
     }
   };
 
+  const handleFolderChange = async (newFolderId: string) => {
+    if (inFlight) return;
+    setInFlight(true);
+
+    const targetId = newFolderId === "none" ? null : newFolderId;
+    const prevFolderId = localNote.folderId;
+
+    // optimistic update
+    setLocalNote((s) => ({ ...s, folderId: targetId }));
+
+    try {
+      const res = await updateNoteFolder(localNote.id, targetId);
+
+      if (res?.error) {
+        setLocalNote((s) => ({ ...s, folderId: prevFolderId }));
+        toast.error(res.error);
+        return;
+      }
+
+      // success
+      if (res?.success) {
+        const patch = { id: localNote.id, folderId: targetId };
+        onPatch?.(patch);
+
+        try {
+          const channel = new BroadcastChannel("notes");
+          channel.postMessage({ type: "patch", data: patch });
+          channel.close();
+        } catch (e) {
+          // ignore
+        }
+
+        toast.success("Folder updated");
+      }
+    } catch (err: any) {
+      setLocalNote((s) => ({ ...s, folderId: prevFolderId }));
+      toast.error(err?.message ?? "Network error");
+    } finally {
+      setInFlight(false);
+    }
+  };
+
   const handleDuplicateNote = async (noteId: string) => {
     if (inFlight) return;
     setInFlight(true);
@@ -460,19 +502,14 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
                     {usableFolders.length > 0 && <ContextMenuSeparator />}
 
                     <ContextMenuRadioGroup
-                      defaultValue={localNote.folderId ?? "none"}
+                      value={localNote.folderId ?? "none"}
+                      onValueChange={handleFolderChange}
                     >
                       <ContextMenuRadioItem value="none">
                         None
                       </ContextMenuRadioItem>
                       {usableFolders.map((folder) => (
-                        <ContextMenuRadioItem
-                          key={folder.id}
-                          value={folder.id}
-                          onClick={() =>
-                            optimisticToggle("folderId", toggleFavorite)
-                          }
-                        >
+                        <ContextMenuRadioItem key={folder.id} value={folder.id}>
                           {folder.name}
                         </ContextMenuRadioItem>
                       ))}

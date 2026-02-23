@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import { FolderWithNotes, getFolderWithNotes } from "@/lib/fetch/get-folders";
 import { NoteCard } from "@/components/notes/note-card";
 import { FolderHeader } from "../folder-header";
+import { EmptyFolder } from "@/components/notes/empty-note";
+import FolderPageClient from "./page.client";
 
 interface FolderPageProps {
   params: {
@@ -18,9 +20,11 @@ export default async function FolderPage({ params }: FolderPageProps) {
 
   if (!session)
     return (
-      <p className="font-mono">
+      <p className="p-4 font-mono">
         You need to be signed in to view this page.{" "}
-        <a href="/auth/sign-in">Sign in</a>{" "}
+        <a href="/auth/sign-in" className="underline">
+          Sign in
+        </a>{" "}
       </p>
     );
 
@@ -29,26 +33,13 @@ export default async function FolderPage({ params }: FolderPageProps) {
   });
   if (!folder)
     return (
-      <p className="font-mono">
-        This folder was not found. <a href="/folders">All folders.</a>
+      <p className="p-4 font-mono">
+        This folder was not found.{" "}
+        <a href="/folders" className="underline">
+          All folders.
+        </a>
       </p>
     );
 
-  return (
-    <>
-      <FolderHeader session={session} back={true}></FolderHeader>
-
-      {/*Metadata and options*/}
-      <section className="section">
-        <h1 className="heading">{folder.name}</h1>
-        <p className="description">{folder.description}</p>
-
-        <section className="wrap">
-          {folder.notes.map((note) => (
-            <NoteCard key={note.id} note={note} view="active" folders={[]} />
-          ))}
-        </section>
-      </section>
-    </>
-  );
+  return <FolderPageClient folder={folder} session={session} />;
 }

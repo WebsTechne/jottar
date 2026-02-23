@@ -3,7 +3,12 @@ import { getNotes, overviewNotes } from "@/lib/fetch/get-notes";
 import { getFoldersForDropdown } from "@/lib/fetch/get-folders";
 import { Note } from "@prisma/client";
 
-export type NotesView = "active" | "favorites" | "archived" | "trash";
+export type NotesView =
+  | "active"
+  | "favorites"
+  | "archived"
+  | "trash"
+  | "folder";
 
 function prepareNotes(
   notes: Note[],
@@ -31,6 +36,7 @@ function prepareNotes(
       break;
 
     case "active":
+    case "folder":
     default:
       result = notes.filter((n) => !n.archived && n.trashedAt == null);
   }

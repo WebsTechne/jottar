@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { getAuthedUser } from "@/lib/fetch/get-authed-user";
+import { revalidatePath } from "next/cache";
 
 async function createFolder({
   name,

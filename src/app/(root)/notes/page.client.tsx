@@ -6,6 +6,7 @@ import { NoteCard, NoteCardSkeleton } from "@/components/notes/note-card";
 import {
   EmptyArchive,
   EmptyFavorites,
+  EmptyFolder,
   EmptyNotes,
   EmptyTrash,
 } from "@/components/notes/empty-note";
@@ -118,7 +119,9 @@ function NotesList({
       ))}
 
       {notes.length === 0 &&
-        (view === "favorites" ? (
+        (view === "folder" ? (
+          <EmptyFolder />
+        ) : view === "favorites" ? (
           <EmptyFavorites />
         ) : view === "archived" ? (
           <EmptyArchive />
