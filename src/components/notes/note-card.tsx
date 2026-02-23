@@ -48,9 +48,10 @@ import { updateNoteFolder } from "@/lib/actions/folder-actions";
 import { FolderDropdownItem } from "@/lib/fetch/get-folders";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { Button, buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { DeleteNoteDialog } from "./delete-note-dialog";
+import { NoteDetails } from "./note-details";
 
 type Props = {
   note: Note;
@@ -61,9 +62,14 @@ type Props = {
 };
 
 const NoteCard = ({ note, folders, onPatch, view }: Props) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const handleDialogOpenChange = (value: boolean) => {
-    setDialogOpen(value);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const handleDeleteDialogChange = (value: boolean) => {
+    setDeleteDialogOpen(value);
+  };
+
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  const handleDetailsDialogChange = (value: boolean) => {
+    setDetailsDialogOpen(value);
   };
 
   // local copy for optimistic updates
@@ -121,7 +127,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
         },
       });
       // close dialog / menu
-      setDialogOpen(false);
+      setDeleteDialogOpen(false);
       close();
     } catch (err: any) {
       setLocalNote(prev);
@@ -331,15 +337,24 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
     const normalizedName = folder.name.trim().toLowerCase();
     return !EXCLUDED_FOLDERS.has(normalizedName);
   });
+  const thisFolder = folders.find((folder) => folder.id === localNote.folderId);
 
   return (
     <>
       <DeleteNoteDialog
         id={localNote.id}
         title={localNote.title ?? "Untitled note"}
-        open={dialogOpen}
-        onOpenChange={handleDialogOpenChange}
+        open={deleteDialogOpen}
+        onOpenChange={handleDeleteDialogChange}
         onConfirm={() => handleTrashConfirm(localNote.id)}
+      />
+
+      <NoteDetails
+        note={localNote}
+        preview={preview}
+        folder={thisFolder?.name ?? "None"}
+        open={detailsDialogOpen}
+        onOpenChange={handleDetailsDialogChange}
       />
 
       <ContextMenu
@@ -535,11 +550,9 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
             </ContextMenuItem>
           )}
 
-          <ContextMenuItem
-            onClick={() => toast("This feature isn't available yet")}
-          >
+          <ContextMenuItem onClick={() => handleDetailsDialogChange(true)}>
             <HugeiconsIcon icon={InformationCircleIcon} strokeWidth={2} />
-            Info
+            Details
           </ContextMenuItem>
 
           <ContextMenuSeparator />
@@ -554,7 +567,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
           {!localNote.trashedAt ? (
             <ContextMenuItem
               variant="destructive"
-              onClick={() => handleDialogOpenChange(true)}
+              onClick={() => handleDeleteDialogChange(true)}
             >
               <HugeiconsIcon icon={Delete02Icon} strokeWidth={2} />
               Trash
