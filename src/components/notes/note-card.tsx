@@ -17,7 +17,7 @@ import {
   StarIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Note } from "@prisma/client";
+import {type Note } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
@@ -45,7 +45,7 @@ import {
   trashNote,
 } from "@/lib/actions/note-actions";
 import { updateNoteFolder } from "@/lib/actions/folder-actions";
-import { FolderDropdownItem } from "@/lib/fetch/get-folders";
+import { type FolderDropdownItem } from "@/lib/fetch/get-folders";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { buttonVariants } from "../ui/button";

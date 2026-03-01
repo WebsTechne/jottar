@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Note } from "@prisma/client";
+import {type Note } from "@prisma/client";
 import { NoteCard, NoteCardSkeleton } from "@/components/notes/note-card";
 import {
   EmptyArchive,
