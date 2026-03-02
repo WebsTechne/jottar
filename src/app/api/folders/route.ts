@@ -1,5 +1,10 @@
 import prisma from "../../../lib/prisma";
-import { apiError, apiSuccess, getRequestUser, parseJson } from "@/app/api/_utils";
+import {
+  apiError,
+  apiSuccess,
+  getRequestUser,
+  parseJson,
+} from "@/app/api/_utils";
 
 type CreateFolderBody = {
   name?: string;
@@ -135,7 +140,7 @@ export async function POST(req: Request) {
         slug: body.slug,
         description: body.description,
         // Preserve existing action contract while defaulting safely to authed user.
-        userId: body.userId ?? user.id,
+        userId: user.id,
       },
     });
 
