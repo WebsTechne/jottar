@@ -1,10 +1,9 @@
-import { OverlayProvider } from "@/context/overlay-context";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { type ReactNode } from "react";
 
-export default async function FolderPagesLayout({
+export default async function NotesLayout({
   children,
 }: {
   children: ReactNode;
@@ -15,5 +14,5 @@ export default async function FolderPagesLayout({
     redirect("/welcome");
   }
 
-  return <OverlayProvider>{children}</OverlayProvider>;
+  return <>{children}</>;
 }

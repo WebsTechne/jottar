@@ -87,7 +87,7 @@ function MenuButton({
   if (!user)
     return (
       <span
-        className="bg-muted size-6.5 rounded-full"
+        className="bg-muted flex-center! size-6.5 rounded-full"
         aria-label="Loading account"
         role="status"
       >
