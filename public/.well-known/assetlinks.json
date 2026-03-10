@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.jottar.app",
+    "sha256_cert_fingerprints": ["9E:2F:EB:FA:CE:70:24:24:C4:C3:15:07:12:17:28:E9:30:B6:7D:64:15:06:4D:A3:0F:62:6D:AA:24:15:6D:E7"]
+  }
+}]
