@@ -176,7 +176,7 @@ export function NoteDetails({
                   <ComboboxEmpty className="flex items-center gap-1.5 px-2">
                     <button
                       type="button"
-                      className="bg-input/20 corner-squircle flex h-9 w-full items-center justify-center gap-1.5 rounded-4xl border"
+                      className="bg-input/20 supports-[corner-shape:squircle]:squircle-card flex h-9 w-full items-center justify-center gap-1.5 rounded-2xl border"
                       onClick={async () => {
                         if (!tagQuery.trim()) return;
 
@@ -237,7 +237,7 @@ export function NoteDetails({
                   <ComboboxEmpty className="flex items-center gap-1.5 px-2">
                     <button
                       type="button"
-                      className="bg-input/20 corner-squircle flex h-9 w-full items-center justify-center gap-1.5 rounded-4xl border"
+                      className="bg-input/20 supports-[corner-shape:squircle]:squircle-card flex h-9 w-full items-center justify-center gap-1.5 rounded-2xl border"
                       onClick={() => {
                         // example create folder flow
                         const newId = `new-folder-${Date.now()}`;

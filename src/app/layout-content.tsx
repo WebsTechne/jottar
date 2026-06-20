@@ -10,7 +10,8 @@ export default function LayoutContent({ children }: { children: ReactNode }) {
         position="top-right"
         toastOptions={{
           classNames: {
-            toast: "rounded-4xl! corner-squircle relative",
+            toast:
+              "rounded-2xl! supports-[corner-shape:squircle]:squircle-card relative",
             actionButton: "rounded-lg!",
             closeButton:
               "absolute right-0! top-0! size-6! rounded-full text-gray-500",

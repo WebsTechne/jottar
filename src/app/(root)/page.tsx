@@ -42,10 +42,10 @@ export default async function Page() {
                 {[...Array(3)].map((_, i) => (
                   <div
                     key={i}
-                    className="corner-squircle relative h-10.5 overflow-clip rounded-4xl border-1"
+                    className="supports-[corner-shape:squircle]:squircle-card relative h-10.5 overflow-clip rounded-xl border"
                     style={{ width: widths[i] }}
                   >
-                    <Skeleton className="corner-squircle size-full rounded-[inherit]" />
+                    <Skeleton className="supports-[corner-shape:squircle]:squircle-card size-full rounded-[inherit]" />
                   </div>
                 ))}
               </div>

@@ -13,7 +13,7 @@ async function FoldersOverviewServer() {
   return (
     <div className="wrap-flex">
       {foldersOverlay.length < 1 && (
-        <div className="bg-card corner-squircle max-w-max! shrink-0 rounded-4xl border border-dashed p-3">
+        <div className="bg-card supports-[corner-shape:squircle]:squircle-card max-w-max! shrink-0 rounded-xl border border-dashed p-3">
           No folders found
         </div>
       )}
@@ -21,7 +21,7 @@ async function FoldersOverviewServer() {
         <Link
           key={folder.id}
           href={`/folders/${folder.slug}`}
-          className="bg-card corner-squircle flex max-w-max! shrink-0 items-center rounded-4xl border p-2"
+          className="bg-card supports-[corner-shape:squircle]:squircle-card flex max-w-max! shrink-0 items-center rounded-xl border p-2"
         >
           {folder.name}
         </Link>

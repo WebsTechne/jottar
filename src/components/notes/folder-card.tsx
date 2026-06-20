@@ -45,7 +45,7 @@ function FolderCard({ folder }: { folder: FolderListItem }) {
         render={
           <div
             className={cn(
-              "bg-muted dark:bg-card! corner-squircle relative z-1 flex h-21 w-full flex-col overflow-clip rounded-4xl p-3 pb-2! transition-shadow duration-300",
+              "bg-muted dark:bg-card! supports-[corner-shape:squircle]:squircle-card relative z-1 flex h-21 w-full flex-col overflow-clip rounded-2xl p-3 pb-2! transition-shadow duration-300",
               isOpen && "z-1005 shadow-sm",
             )}
           >
@@ -76,7 +76,7 @@ function FolderCard({ folder }: { folder: FolderListItem }) {
 }
 function FolderCardSkeleton() {
   return (
-    <div className="corner-squircle flex-center h-21 w-full overflow-clip rounded-4xl">
+    <div className="supports-[corner-shape:squircle]:squircle-card flex-center h-21 w-full overflow-clip rounded-2xl">
       <Skeleton className="size-full" />
     </div>
   );
