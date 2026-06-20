@@ -9,6 +9,7 @@ import { NoteCard } from "@/components/notes/note-card";
 import { FolderHeader } from "../folder-header";
 import { EmptyFolder } from "@/components/notes/empty-note";
 import FolderPageClient from "./page.client";
+import { FloatingButton } from "@/components/floating-button";
 
 interface FolderPageProps {
   params: {
@@ -48,6 +49,10 @@ export default async function FolderPage({ params }: FolderPageProps) {
     );
 
   return (
-    <FolderPageClient folder={folder} session={session} folders={folders} />
+    <>
+      <FolderPageClient folder={folder} session={session} folders={folders} />
+
+      <FloatingButton folderSlug={folder.slug} />
+    </>
   );
 }

@@ -5,21 +5,46 @@ import { revalidatePath } from "next/cache";
 import { getAuthedUser } from "@/lib/fetch/get-authed-user";
 
 // ///// CREATE
-async function createNote(content: string) {
+async function createNote(content: string, slug?: string) {
   const user = await getAuthedUser();
   if (!user) {
     return { error: "Not authenticated" };
   }
-  const newNote = await prisma.note.create({
-    data: {
-      userId: user.id,
-      content: content,
-    },
-  });
 
-  revalidatePath("/");
+  try {
+    if (slug) {
+      const folder = await prisma.folder.findFirst({
+        where: { slug },
+        select: { id: true },
+      });
 
-  return { data: newNote };
+      if (!folder) throw new Error("Folder not found.");
+
+      const newNote = await prisma.note.create({
+        data: {
+          userId: user.id,
+          content: content,
+          folderId: folder.id,
+        },
+      });
+
+      revalidatePath("/");
+      return { data: newNote };
+    }
+
+    const newNote = await prisma.note.create({
+      data: {
+        userId: user.id,
+        content: content,
+      },
+    });
+
+    revalidatePath("/");
+    return { data: newNote };
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to create note");
+  }
 }
 
 async function duplicateNote(id: string) {

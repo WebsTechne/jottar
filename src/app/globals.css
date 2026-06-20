@@ -147,6 +147,10 @@
   @apply flex items-center justify-center;
 }
 
+@utility squircle-card {
+	@apply corner-squircle rounded-4xl!
+}
+
 @utility scrollbar-width-none {
   scrollbar-width: none;
 }

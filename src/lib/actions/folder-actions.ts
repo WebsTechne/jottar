@@ -8,12 +8,10 @@ async function createFolder({
   name,
   slug,
   description,
-  userId,
 }: {
   name: string;
   slug: string;
   description?: string;
-  userId: string;
 }) {
   const user = await getAuthedUser();
   if (!user) {
@@ -22,13 +20,43 @@ async function createFolder({
 
   try {
     const result = await prisma.folder.create({
-      data: { name, slug, description, userId },
+      data: { name, slug, description, userId: user.id },
     });
 
     return { data: result };
   } catch (err) {
     console.error("Failed to create Folder:", err);
     return { error: "There was an error creating your folder." };
+  }
+}
+
+async function updateFolder({
+  id,
+  name,
+  slug,
+  description,
+}: {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+}) {
+  const user = await getAuthedUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  try {
+    const result = await prisma.folder.update({
+      where: { id, userId: user.id },
+      data: { name, slug, description },
+    });
+
+    revalidatePath(`/folders/${slug}`);
+    return { data: result };
+  } catch (err) {
+    console.error("Failed to update Folder:", err);
+    return { error: "There was an error updating your folder." };
   }
 }
 
@@ -83,4 +111,4 @@ async function updateNoteFolder(
   }
 }
 
-export { createFolder, updateNoteFolder };
+export { createFolder, updateFolder, updateNoteFolder };

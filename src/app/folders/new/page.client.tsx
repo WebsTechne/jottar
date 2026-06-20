@@ -56,13 +56,7 @@ const formSchema = z.object({
 });
 type FormValues = z.infer<typeof formSchema>;
 
-export function NewFolderClient({
-  userId,
-  session,
-}: {
-  userId: string;
-  session: ServerSession;
-}) {
+export function NewFolderClient({ session }: { session: ServerSession }) {
   const [error, setError] = useState("");
 
   const form = useForm<FormValues>({
@@ -82,7 +76,7 @@ export function NewFolderClient({
     setError("");
 
     try {
-      const result = await createFolder({ name, slug, description, userId });
+      const result = await createFolder({ name, slug, description });
 
       if (result.error) {
         setError(result.error);
@@ -220,7 +214,7 @@ export function NewFolderClient({
               )}
             />
 
-            {/* Buttons*/}
+            {/* Buttons */}
             <Field orientation="horizontal" className="input-group">
               <Button
                 variant="secondary"

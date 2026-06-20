@@ -66,7 +66,6 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function SignUpClient() {
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const raw = searchParams.get("returnTo") ?? "";

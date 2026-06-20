@@ -17,7 +17,7 @@ import {
   StarIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import {type Note } from "@prisma/client";
+import { type Note } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
@@ -365,54 +365,71 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
           render={
             <div
               className={cn(
-                "bg-muted dark:bg-card! corner-squircle relative z-1 flex w-full flex-col overflow-clip rounded-4xl p-3 pb-2! transition-shadow duration-300",
+                "bg-muted dark:bg-card! supports-[corner-shape:squircle]:squircle-card relative z-1 flex w-full flex-col gap-1 overflow-clip rounded-2xl p-3 pb-2! transition-shadow duration-300",
                 isOpen && "z-1005 shadow-sm",
               )}
-            >
-              <span className="pointer-events-none absolute top-1 right-1 inline-flex min-h-5 w-5 flex-col items-center justify-center gap-0.75">
-                {localNote.isPinned && view === "active" && (
-                  <HugeiconsIcon
-                    icon={PinIcon}
-                    size={16}
-                    fill="var(--muted-foreground)"
-                    className="text-muted-foreground"
-                  />
-                )}
-                {localNote.favorite &&
-                  (view === "active" ||
-                    view === "folder" ||
-                    view === "favorites") && (
-                    <HugeiconsIcon
-                      icon={StarIcon}
-                      size={14}
-                      fill="var(--muted-foreground-51)"
-                      className="text-transparent"
-                    />
-                  )}
-              </span>
+            />
+          }
+        >
+          <span className="pointer-events-none absolute top-1 right-1 inline-flex min-h-5 w-5 flex-col items-center justify-center gap-0.75">
+            {localNote.isPinned && view === "active" && (
+              <HugeiconsIcon
+                icon={PinIcon}
+                size={16}
+                fill="var(--foreground)"
+                className="text-foreground"
+              />
+            )}
+            {localNote.favorite &&
+              (view === "active" ||
+                view === "folder" ||
+                view === "favorites") && (
+                <HugeiconsIcon
+                  icon={StarIcon}
+                  size={14}
+                  fill="var(--muted-foreground)"
+                  className="text-transparent"
+                />
+              )}
+          </span>
 
-              <div className="relative h-max w-full flex-1">
-                <h3 className="line-clamp-1 text-base font-semibold tracking-tight">
-                  {localNote.title ?? "Untitled Note"}
-                </h3>
-                <p className="text-muted-foreground line-clamp-2 text-sm">
-                  {preview}
+          <div className="relative h-max w-full flex-1">
+            <h3 className="line-clamp-1 text-base font-semibold tracking-tight">
+              {localNote.title ?? "Untitled Note"}
+            </h3>
+            <p className="line-clamp-2 text-sm">{preview}</p>
+          </div>
+
+          <div className="text-muted-foreground mt-1 flex items-center justify-between gap-1 font-mono">
+            {note.folderId ? (
+              <div className="text-secondary-foreground bg-secondary/80 flex max-w-full min-w-0 items-center gap-1 rounded-full px-2 py-1 text-xs not-dark:border">
+                <HugeiconsIcon
+                  icon={Folder02Icon}
+                  size={16}
+                  strokeWidth={2}
+                  // fill="var(--secondary-foreground)"
+                />
+                <p className="flex-1 truncate">
+                  {folders.find((f) => f.id === note.folderId)?.name ??
+                    "No folder"}
                 </p>
               </div>
+            ) : (
+              <span></span>
+            )}
 
-              <div className="flex items-center justify-end gap-2 font-mono">
-                <span className="text-muted-foreground text-xs">{date}</span>
-                <span className="text-muted-foreground text-xs">{time}</span>
-              </div>
-
-              {/* absolute clickable layer */}
-              <Link
-                href={`/notes/${localNote.id}`}
-                className="absolute inset-0 z-10"
-              />
+            <div className="flex shrink-0 items-center gap-2">
+              <span className="text-muted-foreground text-xs">{date}</span>
+              <span className="text-muted-foreground text-xs">{time}</span>
             </div>
-          }
-        />
+          </div>
+
+          {/* absolute clickable layer */}
+          <Link
+            href={`/notes/${localNote.id}`}
+            className="absolute inset-0 z-10"
+          />
+        </ContextMenuTrigger>
         <ContextMenuContent className="min-w-52!">
           {!localNote.archived && !localNote.trashedAt && (
             <>
@@ -589,7 +606,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
 
 const NoteCardSkeleton = () => {
   return (
-    <div className="corner-squircle flex-center h-25 w-full overflow-clip rounded-4xl">
+    <div className="supports-[corner-shape:squircle]:squircle-card flex-center h-25 w-full overflow-clip rounded-2xl">
       <Skeleton className="size-full" />
     </div>
   );

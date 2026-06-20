@@ -67,7 +67,11 @@ export function FolderHeader({
               onClick={() => toast("This feature isn't available yet")}
               // className="p-0! px-0! py-0!"
             >
-              <HugeiconsIcon icon={Search01Icon} className="size-6!" />
+              <HugeiconsIcon
+                icon={Search01Icon}
+                strokeWidth={2}
+                className="size-6!"
+              />
             </Button>
 
             <MenuButton session={session} returnTo={returnTo} />

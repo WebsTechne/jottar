@@ -4,7 +4,6 @@ import { headers } from "next/headers";
 
 export default async function NewFolderPage() {
   const session = await auth.api.getSession({ headers: await headers() });
-  const userId = session?.user.id ?? "";
 
   return (
     <>
@@ -12,7 +11,7 @@ export default async function NewFolderPage() {
         <h1 className="heading">New folder</h1>
       </section>*/}
 
-      <NewFolderClient userId={userId} session={session} />
+      <NewFolderClient session={session} />
     </>
   );
 }

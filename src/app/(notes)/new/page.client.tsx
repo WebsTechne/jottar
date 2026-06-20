@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useEditor, type Extension } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -78,10 +78,13 @@ function getInitialContent() {
 
 const NewNotePage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(
     () => !!getInitialContent(),
   );
+
+  const folderSlug = searchParams.get("folder");
 
   const editor = useEditor({
     extensions: extensions as Extension[],
@@ -121,7 +124,10 @@ const NewNotePage = () => {
 
     try {
       const content = editor.getJSON();
-      const result = await createNote(JSON.stringify(content));
+      const result = await createNote(
+        JSON.stringify(content),
+        folderSlug ?? undefined,
+      );
 
       if (result.error) {
         toast.error(result.error);
@@ -136,7 +142,7 @@ const NewNotePage = () => {
           JSON.stringify(newDraft),
         );
         localStorage.removeItem("draft:new");
-        toast.success("Note saved!");
+        toast.success(`Note saved${folderSlug && ` to ${folderSlug}`}!`);
         router.replace(`/notes/${newNoteId}`);
       }
     } finally {
