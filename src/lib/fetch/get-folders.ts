@@ -142,7 +142,7 @@ export const getFolderWithNotes = async ({
           archived: true,
           createdAt: true,
           updatedAt: true,
-          noteTags: true,
+          noteTags: { select: { tag: { select: { name: true } } } },
           trashedAt: true,
           allowCopy: true,
           copiedFromNoteId: true,
@@ -186,7 +186,7 @@ type FolderWithNotes = Prisma.FolderGetPayload<{
         copiedFromUserId: true;
         shareLinkType: true;
         shareable: true;
-        noteTags: true;
+        noteTags: { select: { tag: { select: { name: true } } } };
       };
     };
   };
