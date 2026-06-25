@@ -295,12 +295,14 @@ const ComboboxChipsInput = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <ComboboxPrimitive.Input
+      ref={ref}
       data-slot="combobox-chip-input"
       className={cn("min-w-16 flex-1 outline-none", className)}
       {...props}
     />
   );
-}
+});
+ComboboxChipsInput.displayName = "ComboboxChipsInput";
 
 function useComboboxAnchor() {
   return React.useRef<HTMLDivElement | null>(null);
