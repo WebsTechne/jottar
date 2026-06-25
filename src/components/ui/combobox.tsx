@@ -289,10 +289,10 @@ function ComboboxChip({
   );
 }
 
-function ComboboxChipsInput({
-  className,
-  ...props
-}: ComboboxPrimitive.Input.Props) {
+const ComboboxChipsInput = React.forwardRef<
+  HTMLInputElement,
+  ComboboxPrimitive.Input.Props
+>(({ className, ...props }, ref) => {
   return (
     <ComboboxPrimitive.Input
       data-slot="combobox-chip-input"
