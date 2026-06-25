@@ -6,7 +6,7 @@ import {
 } from "@/lib/fetch/get-folders";
 import FolderPageClient from "./page.client";
 import { FloatingButton } from "@/components/floating-button";
-import { Link } from "next/link";
+import Link from "next/link";
 
 interface FolderPageProps {
   params: {
