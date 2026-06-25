@@ -131,6 +131,14 @@
 }
 
 @layer base {
+  ::selection {
+    @apply text-primary-foreground bg-foreground;
+  }
+
+  .dark ::selection {
+    @apply text-primary-foreground bg-foreground;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
@@ -148,7 +156,7 @@
 }
 
 @utility squircle-card {
-	@apply corner-squircle rounded-4xl!
+  @apply corner-squircle rounded-4xl!;
 }
 
 @utility scrollbar-width-none {

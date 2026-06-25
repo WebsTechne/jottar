@@ -29,7 +29,7 @@ import {
 import { ReloadIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Spinner } from "@/components/ui/spinner";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetFooter } from "@/components/ui/sheet";
 import { useRouter } from "next/navigation";
 
 const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -118,25 +118,25 @@ export function UpdateFolderSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent>
-        <FieldSet className="mx-auto flex w-full max-w-115 flex-col items-center gap-5 p-4">
-          <section className="flex w-full flex-col gap-3.5">
-            <FieldTitle className="m-0! w-full text-2xl leading-tight font-extrabold! md:text-3xl">
-              Update Folder
-            </FieldTitle>
-            <FieldDescription className="m-0! w-full leading-tight">
-              Update the folder details below to modify its name, slug or
-              description.
-            </FieldDescription>
-          </section>
+      <SheetContent className="w-full! max-w-115!">
+        <form
+          className="contents"
+          onSubmit={form.handleSubmit(onSubmit)}
+          role="form"
+          aria-labelledby="new-form-heading"
+        >
+          <FieldSet className="flex flex-col items-center gap-5 p-4">
+            <section className="flex w-full flex-col gap-3.5">
+              <FieldTitle className="m-0! w-full text-xl leading-tight font-bold! md:text-2xl">
+                Update Folder
+              </FieldTitle>
+              <FieldDescription className="m-0! w-full leading-tight">
+                Update the folder details below to modify its name, slug or
+                description.
+              </FieldDescription>
+            </section>
 
-          <FieldGroup>
-            <form
-              className="contents"
-              onSubmit={form.handleSubmit(onSubmit)}
-              role="form"
-              aria-labelledby="new-form-heading"
-            >
+            <FieldGroup>
               {/* Name */}
               <Controller
                 name="name"
@@ -229,39 +229,38 @@ export function UpdateFolderSheet({
                 )}
               />
 
-              {/* Buttons */}
-              <Field orientation="horizontal" className="input-group">
-                <Button
-                  variant="secondary"
-                  onClick={() => form.reset()}
-                  className="button flex-1"
-                >
-                  Clear form
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="button flex-1"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Spinner />
-                      Updating
-                    </>
-                  ) : (
-                    <>Update folder</>
-                  )}
-                </Button>
-              </Field>
-            </form>
+              {error && (
+                <Field>
+                  <ErrorText>{error}</ErrorText>
+                </Field>
+              )}
+            </FieldGroup>
+          </FieldSet>
 
-            {error && (
-              <Field>
-                <ErrorText>{error}</ErrorText>
-              </Field>
-            )}
-          </FieldGroup>
-        </FieldSet>
+          <SheetFooter className="grid grid-cols-2 p-4!">
+            <Button
+              variant="secondary"
+              onClick={() => form.reset()}
+              className="button flex-1"
+            >
+              Clear form
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="button flex-1"
+            >
+              {isSubmitting ? (
+                <>
+                  <Spinner />
+                  Updating
+                </>
+              ) : (
+                <>Update folder</>
+              )}
+            </Button>
+          </SheetFooter>
+        </form>
       </SheetContent>
     </Sheet>
   );

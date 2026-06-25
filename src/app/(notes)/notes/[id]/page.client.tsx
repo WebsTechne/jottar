@@ -11,7 +11,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { updateNote } from "@/lib/actions/note-actions";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { type FolderWithNotes } from "@/lib/fetch/get-folders";
+import { type FolderDropdownItem } from "@/lib/fetch/get-folders";
 import { type TagWithNoteTags } from "@/lib/fetch/get-tags";
 import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
 import { NoteDetails } from "@/components/toolbars/note-details";
@@ -64,15 +64,11 @@ const extensions = [
 
 interface NotePageClientProps {
   note: NoteWithNoteTags;
-  // folders: FolderWithNotes[];
-  // tags: TagWithNoteTags[];
+  folders: FolderDropdownItem[];
+  tags: TagWithNoteTags[];
 }
 
-const NotePageClient = ({
-  note,
-  // folders,
-  // tags
-}: NotePageClientProps) => {
+const NotePageClient = ({ note, folders, tags }: NotePageClientProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -196,11 +192,7 @@ const NotePageClient = ({
           />
         </Button>
 
-        <NoteDetails
-          note={note}
-          // folders={folders}
-          // tags={tags}
-        >
+        <NoteDetails note={note} folders={folders} tags={tags}>
           <div className="bg-muted text-muted-foreground! flex h-full max-w-100 flex-1 cursor-pointer items-center justify-center rounded-full">
             <span className="relative line-clamp-1 max-w-50">
               {note.title || "Untitled Note "}

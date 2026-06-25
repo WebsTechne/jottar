@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import NotePageClient from "./page.client";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { getFolderWithNotes } from "@/lib/fetch/get-folders";
+import { getFoldersForDropdown } from "@/lib/fetch/get-folders";
 import { getTags } from "@/lib/fetch/get-tags";
 import { Prisma } from "@prisma/client";
 
@@ -46,21 +46,18 @@ export default async function NotePage({ params }: NotePageProps) {
     },
   });
 
-  // const [folders, tags] = await Promise.all([getFolderWithNotes(), getTags()]);
+  const [folders, tags] = await Promise.all([
+    getFoldersForDropdown(),
+    getTags(),
+  ]);
 
   if (!note) {
     return notFound();
   }
 
   // Filter out any potential falsy values from the arrays before passing to client
-  // const validFolders = (folders || []).filter(Boolean);
-  // const validTags = (tags || []).filter(Boolean);
+  const validFolders = (folders || []).filter(Boolean);
+  const validTags = (tags || []).filter(Boolean);
 
-  return (
-    <NotePageClient
-      note={note}
-      // folders={validFolders}
-      // tags={validTags}
-    />
-  );
+  return <NotePageClient note={note} folders={validFolders} tags={validTags} />;
 }

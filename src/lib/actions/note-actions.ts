@@ -90,10 +90,14 @@ async function createTag(name: string) {
   if (!user) {
     return { error: "Not authenticated" };
   }
-  const newTag = await prisma.tag.create({
-    data: {
+  const newTag = await prisma.tag.upsert({
+    where: {
+      userId_name: { name, userId: user.id },
+    },
+    update: {},
+    create: {
+      name,
       userId: user.id,
-      name: name,
     },
   });
   revalidatePath("/");
@@ -219,6 +223,7 @@ async function updateNoteDetails(
   data: {
     title?: string;
     folderId?: string | null;
+    tagIds?: string[] | [];
   },
 ) {
   const user = await getAuthedUser();
@@ -238,7 +243,21 @@ async function updateNoteDetails(
   try {
     const updatedNote = await prisma.note.update({
       where: { id, userId: user.id },
-      data: updateData,
+      data: {
+        ...updateData,
+        ...(data.tagIds !== undefined && {
+          noteTags: {
+            deleteMany: {},
+            create: data.tagIds.map((tagId) => ({
+              tag: {
+                connect: {
+                  id: tagId,
+                },
+              },
+            })),
+          },
+        }),
+      },
     });
 
     revalidatePath(`/notes/${id}`);

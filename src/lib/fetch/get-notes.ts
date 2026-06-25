@@ -1,6 +1,7 @@
 // lib/fetch/get-notes.ts
 import prisma from "@/lib/prisma";
 import { getAuthedUser } from "./get-authed-user";
+import { Prisma } from "@prisma/client";
 
 const getNotes = async () => {
   const user = await getAuthedUser();
@@ -21,7 +22,7 @@ const getNotes = async () => {
       archived: true,
       createdAt: true,
       updatedAt: true,
-      noteTags: true,
+      noteTags: { select: { tag: { select: { name: true } } } },
       // new fields
       trashedAt: true,
       allowCopy: true,
@@ -54,7 +55,7 @@ const getNote = async (id: string) => {
       archived: true,
       createdAt: true,
       updatedAt: true,
-      noteTags: true,
+      noteTags: { select: { tag: { select: { name: true } } } },
       // new fields
       trashedAt: true,
       allowCopy: true,
@@ -66,6 +67,29 @@ const getNote = async (id: string) => {
     where: { id, userId: user.id },
   });
 };
+
+type NoteData = Prisma.NoteGetPayload<{
+  select: {
+    id: true;
+    title: true;
+    content: true;
+    folderId: true;
+    userId: true;
+    isPinned: true;
+    favorite: true;
+    archived: true;
+    createdAt: true;
+    updatedAt: true;
+    noteTags: { select: { tag: { select: { name: true } } } };
+    // new fields
+    trashedAt: true;
+    allowCopy: true;
+    copiedFromNoteId: true;
+    copiedFromUserId: true;
+    shareLinkType: true;
+    shareable: true;
+  };
+}>;
 
 const overviewNotes = async () => {
   const user = await getAuthedUser();
@@ -81,6 +105,7 @@ const overviewNotes = async () => {
       trashedAt: null,
       isPinned: true,
     },
+    include: { noteTags: { select: { tag: { select: { name: true } } } } },
     orderBy: { updatedAt: "desc" },
     take: 2,
   });
@@ -94,6 +119,7 @@ const overviewNotes = async () => {
       trashedAt: null,
       isPinned: false,
     },
+    include: { noteTags: { select: { tag: { select: { name: true } } } } },
     orderBy: { updatedAt: "desc" },
     take: remaining,
   });
@@ -101,4 +127,9 @@ const overviewNotes = async () => {
   return [...pinned, ...unpinned];
 };
 
+type OverviewNote = Prisma.NoteGetPayload<{
+  include: { noteTags: { select: { tag: { select: { name: true } } } } };
+}>;
+
+export type { NoteData, OverviewNote };
 export { getNote, getNotes, overviewNotes };

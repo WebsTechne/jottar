@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import {type Note } from "@prisma/client";
+import { type NoteData } from "@/lib/fetch/get-notes";
 import { NoteCard, NoteCardSkeleton } from "@/components/notes/note-card";
 import {
   EmptyArchive,
@@ -11,24 +11,25 @@ import {
   EmptyTrash,
 } from "@/components/notes/empty-note";
 import type { NotesView } from "./page.server";
+import { FolderDropdownItem } from "@/lib/fetch/get-folders";
 
 function NotesList({
   initialNotes,
   folders,
   view,
 }: {
-  initialNotes: Note[];
-  folders: { id: string; name: string }[];
+  initialNotes: NoteData[];
+  folders: FolderDropdownItem[];
   view: NotesView;
 }) {
-  const [notes, setNotes] = useState<Note[]>(initialNotes);
+  const [notes, setNotes] = useState<NoteData[]>(initialNotes);
 
   useEffect(() => {
     setNotes(initialNotes);
   }, [initialNotes]);
 
   const applyPatchToList = useCallback(
-    (updated: Partial<Note> & { id: string }) => {
+    (updated: Partial<NoteData> & { id: string }) => {
       setNotes((prev) => {
         const found = prev.find((p) => p.id === updated.id);
 
@@ -63,7 +64,7 @@ function NotesList({
           if (view === "favorites" && updated.favorite !== true) return prev;
           if (updated.archived === true && !(view === "archived")) return prev;
           if (updated.trashedAt && !(view === "trash")) return prev;
-          return [updated as Note, ...prev];
+          return [updated as NoteData, ...prev];
         }
 
         const replaced = prev.map((p) =>

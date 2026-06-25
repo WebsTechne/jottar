@@ -1,6 +1,6 @@
 "use client";
 
-import { cloneElement, Fragment, useState, type ReactElement } from "react";
+import { cloneElement, useRef, useState, type ReactElement } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Combobox,
@@ -28,71 +28,97 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import capitalize from "@/lib/helpers/capitalize";
-// import { type FolderWithNotes } from "@/lib/fetch/get-folders";
-// import { type TagWithNoteTags } from "@/lib/fetch/get-tags";
 import { type NoteWithNoteTags } from "@/app/(notes)/notes/[id]/page";
 
 import { createTag, updateNoteDetails } from "@/lib/actions/note-actions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Spinner } from "../ui/spinner";
+import { FolderDropdownItem } from "@/lib/fetch/get-folders";
+import { TagWithNoteTags } from "@/lib/fetch/get-tags";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetTrigger,
+} from "../ui/sheet";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+  FieldTitle,
+} from "../ui/field";
+import { ErrorText } from "../error-text";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { FolderAddIcon } from "@hugeicons/core-free-icons";
+import Link from "next/link";
 
 interface NoteDetailsProps {
   children: ReactElement;
   note: NoteWithNoteTags;
-  // folders: FolderWithNotes[];
-  // tags: TagWithNoteTags[];
+  folders: FolderDropdownItem[];
+  tags: TagWithNoteTags[];
 }
 
 type FormValues = {
   title: string;
+  tagIds: string[] | []; // ids
   folderId: string | null;
-  tagIds: string[]; // ids
 };
 
 export function NoteDetails({
   children,
   note,
-  // folders,
-  // tags,
+  folders,
+  tags,
 }: NoteDetailsProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [availableTags, setAvailableTags] = useState(tags);
+  const [selectedTags, setSelectedTags] = useState<typeof tags>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const [tagQuery, setTagQuery] = useState("");
 
   const initialTagIds = note.noteTags.map((nt) => nt.tagId);
 
-  const { control, register, handleSubmit, reset, setValue, watch } =
-    useForm<FormValues>({
-      defaultValues: {
-        title: note.title || "",
-        folderId: note.folderId ?? null,
-        tagIds: initialTagIds,
-      },
-    });
+  const form = useForm<FormValues>({
+    defaultValues: {
+      title: note.title || "",
+      folderId: note.folderId ?? null,
+      tagIds: initialTagIds,
+    },
+  });
 
   // Make sure form shows latest note when dialog opens/closes.
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
     if (isOpen) {
-      reset({
+      form.reset({
         title: note.title || "",
         folderId: note.folderId ?? null,
         tagIds: note.noteTags.map((nt) => nt.tagId),
       });
     } else {
       // optional: reset to original when closed
-      reset({
+      form.reset({
         title: note.title || "",
         folderId: note.folderId ?? null,
         tagIds: note.noteTags.map((nt) => nt.tagId),
       });
+      setSelectedTags(
+        availableTags.filter((tag) => initialTagIds.includes(tag.id)),
+      );
     }
   };
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = form.handleSubmit(async (data) => {
+    setError("");
     setIsSaving(true);
     try {
       // adapt to the API shape your backend expects
@@ -101,193 +127,251 @@ export function NoteDetails({
         folderId: data.folderId,
         tagIds: data.tagIds,
       } as any);
+
       if (result?.error) {
         toast.error(result.error);
+        setError(result.error);
       } else {
         toast.success("Note updated!");
         router.refresh();
         setOpen(false);
       }
+    } catch (err) {
+      setError("Failed to update note.");
+      console.error(err);
     } finally {
       setIsSaving(false);
     }
   });
 
-  const tagsAnchor = useComboboxAnchor();
+  const handleCreateTag = async () => {
+    toast.loading("Creating tag...", { id: "create-tag-toast" });
+
+    try {
+      const res = await createTag(comboboxChipsInputRef.current?.value ?? "");
+
+      if (res.error) toast.error(res.error, { id: "create-tag-toast" });
+      if (res.data) {
+        setAvailableTags((prev) => [...prev, res.data]);
+        // setSelectedTags((prev) => [...prev, res.data]);
+      }
+
+      toast.success("Tag created!", { id: "create-tag-toast" });
+      comboboxChipsInputRef.current?.blur();
+    } catch (err) {
+      toast.error("Failed to create tag.", { id: "create-tag-toast" });
+      console.error(err);
+    }
+  };
+
+  const anchor = useComboboxAnchor();
+  const comboboxChipsInputRef = useRef<HTMLInputElement | null>(null);
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger
+    <Sheet open={open} onOpenChange={handleOpenChange}>
+      <SheetTrigger
         nativeButton={false}
         render={(props) => cloneElement(children, props)}
-      ></DialogTrigger>
-      <DialogContent className="p-4! sm:max-w-125">
-        <DialogHeader>
-          <DialogTitle>Note details</DialogTitle>
-        </DialogHeader>
+      ></SheetTrigger>
+      <SheetContent className="w-full! max-w-115!">
+        <form onSubmit={onSubmit} className="contents">
+          <FieldSet className="flex flex-col items-center gap-5 p-4">
+            <section className="flex w-full flex-col gap-3.5">
+              <FieldTitle className="m-0! w-full text-xl leading-tight font-bold! md:text-2xl">
+                Note details
+              </FieldTitle>
+              <FieldDescription className="m-0! w-full leading-tight">
+                Update the folder details below to modify its name, slug or
+                description.
+              </FieldDescription>
+            </section>
 
-        <form onSubmit={onSubmit} className="flex flex-col gap-3">
-          {/* Title - native input: use register */}
-          <Input
-            type="text"
-            id="title"
-            placeholder="Title"
-            {...register("title")}
-            className="input h-10! w-full"
-          />
-
-          {/* Tags (multiple) - Controller */}
-          {/*<Controller
-            control={control}
-            name="tagIds"
-            render={({ field }) => (
-              <Combobox
-                multiple
-                autoHighlight
-                items={tags}
-                value={field.value}
-                onValueChange={(v) => field.onChange(v)}
-              >
-                <ComboboxChips ref={tagsAnchor} className="input">
-                  <ComboboxValue>
-                    {(values: string[]) => (
-                      <Fragment>
-                        {values
-                          .map((tagId) => tags.find((t) => t.id === tagId))
-                          .filter(Boolean)
-                          .map((tag) => (
-                            <ComboboxChip key={tag!.id}>
-                              {tag!.name}
-                            </ComboboxChip>
-                          ))}
-                        <ComboboxChipsInput
-                          placeholder="Select or create tags..."
-                          // local UI input; not tied to react-hook-form directly
-                          // onValueChange={(val) => {
-                          //   optional: store typed text in local state or create on Enter
-                          // }}
-                        />
-                      </Fragment>
+            <FieldGroup>
+              {/* Title */}
+              <Controller
+                name="title"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="input-group"
+                  >
+                    <FieldLabel htmlFor={field.name} className="input-label">
+                      Note title
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      id={field.name}
+                      type="text"
+                      placeholder="Title"
+                      aria-invalid={fieldState.invalid}
+                      className="input h-10!"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
                     )}
-                  </ComboboxValue>
-                </ComboboxChips>
+                  </Field>
+                )}
+              />
 
-                <ComboboxContent anchor={tagsAnchor}>
-                  <ComboboxEmpty className="flex items-center gap-1.5 px-2">
-                    <button
-                      type="button"
-                      className="bg-input/20 supports-[corner-shape:squircle]:squircle-card flex h-9 w-full items-center justify-center gap-1.5 rounded-2xl border"
-                      onClick={async () => {
-                        if (!tagQuery.trim()) return;
-
-                        const res = await createTag(tagQuery.trim());
-
-                        if (res?.error) {
-                          toast.error(res.error);
-                          return;
-                        }
-
-                        const newTag = res.data;
-                        setValue(
-                          "tagIds",
-                          [...(field.value || []), newTag.id],
-                          {
-                            shouldDirty: true,
-                          },
-                        );
-
-                        toast.success(`Tag created: ${newTag.name}`);
-                        setTagQuery("");
+              {/* Tags (multiple) - Controller */}
+              <Controller
+                name="tagIds"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="input-group"
+                  >
+                    <FieldLabel htmlFor={field.name} className="input-label">
+                      Tags
+                    </FieldLabel>
+                    <Combobox
+                      multiple
+                      items={availableTags}
+                      value={selectedTags}
+                      itemToStringLabel={(tag) => tag.name}
+                      autoHighlight
+                      onValueChange={(selected) => {
+                        const typed = selected;
+                        setSelectedTags(typed);
+                        field.onChange(typed.map((tag) => tag.id));
                       }}
                     >
-                      Create <code className="px-1">{tagQuery || "tag"}</code>
-                    </button>
-                  </ComboboxEmpty>
+                      <ComboboxChips
+                        ref={anchor}
+                        className="input h-max! min-h-10!"
+                      >
+                        <ComboboxValue>
+                          {(values) => (
+                            <>
+                              {values.map((tag: (typeof tags)[number]) => (
+                                <ComboboxChip key={tag.id}>
+                                  {tag.name}
+                                </ComboboxChip>
+                              ))}
+                              <ComboboxChipsInput ref={comboboxChipsInputRef} />
+                            </>
+                          )}
+                        </ComboboxValue>
+                      </ComboboxChips>
+                      <ComboboxContent anchor={anchor}>
+                        <ComboboxEmpty>
+                          <Button
+                            variant="secondary"
+                            onClick={handleCreateTag}
+                            // disabled={
+                            //   comboboxChipsInputRef.current?.value.trim() === ""
+                            // }
+                          >
+                            Add tag
+                          </Button>
+                        </ComboboxEmpty>
+                        <ComboboxList>
+                          {(tag) => (
+                            <ComboboxItem key={tag.id} value={tag}>
+                              {tag.name}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                  </Field>
+                )}
+              />
 
-                  <ComboboxList>
-                    {tags.map((tag) => (
-                      <ComboboxItem key={tag.id} value={tag.id}>
-                        {tag.name}
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
-            )}
-          />*/}
+              {/* Folder (single) */}
+              <Controller
+                name="folderId"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field
+                    data-invalid={fieldState.invalid}
+                    className="input-group"
+                  >
+                    <FieldLabel htmlFor={field.name} className="input-label">
+                      Folder
+                    </FieldLabel>
+                    <Combobox
+                      items={folders}
+                      value={folders.find((f) => f.id === field.value) ?? null}
+                      itemToStringLabel={(folder) => folder.name}
+                      onValueChange={(folder) =>
+                        field.onChange(folder?.id ?? "")
+                      }
+                      autoHighlight
+                    >
+                      <ComboboxInput
+                        className="input h-10!"
+                        placeholder="Enter a folder name"
+                        showClear={true}
+                      />
+                      <ComboboxContent>
+                        <ComboboxEmpty>
+                          <ComboboxItem
+                            render={
+                              <Link
+                                href="/folders/new"
+                                className="border-border bg-input/30 hover:bg-input/50 hover:text-foreground cursor-pointer"
+                              />
+                            }
+                          >
+                            <HugeiconsIcon
+                              icon={FolderAddIcon}
+                              strokeWidth={2}
+                            />
+                            Create folder
+                          </ComboboxItem>
+                        </ComboboxEmpty>
+                        <ComboboxList>
+                          {(item) => (
+                            <ComboboxItem key={item.id} value={item}>
+                              {item.name}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                  </Field>
+                )}
+              />
 
-          {/* Folder (single) - Controller */}
-          {/*<Controller
-            control={control}
-            name="folderId"
-            render={({ field }) => (
-              <Combobox
-                items={folders}
-                value={field.value}
-                onValueChange={(v) => field.onChange(v)}
-              >
-                <ComboboxInput
-                  placeholder="Select a folder"
-                  className="input"
-                  displayValue={(folderId) =>
-                    folders.find((f) => f.id === folderId)?.name || ""
+              {error && (
+                <Field>
+                  <ErrorText>{error}</ErrorText>
+                </Field>
+              )}
+            </FieldGroup>
+          </FieldSet>
+
+          <SheetFooter className="grid grid-cols-2 p-4!">
+            <SheetClose
+              render={
+                <Button
+                  variant="secondary"
+                  className="h-11! w-full"
+                  onClick={() =>
+                    form.reset({
+                      title: note.title || "",
+                      folderId: note.folderId ?? null,
+                      tagIds: initialTagIds,
+                    })
                   }
-                />
-                <ComboboxContent>
-                  <ComboboxEmpty className="flex items-center gap-1.5 px-2">
-                    <button
-                      type="button"
-                      className="bg-input/20 supports-[corner-shape:squircle]:squircle-card flex h-9 w-full items-center justify-center gap-1.5 rounded-2xl border"
-                      onClick={() => {
-                        // example create folder flow
-                        const newId = `new-folder-${Date.now()}`;
-                        setValue("folderId", newId, { shouldDirty: true });
-                      }}
-                    >
-                      Create Folder
-                    </button>
-                  </ComboboxEmpty>
-
-                  <ComboboxList>
-                    {folders.map((folder) => (
-                      <ComboboxItem key={folder.id} value={folder.id}>
-                        {folder.name}
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
-            )}
-          />*/}
+                >
+                  Close
+                </Button>
+              }
+            ></SheetClose>
+            <Button
+              className="h-11! w-full"
+              onClick={onSubmit}
+              disabled={isSaving}
+            >
+              {isSaving ? <Spinner /> : "Save"}
+            </Button>
+          </SheetFooter>
         </form>
-
-        <DialogFooter className="grid grid-cols-2">
-          <DialogClose
-            render={
-              <Button
-                variant="secondary"
-                className="h-11! w-full"
-                onClick={() =>
-                  reset({
-                    title: note.title || "",
-                    folderId: note.folderId ?? null,
-                    tagIds: initialTagIds,
-                  })
-                }
-              >
-                Close
-              </Button>
-            }
-          ></DialogClose>
-          <Button
-            className="h-11! w-full"
-            onClick={onSubmit}
-            disabled={isSaving}
-          >
-            {isSaving ? <Spinner /> : "Save"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

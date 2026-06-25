@@ -23,6 +23,7 @@ async function createFolder({
       data: { name, slug, description, userId: user.id },
     });
 
+    revalidatePath("/folders");
     return { data: result };
   } catch (err) {
     console.error("Failed to create Folder:", err);

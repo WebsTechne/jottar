@@ -20,12 +20,12 @@ const _getTags = async () => {
       userId: true,
       createdAt: true,
       updatedAt: true,
-      noteTags: {
-        select: {
-          noteId: true,
-          tagId: true,
-        },
-      },
+      // noteTags: {
+      //   select: {
+      //     noteId: true,
+      //     tagId: true,
+      //   },
+      // },
     },
     where: { userId: { equals: user.id } },
   });
@@ -40,11 +40,11 @@ export type TagWithNoteTags = Prisma.TagGetPayload<{
     userId: true;
     createdAt: true;
     updatedAt: true;
-    noteTags: {
-      select: {
-        noteId: true;
-        tagId: true;
-      };
-    };
+    // noteTags: {
+    //   select: {
+    //     noteId: true;
+    //     tagId: true;
+    //   };
+    // };
   };
 }>;

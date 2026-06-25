@@ -17,7 +17,7 @@ import {
   StarIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { type Note } from "@prisma/client";
+import { type NoteData } from "@/lib/fetch/get-notes";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
@@ -54,10 +54,10 @@ import { DeleteNoteDialog } from "./delete-note-dialog";
 import { NoteDetails } from "./note-details";
 
 type Props = {
-  note: Note;
+  note: NoteData;
   folders: FolderDropdownItem[];
   // optional callback to notify parent list about a server-updated note
-  onPatch?: (updated: Partial<Note> & { id: string }) => void;
+  onPatch?: (updated: Partial<NoteData> & { id: string }) => void;
   view: NotesView;
 };
 
@@ -73,7 +73,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
   };
 
   // local copy for optimistic updates
-  const [localNote, setLocalNote] = useState<Note>(note);
+  const [localNote, setLocalNote] = useState<NoteData>(note);
   // simple in-flight guard so user can't spam toggles
   const [inFlight, setInFlight] = useState(false);
 
@@ -353,6 +353,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
         note={localNote}
         preview={preview}
         folder={thisFolder?.name ?? "None"}
+        tags={localNote.noteTags?.map((tag) => tag.tag.name) ?? []}
         open={detailsDialogOpen}
         onOpenChange={handleDetailsDialogChange}
       />
@@ -528,11 +529,11 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
                             buttonVariants({ variant: "outline" }),
                             "w-full justify-start!",
                           )}
-                        ></Link>
+                        />
                       }
                     >
                       <HugeiconsIcon icon={FolderAddIcon} strokeWidth={2} />
-                      New folder
+                      Create folder
                     </ContextMenuItem>
 
                     {usableFolders.length > 0 && <ContextMenuSeparator />}

@@ -1,7 +1,7 @@
 import { NotesList } from "./page.client";
 import { getNotes, overviewNotes } from "@/lib/fetch/get-notes";
 import { getFoldersForDropdown } from "@/lib/fetch/get-folders";
-import {type Note } from "@prisma/client";
+import { type NoteData } from "@/lib/fetch/get-notes";
 
 export type NotesView =
   | "active"
@@ -11,7 +11,7 @@ export type NotesView =
   | "folder";
 
 function prepareNotes(
-  notes: Note[],
+  notes: NoteData[],
   {
     limit,
     view,

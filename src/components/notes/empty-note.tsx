@@ -16,8 +16,8 @@ const EmptyNotes = () => (
 const EmptyFolder = () => (
   <div className="text-card-foreground bg-background supports-[corner-shape:squircle]:squircle-card flex min-h-25 w-full flex-col items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed p-3">
     <p className="text-center text-sm">
-      You do not have any notes in this folder. You can add notes to this folder
-      from the notes page.
+      You do not have any notes in this folder. Create a note with the pen icon
+      or add some from the notes page.
     </p>
     <Link href="/notes" className={buttonVariants({ size: "sm" })}>
       Explore Notes
