@@ -353,7 +353,6 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
         note={localNote}
         preview={preview}
         folder={thisFolder?.name ?? "None"}
-        tags={localNote.noteTags?.map((tag) => tag.tag.name) ?? []}
         open={detailsDialogOpen}
         onOpenChange={handleDetailsDialogChange}
       />

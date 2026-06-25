@@ -1,15 +1,12 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import {
-  FolderWithNotes,
   getFolderWithNotes,
   getFoldersForDropdown,
 } from "@/lib/fetch/get-folders";
-import { NoteCard } from "@/components/notes/note-card";
-import { FolderHeader } from "../folder-header";
-import { EmptyFolder } from "@/components/notes/empty-note";
 import FolderPageClient from "./page.client";
 import { FloatingButton } from "@/components/floating-button";
+import { Link } from "next/link";
 
 interface FolderPageProps {
   params: {
@@ -42,9 +39,9 @@ export default async function FolderPage({ params }: FolderPageProps) {
     return (
       <p className="p-4 font-mono">
         This folder was not found.{" "}
-        <a href="/folders" className="underline">
+        <Link href="/folders" className="underline">
           All folders.
-        </a>
+        </Link>
       </p>
     );
 
