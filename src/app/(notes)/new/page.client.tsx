@@ -142,7 +142,7 @@ const NewNotePage = () => {
           JSON.stringify(newDraft),
         );
         localStorage.removeItem("draft:new");
-        toast.success(`Note saved${folderSlug && ` to ${folderSlug}`}!`);
+        toast.success(`Note saved${folderSlug ? ` to ${folderSlug}` : ""}!`);
         router.replace(`/notes/${newNoteId}`);
       }
     } finally {
