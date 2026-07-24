@@ -28,7 +28,7 @@ import {
 } from "../ui/field";
 import { Switch } from "../ui/switch";
 import { Button } from "../ui/button";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { cn } from "@/lib/utils";
@@ -48,12 +48,15 @@ const ShareNoteBody = ({
 }) => {
   const isMobile = useIsMobile();
 
-  const { control, watch, handleSubmit } = useForm<FormValues>({
+  const { control, handleSubmit } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { shareNote: false, showUsername: false },
+    defaultValues: {
+      shareNote: note.shareable,
+      showUsername: note.shareLinkType === "USERNAME",
+    },
   });
 
-  const watchShareNote = watch("shareNote");
+  const watchShareNote = useWatch({ control, name: "shareNote" });
 
   return (
     <>
