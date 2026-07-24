@@ -25,12 +25,12 @@ export const auth = betterAuth({
 
   ///// Trust expo mobile
   trustedOrigins: [
-    "jottar://", // Basic scheme
-    "jottar://*", // Wildcard support for all paths following the scheme
-    "exp://", // Trust all Expo URLs (prefix matching)
-    "exp://**", // Trust all Expo URLs (wildcard matching)
-    "exp://10.198.*.*:*/**", // Trust 10.198.x.x IP range with any port and path,
-    "http://10.10.54.32:3000",
+    "jottar://",
+    "jottar://*",
+    "exp://",
+    "exp://**",
+    "exp://10.198.*.*:*/**",
+    "http://10.240.29.24:3000",
   ],
 
   ///// Plugins

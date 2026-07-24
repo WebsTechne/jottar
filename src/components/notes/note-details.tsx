@@ -89,7 +89,7 @@ const NoteDetails = ({
         <DrawerContent className="">
           <DrawerHeader>
             <DrawerTitle>
-              <div className="bg-muted text-muted-foreground line-clamp-1 rounded-md px-2 py-1 text-sm font-semibold">
+              <div className="line-clamp-1 px-2 py-1 font-semibold">
                 {note.title || "Untitled note"}
               </div>
             </DrawerTitle>
@@ -109,7 +109,7 @@ const NoteDetails = ({
       <DialogContent className="gap-3.5!">
         <DialogHeader>
           <DialogTitle>Note details</DialogTitle>
-          <div className="bg-muted text-muted-foreground line-clamp-1 rounded-md px-2 py-1 text-sm font-semibold">
+          <div className="line-clamp-1 px-2 py-1 font-semibold">
             {note.title || "Untitled note"}
           </div>
           <DialogDescription className="line-clamp-2">
