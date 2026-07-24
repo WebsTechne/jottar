@@ -10,13 +10,11 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const DeleteNoteDialog = ({
-  id,
   title,
   open,
   onOpenChange,
   onConfirm,
 }: {
-  id: string;
   title: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;

@@ -30,6 +30,7 @@ export const auth = betterAuth({
     "exp://", // Trust all Expo URLs (prefix matching)
     "exp://**", // Trust all Expo URLs (wildcard matching)
     "exp://10.198.*.*:*/**", // Trust 10.198.x.x IP range with any port and path,
+    "http://10.10.54.32:3000",
   ],
 
   ///// Plugins

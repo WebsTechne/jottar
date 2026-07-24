@@ -86,8 +86,9 @@ model Note {
   allowCopy        Boolean       @default(false)
   copiedFromNoteId String?       @db.Uuid
   copiedFromUserId String?       @db.Uuid
-  shareLinkType    ShareLinkType @default(USERNAME)
   shareable        Boolean       @default(false)
+  shareLinkType    ShareLinkType @default(USERNAME)
+  shareToken       String?       @unique @db.VarChar(8)
   trashedAt        DateTime?     @db.Timestamp(6)
   copiedFromNote   Note?         @relation("NoteCopies", fields: [copiedFromNoteId], references: [id])
   copies           Note[]        @relation("NoteCopies")

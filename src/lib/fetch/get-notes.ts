@@ -30,6 +30,7 @@ const getNotes = async () => {
       copiedFromUserId: true,
       shareLinkType: true,
       shareable: true,
+      shareToken: true,
     },
     where: { userId: { equals: user.id } },
   });
@@ -63,6 +64,7 @@ const getNote = async (id: string) => {
       copiedFromUserId: true,
       shareLinkType: true,
       shareable: true,
+      shareToken: true,
     },
     where: { id, userId: user.id },
   });
@@ -88,6 +90,7 @@ type NoteData = Prisma.NoteGetPayload<{
     copiedFromUserId: true;
     shareLinkType: true;
     shareable: true;
+    shareToken: true;
   };
 }>;
 

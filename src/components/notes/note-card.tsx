@@ -52,6 +52,7 @@ import { buttonVariants } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { DeleteNoteDialog } from "./delete-note-dialog";
 import { NoteDetails } from "./note-details";
+import { ShareNoteDrawer } from "./share-note-drawer";
 
 type Props = {
   note: NoteData;
@@ -70,6 +71,11 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const handleDetailsDialogChange = (value: boolean) => {
     setDetailsDialogOpen(value);
+  };
+
+  const [shareNoteDrawerOpen, setShareNoteDrawerOpen] = useState(false);
+  const handleShareNoteDrawerChange = (value: boolean) => {
+    setShareNoteDrawerOpen(value);
   };
 
   // local copy for optimistic updates
@@ -342,7 +348,6 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
   return (
     <>
       <DeleteNoteDialog
-        id={localNote.id}
         title={localNote.title ?? "Untitled note"}
         open={deleteDialogOpen}
         onOpenChange={handleDeleteDialogChange}
@@ -355,6 +360,14 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
         folder={thisFolder?.name ?? "None"}
         open={detailsDialogOpen}
         onOpenChange={handleDetailsDialogChange}
+      />
+
+      <ShareNoteDrawer
+        note={localNote}
+        setNote={setLocalNote}
+        preview={preview}
+        open={shareNoteDrawerOpen}
+        onOpenChange={handleShareNoteDrawerChange}
       />
 
       <ContextMenu
@@ -559,9 +572,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
           )}
 
           {!localNote.archived && !localNote.trashedAt && (
-            <ContextMenuItem
-              onClick={() => toast("This feature isn't available yet")}
-            >
+            <ContextMenuItem onClick={() => handleShareNoteDrawerChange(true)}>
               <HugeiconsIcon icon={Share01Icon} strokeWidth={2} />
               Share note
             </ContextMenuItem>
