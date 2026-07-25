@@ -18,7 +18,7 @@ import {
   DrawerTitle,
 } from "../ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import {
   Field,
   FieldContent,
@@ -32,10 +32,12 @@ import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { cn } from "@/lib/utils";
+import { useOverlay } from "@/context/overlay-context";
 
 const formSchema = z.object({
   shareNote: z.boolean(),
   showUsername: z.boolean(),
+  allowCopy: z.boolean(),
 });
 type FormValues = z.infer<typeof formSchema>;
 
@@ -53,6 +55,7 @@ const ShareNoteBody = ({
     defaultValues: {
       shareNote: note.shareable,
       showUsername: note.shareLinkType === "USERNAME",
+      allowCopy: note.allowCopy,
     },
   });
 
@@ -61,7 +64,7 @@ const ShareNoteBody = ({
   return (
     <>
       <div className="flex flex-col gap-2">
-        <FieldLabel htmlFor="share-note" className="border-none">
+        <FieldLabel htmlFor="share-note" className="cursor-pointer border-none">
           <Field orientation="horizontal" className="py-3!">
             <FieldContent>
               <FieldTitle>Share note</FieldTitle>
@@ -88,7 +91,7 @@ const ShareNoteBody = ({
         <FieldLabel
           htmlFor="show-username"
           className={cn(
-            "border-none duration-300",
+            "cursor-pointer border-none duration-200",
             !watchShareNote && "pointer-events-none opacity-50",
           )}
         >
@@ -105,6 +108,37 @@ const ShareNoteBody = ({
               render={({ field }) => (
                 <Switch
                   id="show-username"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                  disabled={!watchShareNote}
+                />
+              )}
+            />
+          </Field>
+        </FieldLabel>
+
+        <FieldLabel
+          htmlFor="allow-copy"
+          className={cn(
+            "mt-2 cursor-pointer border-none duration-200",
+            !watchShareNote && "pointer-events-none opacity-50",
+          )}
+        >
+          <Field orientation="horizontal" className="py-3!">
+            <FieldContent>
+              <FieldTitle>Allow saving a copy</FieldTitle>
+              <FieldDescription>
+                Let others save this note to their own account
+              </FieldDescription>
+            </FieldContent>
+            <Controller
+              name="allowCopy"
+              control={control}
+              render={({ field }) => (
+                <Switch
+                  id="allow-copy"
                   checked={field.value}
                   onCheckedChange={field.onChange}
                   onBlur={field.onBlur}
@@ -153,6 +187,17 @@ const ShareNoteDrawer = ({
   open: boolean;
   onOpenChange: (val: boolean) => void;
 }) => {
+  const { active, open: overlayOpen, close } = useOverlay();
+  const owner = `share-note:${note.id}`;
+
+  useEffect(() => {
+    if (open) {
+      overlayOpen(owner);
+    } else if (active === owner) {
+      close();
+    }
+  }, [open]);
+
   const isMobile = useIsMobile();
   if (isMobile)
     return (
@@ -160,7 +205,7 @@ const ShareNoteDrawer = ({
         <DrawerContent className="">
           <DrawerHeader>
             <DrawerTitle>
-              <div className="line-clamp-1 px-2 py-1 font-semibold">
+              <div className="line-clamp-1 py-1 font-semibold">
                 {note.title || "Untitled note"}
               </div>
             </DrawerTitle>
@@ -180,7 +225,7 @@ const ShareNoteDrawer = ({
       <DialogContent className="gap-3.5!">
         <DialogHeader>
           <DialogTitle>Note details</DialogTitle>
-          <div className="line-clamp-1 px-2 py-1 font-semibold">
+          <div className="line-clamp-1 py-1 font-semibold">
             {note.title || "Untitled note"}
           </div>
           <DialogDescription className="line-clamp-2">

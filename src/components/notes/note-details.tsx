@@ -16,6 +16,8 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "../ui/drawer";
+import { useOverlay } from "@/context/overlay-context";
+import { useEffect } from "react";
 
 const NoteDetailsBody = ({
   note,
@@ -81,6 +83,17 @@ const NoteDetails = ({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) => {
+  const { active, open: overlayOpen, close } = useOverlay();
+  const owner = `note-details:${note.id}`;
+
+  useEffect(() => {
+    if (open) {
+      overlayOpen(owner);
+    } else if (active === owner) {
+      close();
+    }
+  }, [open]);
+
   const isMobile = useIsMobile();
 
   if (isMobile)
@@ -89,7 +102,7 @@ const NoteDetails = ({
         <DrawerContent className="">
           <DrawerHeader>
             <DrawerTitle>
-              <div className="line-clamp-1 px-2 py-1 font-semibold">
+              <div className="line-clamp-1 py-1 font-semibold">
                 {note.title || "Untitled note"}
               </div>
             </DrawerTitle>
@@ -109,7 +122,7 @@ const NoteDetails = ({
       <DialogContent className="gap-3.5!">
         <DialogHeader>
           <DialogTitle>Note details</DialogTitle>
-          <div className="line-clamp-1 px-2 py-1 font-semibold">
+          <div className="line-clamp-1 py-1 font-semibold">
             {note.title || "Untitled note"}
           </div>
           <DialogDescription className="line-clamp-2">

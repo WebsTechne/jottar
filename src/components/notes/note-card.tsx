@@ -89,8 +89,13 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
   }, [note]);
 
   const { active, open, close } = useOverlay();
-  const owner = `note-context:${localNote.id}` as const;
-  const isOpen = active === owner;
+
+  const contextOwner = `note-context:${localNote.id}`;
+  const shareOwner = `share-note:${localNote.id}`;
+  const detailsOwner = `note-details:${localNote.id}`;
+  const isRaised =
+    active === contextOwner || active === shareOwner || active === detailsOwner;
+  const isOpen = active === contextOwner;
 
   const handleTrashConfirm = async (id: string) => {
     if (inFlight) return;
@@ -372,14 +377,14 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
 
       <ContextMenu
         open={isOpen}
-        onOpenChange={(v) => (v ? open(owner) : close())}
+        onOpenChange={(v) => (v ? open(contextOwner) : close())}
       >
         <ContextMenuTrigger
           render={
             <div
               className={cn(
                 "bg-muted dark:bg-card! supports-[corner-shape:squircle]:squircle-card relative z-1 flex w-full flex-col gap-1 overflow-clip rounded-2xl p-3 pb-2! transition-shadow duration-300",
-                isOpen && "z-1005 shadow-sm",
+                isRaised && "z-1005 shadow-sm",
               )}
             />
           }
