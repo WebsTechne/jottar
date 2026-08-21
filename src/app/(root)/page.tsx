@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FoldersOverviewServer } from "../folders/page.server";
 
 export default async function Page() {
-  const widths = [144.34, 160.13, 92.55];
+  const widths = [144.34, 160.13, 92.55, 120.31];
 
   return (
     <>
@@ -39,7 +39,7 @@ export default async function Page() {
           <Suspense
             fallback={
               <div className="wrap-flex">
-                {[...Array(3)].map((_, i) => (
+                {[...Array(4)].map((_, i) => (
                   <div
                     key={i}
                     className="supports-[corner-shape:squircle]:squircle-card relative h-10.5 overflow-clip rounded-xl border"

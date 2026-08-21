@@ -3,12 +3,35 @@ import { getFoldersList, getFoldersOverview } from "@/lib/fetch/get-folders";
 import { FoldersList } from "./page.client";
 
 async function FoldersListServer() {
-  const folders = await getFoldersList();
+  const fetched = await getFoldersList();
+  const now = new Date();
+  const folders = [
+    {
+      name: "Shared Notes",
+      id: "blah-blah-blah",
+      slug: "shared-notes",
+      createdAt: now,
+      updatedAt: now,
+      description: "Notes you made available to others",
+      _count: { notes: 0 },
+    },
+  ].concat(fetched);
   return <FoldersList folders={folders} />;
 }
 
 async function FoldersOverviewServer() {
-  const foldersOverlay = await getFoldersOverview();
+  const fetched = await getFoldersOverview();
+  const now = new Date();
+  const foldersOverlay = fetched.concat([
+    {
+      name: "Shared Notes",
+      id: "blah-blah-blah",
+      slug: "shared-notes",
+      updatedAt: now,
+      description: "Notes you made available to others",
+      _count: { notes: 0 },
+    },
+  ]);
 
   return (
     <div className="wrap-flex">

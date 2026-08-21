@@ -454,6 +454,7 @@ const NoteCard = ({ note, folders, onPatch, view }: Props) => {
               <ContextMenuGroup>
                 {view === "active" && (
                   <ContextMenuItem
+                    className="text-base"
                     onClick={() => optimisticToggle("isPinned", togglePin)}
                   >
                     {localNote.isPinned ? (

@@ -33,6 +33,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { cn } from "@/lib/utils";
 import { useOverlay } from "@/context/overlay-context";
+import { toggleShareOptions } from "@/lib/actions/note-actions";
+import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
+import {
+  InputGroup,
+  InputGroupButton,
+  InputGroupInput,
+} from "../ui/input-group";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Copy01Icon } from "@hugeicons/core-free-icons";
+import { Spinner } from "../ui/spinner";
 
 const formSchema = z.object({
   shareNote: z.boolean(),
@@ -44,13 +55,19 @@ type FormValues = z.infer<typeof formSchema>;
 const ShareNoteBody = ({
   note,
   setNote,
+  shareLink,
 }: {
   note: NoteData;
   setNote: Dispatch<SetStateAction<NoteData>>;
+  shareLink: string;
 }) => {
   const isMobile = useIsMobile();
 
-  const { control, handleSubmit } = useForm<FormValues>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       shareNote: note.shareable,
@@ -59,10 +76,53 @@ const ShareNoteBody = ({
     },
   });
 
+  const onSubmit = async (data: FormValues) => {
+    const { allowCopy, shareNote: shareable, showUsername } = data;
+    const shareLinkType = showUsername ? "USERNAME" : "TOKEN";
+
+    try {
+      const res = await toggleShareOptions({
+        id: note.id,
+        allowCopy,
+        shareLinkType,
+        shareable,
+      });
+
+      if (res.error) {
+        toast.error(res.error);
+        console.error(res.error);
+      }
+
+      if (res.data) {
+        const { allowCopy, shareLinkType, shareable } = res.data;
+        setNote((n) => ({ ...n, allowCopy, shareLinkType, shareable }));
+      }
+    } catch (err) {}
+  };
+
   const watchShareNote = useWatch({ control, name: "shareNote" });
 
   return (
-    <>
+    <form id="share-options-form" onSubmit={handleSubmit(onSubmit)}>
+      <div className="mb-4">
+        <InputGroup
+          className="h-11 border! bg-transparent font-mono"
+          aria-disabled={!note.shareable}
+        >
+          <InputGroupInput
+            value={shareLink}
+            readOnly
+            disabled={!note.shareable}
+          />
+          <InputGroupButton
+            className="aspect-square h-9/10! rounded-md!"
+            disabled={!note.shareable}
+          >
+            <HugeiconsIcon icon={Copy01Icon} className="size-5!" />
+          </InputGroupButton>
+        </InputGroup>
+      </div>
+
       <div className="flex flex-col gap-2">
         <FieldLabel htmlFor="share-note" className="cursor-pointer border-none">
           <Field orientation="horizontal" className="py-3!">
@@ -154,23 +214,39 @@ const ShareNoteBody = ({
       {isMobile ? (
         <DrawerFooter className="grid grid-cols-2 px-2!">
           <DrawerClose asChild={true}>
-            <Button variant="secondary" className="h-11!">
+            <Button
+              type="reset"
+              form="share-options-form"
+              variant="secondary"
+              className="h-11!"
+            >
               Cancel
             </Button>
           </DrawerClose>
-          <Button className="h-11!">Share</Button>
+          <Button type="submit" form="share-options-form" className="h-11!">
+            {isSubmitting ? <Spinner /> : "Share"}
+          </Button>
         </DrawerFooter>
       ) : (
-        <DialogFooter className="grid grid-cols-2 px-2!">
+        <DialogFooter className="grid grid-cols-2 px-2! py-4">
           <DialogClose
-            render={<Button variant="secondary" className="h-11!" />}
+            render={
+              <Button
+                type="reset"
+                form="share-options-form"
+                variant="secondary"
+                className="h-11!"
+              />
+            }
           >
             Cancel
           </DialogClose>
-          <Button className="h-11!">Share</Button>
+          <Button type="submit" form="share-options-form" className="h-11!">
+            {isSubmitting ? <Spinner /> : "Share"}
+          </Button>
         </DialogFooter>
       )}
-    </>
+    </form>
   );
 };
 
@@ -189,6 +265,15 @@ const ShareNoteDrawer = ({
 }) => {
   const { active, open: overlayOpen, close } = useOverlay();
   const owner = `share-note:${note.id}`;
+
+  const prefix = `${process.env.NEXT_PUBLIC_APP_URL}/s`;
+  const { data: session } = authClient.useSession();
+  const username = session?.user.username;
+  const shareLink = !note.shareable
+    ? "https://"
+    : note.shareLinkType === "USERNAME"
+      ? `${prefix}/${username}/${note.id}`
+      : `${prefix}/${note.shareToken}`;
 
   useEffect(() => {
     if (open) {
@@ -215,7 +300,7 @@ const ShareNoteDrawer = ({
             </DrawerDescription>
           </DrawerHeader>
 
-          <ShareNoteBody note={note} setNote={setNote} />
+          <ShareNoteBody note={note} setNote={setNote} shareLink={shareLink} />
         </DrawerContent>
       </Drawer>
     );
@@ -233,7 +318,7 @@ const ShareNoteDrawer = ({
           </DialogDescription>
         </DialogHeader>
 
-        <ShareNoteBody note={note} setNote={setNote} />
+        <ShareNoteBody note={note} setNote={setNote} shareLink={shareLink} />
       </DialogContent>
     </Dialog>
   );

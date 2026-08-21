@@ -7,6 +7,7 @@ import {
 import FolderPageClient from "./page.client";
 import { FloatingButton } from "@/components/floating-button";
 import Link from "next/link";
+import SharedNotesPage from "./shared-notes-page";
 
 interface FolderPageProps {
   params: {
@@ -29,6 +30,8 @@ export default async function FolderPage({ params }: FolderPageProps) {
         </a>{" "}
       </p>
     );
+
+  if (slug === "shared-notes") return <SharedNotesPage session={session} />;
 
   const [folder, folders] = await Promise.all([
     getFolderWithNotes({ folderSlug: slug }),

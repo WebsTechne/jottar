@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
+import { username } from "better-auth/plugins";
 import prisma from "./prisma";
 
 export const auth = betterAuth({
@@ -30,9 +31,9 @@ export const auth = betterAuth({
     "exp://",
     "exp://**",
     "exp://10.198.*.*:*/**",
-    "http://10.240.29.24:3000",
+    "http://10.12.162.24:3000",
   ],
 
   ///// Plugins
-  plugins: [nextCookies()],
+  plugins: [username(), nextCookies()],
 });

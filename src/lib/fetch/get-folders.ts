@@ -194,6 +194,38 @@ type FolderWithNotes = Prisma.FolderGetPayload<{
   };
 }>;
 
+// For Shared Notes (virtual folder)
+export const getSharedNotes = async () => {
+  const user = await getAuthedUser();
+
+  if (!user) return null;
+
+  const notes = prisma.note.findMany({
+    where: { userId: user.id, shareable: true },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      folderId: true,
+      userId: true,
+      isPinned: true,
+      favorite: true,
+      archived: true,
+      createdAt: true,
+      updatedAt: true,
+      noteTags: { select: { tag: { select: { name: true } } } },
+      trashedAt: true,
+      allowCopy: true,
+      copiedFromNoteId: true,
+      copiedFromUserId: true,
+      shareLinkType: true,
+      shareable: true,
+      shareToken: true,
+    },
+  });
+  return notes;
+};
+
 export const getFoldersOverview = cache(_getFoldersOverview);
 export const getFoldersForDropdown = cache(_getFoldersForDropdown);
 export const getFoldersList = cache(_getFoldersList);

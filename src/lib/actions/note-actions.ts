@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getAuthedUser } from "@/lib/fetch/get-authed-user";
+import { generateToken } from "../helpers/generate-token";
 
 // ///// CREATE
 async function createNote(content: string, slug?: string) {
@@ -105,6 +106,96 @@ async function createTag(name: string) {
 }
 
 // ///// TOGGLE
+
+// All the share options
+async function toggleShareOptions({
+  id,
+  shareable,
+  shareLinkType,
+  allowCopy,
+}: {
+  id: string;
+  shareable: boolean;
+  shareLinkType: "USERNAME" | "TOKEN";
+  allowCopy: boolean;
+}) {
+  const user = await getAuthedUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  try {
+    // Fetch current state first — we need to know if a token already
+    // exists so we don't clobber a link that's already been shared out.
+    const existing = await prisma.note.findUnique({
+      where: { id, userId: user.id },
+      select: { shareToken: true, folderId: true },
+    });
+
+    if (!existing) {
+      return { error: "Note not found" };
+    }
+
+    if (!shareable) {
+      const updated = await prisma.note.update({
+        where: { id, userId: user.id },
+        data: { shareable: false, shareLinkType, allowCopy },
+        select: {
+          allowCopy: true,
+          shareable: true,
+          shareLinkType: true,
+          shareToken: true,
+        },
+      });
+      return { data: updated };
+    }
+
+    let shareToken: string | null = existing.shareToken;
+
+    if (shareLinkType === "TOKEN" && !shareToken) {
+      shareToken = await generateToken();
+    } else if (shareLinkType === "USERNAME") {
+      shareToken = null;
+    }
+
+    const sharefolder = await prisma.folder.findFirst({
+      where: { name: "Shared Notes", userId: user.id },
+      select: { id: true },
+    });
+
+    const targetFolderId =
+      existing.folderId === sharefolder?.id
+        ? existing.folderId
+        : (sharefolder?.id ?? existing.folderId);
+
+    const updated = await prisma.note.update({
+      where: { id, userId: user.id },
+      data: {
+        shareable,
+        shareLinkType,
+        allowCopy,
+        shareToken,
+        folderId: targetFolderId,
+      },
+      select: {
+        allowCopy: true,
+        shareable: true,
+        shareLinkType: true,
+        shareToken: true,
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/notes");
+    revalidatePath("/folders");
+
+    return { data: updated };
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to update share options");
+  }
+}
+
 // faster toggle using one SQL statement
 async function togglePin(id: string) {
   const user = await getAuthedUser();
@@ -336,6 +427,7 @@ export {
   togglePin,
   toggleFavorite,
   toggleArchive,
+  toggleShareOptions,
   //
   updateNote,
   updateNoteDetails,
