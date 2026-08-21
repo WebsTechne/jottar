@@ -15,7 +15,8 @@ async function FoldersListServer() {
       description: "Notes you made available to others",
       _count: { notes: 0 },
     },
-  ].concat(fetched);
+    ...fetched,
+  ];
   return <FoldersList folders={folders} />;
 }
 
