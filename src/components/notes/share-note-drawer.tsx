@@ -18,7 +18,7 @@ import {
   DrawerTitle,
 } from "../ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   Field,
   FieldContent,
@@ -42,8 +42,9 @@ import {
   InputGroupInput,
 } from "../ui/input-group";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Copy01Icon } from "@hugeicons/core-free-icons";
+import { Copy01Icon, Copy02Icon, CopyCheck } from "@hugeicons/core-free-icons";
 import { Spinner } from "../ui/spinner";
+import { copyToClipboard } from "@/lib/helpers/copy-to-clipboard";
 
 const formSchema = z.object({
   shareNote: z.boolean(),
@@ -62,6 +63,7 @@ const ShareNoteBody = ({
   shareLink: string;
 }) => {
   const isMobile = useIsMobile();
+  const [isCopying, setIsCopying] = useState(false);
 
   const {
     control,
@@ -100,6 +102,18 @@ const ShareNoteBody = ({
     } catch (err) {}
   };
 
+  const handleCopyLink = async () => {
+    const success = await copyToClipboard(shareLink);
+
+    if (success) {
+      toast.success("Link copied to clipboard");
+      setIsCopying(true);
+      setTimeout(() => setIsCopying(false), 2000);
+    } else {
+      toast.error("Failed to copy link");
+    }
+  };
+
   const watchShareNote = useWatch({ control, name: "shareNote" });
 
   return (
@@ -115,10 +129,14 @@ const ShareNoteBody = ({
             disabled={!note.shareable}
           />
           <InputGroupButton
-            className="aspect-square h-9/10! rounded-md!"
+            className="mr-1 aspect-square h-8/10! rounded-lg!"
             disabled={!note.shareable}
+            onClick={handleCopyLink}
           >
-            <HugeiconsIcon icon={Copy01Icon} className="size-5!" />
+            <HugeiconsIcon
+              icon={isCopying ? CopyCheck : Copy01Icon}
+              className="size-5!"
+            />
           </InputGroupButton>
         </InputGroup>
       </div>

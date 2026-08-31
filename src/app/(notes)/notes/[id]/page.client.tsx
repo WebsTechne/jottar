@@ -25,7 +25,7 @@ const Editor = dynamic(
   },
 );
 
-const extensions = [
+export const extensions = [
   StarterKit.configure({
     orderedList: {
       HTMLAttributes: {

@@ -154,6 +154,9 @@
 @utility flex-center {
   @apply flex items-center justify-center;
 }
+@utility flex-between {
+  @apply flex items-center justify-between;
+}
 
 @utility squircle-card {
   @apply corner-squircle rounded-4xl!;

@@ -27,7 +27,11 @@ export default async function SharedNotesPage({
         </p>
 
         {sharedNotes === null || sharedNotes.length < 1 ? (
-          <section></section>
+          <section>
+            <h2 className="my-5 text-4xl font-extrabold md:text-5xl">
+              You have not shared any notes.
+            </h2>
+          </section>
         ) : (
           <section className="wrap">
             {sharedNotes.map((note) => (

@@ -64,7 +64,7 @@ function UserAvatar({
 }) {
   return (
     <Avatar className="ring-accent dark:ring-accent/50 size-6.5 duration-300 hover:ring-4">
-      <AvatarImage src={image || ""} alt={name} />
+      {image && <AvatarImage src={image} alt={name} />}
       <AvatarFallback>{initials}</AvatarFallback>
     </Avatar>
   );
