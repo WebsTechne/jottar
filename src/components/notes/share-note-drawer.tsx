@@ -42,7 +42,7 @@ import {
   InputGroupInput,
 } from "../ui/input-group";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Copy01Icon, Copy02Icon, CopyCheck } from "@hugeicons/core-free-icons";
+import { Copy01Icon, CopyCheckFreeIcons } from "@hugeicons/core-free-icons";
 import { Spinner } from "../ui/spinner";
 import { copyToClipboard } from "@/lib/helpers/copy-to-clipboard";
 
@@ -134,7 +134,7 @@ const ShareNoteBody = ({
             onClick={handleCopyLink}
           >
             <HugeiconsIcon
-              icon={isCopying ? CopyCheck : Copy01Icon}
+              icon={isCopying ? CopyCheckFreeIcons : Copy01Icon}
               className="size-5!"
             />
           </InputGroupButton>
