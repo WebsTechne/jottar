@@ -146,17 +146,17 @@ export function SignInClient() {
         {/* Email */}
         <Field data-invalid={!!emailError} className="input-group gap-1.5!">
           <FieldLabel htmlFor="form-rhf-email" className="input-label">
-            Email
+            Email or Username
           </FieldLabel>
           <Input
             {...form.register("email")}
             id="form-rhf-email"
             aria-invalid={!!emailError}
             aria-describedby={emailError ? "form-rhf-email-error" : undefined}
-            autoComplete="email"
+            autoComplete="username"
             className="input required"
             type="email"
-            placeholder="j@example.com"
+            placeholder=""
           />
           <FieldError
             errors={[emailError]}
