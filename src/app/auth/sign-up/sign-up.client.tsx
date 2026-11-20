@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTheme } from "next-themes";
 
 import {
   Field,
@@ -22,6 +21,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
+  Alert02Icon,
+  CircleCheck,
+  CircleX,
   SquareLock02Icon,
   ViewIcon,
   ViewOffSlashIcon,
@@ -37,6 +39,11 @@ import { toast } from "sonner";
 import { AuthMessage } from "../_components/auth-message";
 import { ErrorText } from "@/components/error-text";
 import { cn } from "@/lib/utils";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 
 // validation: identifier must be email, password 6+ chars
 const formSchema = z
@@ -45,6 +52,10 @@ const formSchema = z
       .string()
       .min(2, "Name must be at least 2 characters.")
       .max(100, "Name must be at most 100 characters."),
+    username: z
+      .string()
+      .min(3, "Username must be at least 3 characters.")
+      .max(20, "Username must be at most 20 characters."),
     email: z.email("Please enter a valid email address."),
     password: z
       .string()
@@ -64,8 +75,9 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>;
 
+type UsernameStatus = "idle" | "checking" | "available" | "taken" | "error";
+
 export function SignUpClient() {
-  const { resolvedTheme } = useTheme();
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const raw = searchParams.get("returnTo") ?? "";
@@ -74,6 +86,41 @@ export function SignUpClient() {
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [error, setError] = useState("");
+
+  const requestId = useRef(0);
+
+  const [usernameStatus, setUsernameStatus] = useState<UsernameStatus>("idle");
+
+  const checkUsernameStatus = async (username: string) => {
+    const currentRequest = ++requestId.current;
+
+    if (username.length < 1) {
+      setUsernameStatus("idle");
+      return;
+    }
+
+    setUsernameStatus("checking");
+
+    try {
+      const { data, error } = await authClient.isUsernameAvailable({
+        username,
+      });
+
+      // Ignore outdated responses
+      if (currentRequest !== requestId.current) return;
+
+      if (error) {
+        setUsernameStatus("error");
+        return;
+      }
+
+      setUsernameStatus(data?.available ? "available" : "taken");
+    } catch {
+      if (currentRequest === requestId.current) {
+        setUsernameStatus("idle");
+      }
+    }
+  };
 
   // const handleSocialAuth = async (
   //   provider: "google" | "apple",
@@ -92,21 +139,30 @@ export function SignUpClient() {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
+    defaultValues: {
+      name: "",
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   const nameError = form.formState.errors.name;
+  const usernameError = form.formState.errors.username;
   const emailError = form.formState.errors.email;
   const passwordError = form.formState.errors.password;
 
   const {
     formState: { isSubmitting },
+    control,
   } = form;
 
   const onSubmit = async (data: FormValues) => {
     const { confirmPassword, ...payload } = {
       ...data,
       name: data.name,
+      username: data.username,
       email: data.email.toLowerCase().trim(),
     };
 
@@ -170,7 +226,7 @@ export function SignUpClient() {
         {/* Name */}
         <Field data-invalid={!!nameError} className="input-group gap-1.5!">
           <FieldLabel htmlFor="form-rhf-name" className="input-label">
-            Name
+            Full name
           </FieldLabel>
           <Input
             {...form.register("name")}
@@ -183,11 +239,77 @@ export function SignUpClient() {
             placeholder="John Doe"
           />
           <FieldError
-            errors={[emailError]}
-            id="form-rhf-email-error"
+            errors={[nameError]}
+            id="form-rhf-name-error"
             role="alert"
           />
         </Field>
+
+        {/* Username */}
+        <Controller
+          name="username"
+          control={control}
+          render={({ field }) => (
+            <Field
+              data-invalid={!!usernameError}
+              className="input-group gap-1.5!"
+            >
+              <FieldLabel htmlFor="form-rhf-username" className="input-label">
+                Username
+              </FieldLabel>
+              <InputGroup className="input">
+                <InputGroupInput
+                  {...field}
+                  id="form-rhf-username"
+                  aria-invalid={!!usernameError}
+                  aria-describedby={
+                    usernameError ? "form-rhf-username-error" : undefined
+                  }
+                  autoComplete="username"
+                  className="required"
+                  type="text"
+                  placeholder="johndoe"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    checkUsernameStatus(e.target.value);
+                  }}
+                />
+                <InputGroupAddon align="inline-end">
+                  {usernameStatus === "idle" ? (
+                    <></>
+                  ) : usernameStatus === "checking" ? (
+                    <Spinner />
+                  ) : usernameStatus === "available" ? (
+                    <HugeiconsIcon
+                      icon={CircleCheck}
+                      strokeWidth={2}
+                      className="text-success"
+                    />
+                  ) : usernameStatus === "taken" ? (
+                    <HugeiconsIcon
+                      icon={CircleX}
+                      strokeWidth={2}
+                      className="text-destructive"
+                    />
+                  ) : usernameStatus === "error" ? (
+                    <HugeiconsIcon
+                      icon={Alert02Icon}
+                      strokeWidth={2}
+                      className="text-destructive"
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </InputGroupAddon>
+              </InputGroup>
+              <FieldError
+                errors={[usernameError]}
+                id="form-rhf-username-error"
+                role="alert"
+              />
+            </Field>
+          )}
+        />
 
         {/* Email */}
         <Field data-invalid={!!emailError} className="input-group gap-1.5!">
@@ -325,7 +447,16 @@ export function SignUpClient() {
           />
         </Field>
 
-        <Button className="button w-full" type="submit" disabled={isSubmitting}>
+        <Button
+          className="button w-full"
+          type="submit"
+          disabled={
+            isSubmitting ||
+            usernameStatus === "checking" ||
+            usernameStatus === "error" ||
+            usernameStatus === "taken"
+          }
+        >
           {isSubmitting ? <Spinner /> : "Sign up"}
         </Button>
 

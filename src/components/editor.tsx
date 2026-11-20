@@ -72,7 +72,7 @@ const Editor = ({
         className="bg-background min-h-72 cursor-text"
       >
         <EditorContent
-          className="mt-[calc(var(--header-h)*1)] outline-none"
+          className="mt-(--header-h) outline-none"
           editor={editor}
         />
       </div>

@@ -41,7 +41,10 @@ import { cn } from "@/lib/utils";
 
 // validation: identifier must be email, password 6+ chars
 const formSchema = z.object({
-  email: z.email("Please enter a valid email address."),
+  emailOrUsername: z
+    .string()
+    .min(2, "Email or Username is required")
+    .max(254, "Your input is too long!"),
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters." })
@@ -78,10 +81,10 @@ export function SignInClient() {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: "", password: "", rememberMe: false },
+    defaultValues: { emailOrUsername: "", password: "", rememberMe: false },
   });
 
-  const emailError = form.formState.errors.email;
+  const emailError = form.formState.errors.emailOrUsername;
   const passwordError = form.formState.errors.password;
 
   const {
@@ -89,17 +92,31 @@ export function SignInClient() {
   } = form;
 
   const onSubmit = async (data: FormValues) => {
-    const payload = { ...data, email: data.email.toLowerCase().trim() };
+    const isEmail = data.emailOrUsername.includes("@");
+    const varInput = data.emailOrUsername.toLowerCase().trim();
+
+    const emailPayload = {
+      email: varInput,
+      password: data.password,
+      rememberMe: data.rememberMe,
+    };
+    const usernamePayload = {
+      username: varInput,
+      password: data.password,
+      rememberMe: data.rememberMe,
+    };
 
     setError("");
 
     try {
-      const result = await authClient.signIn.email(payload);
+      let result;
+      if (isEmail) result = await authClient.signIn.email(emailPayload);
+      else result = await authClient.signIn.username(usernamePayload);
 
       if (result.error) {
         switch (result.error.code) {
           case "INVALID_CREDENTIALS":
-            setError("Incorrect email or password.");
+            setError("Incorrect email/username or password.");
             return;
 
           case "EMAIL_NOT_VERIFIED":
@@ -140,7 +157,7 @@ export function SignInClient() {
         <AuthMessage
           id="sign-in-heading"
           title="Welcome back"
-          description="Sign in with your email and password"
+          description="Sign in with your email/username and password"
         />
 
         {/* Email */}
@@ -149,13 +166,13 @@ export function SignInClient() {
             Email or Username
           </FieldLabel>
           <Input
-            {...form.register("email")}
+            {...form.register("emailOrUsername")}
             id="form-rhf-email"
             aria-invalid={!!emailError}
             aria-describedby={emailError ? "form-rhf-email-error" : undefined}
             autoComplete="username"
             className="input required"
-            type="email"
+            type="text"
             placeholder=""
           />
           <FieldError
