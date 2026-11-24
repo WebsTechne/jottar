@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import {
@@ -45,6 +45,11 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 
+const USERNAME_REGEX = /^[a-zA-Z0-9_]+$/;
+
+const isValidUsername = (value: string) =>
+  value.length >= 3 && value.length <= 20 && USERNAME_REGEX.test(value);
+
 // validation: identifier must be email, password 6+ chars
 const formSchema = z
   .object({
@@ -55,7 +60,8 @@ const formSchema = z
     username: z
       .string()
       .min(3, "Username must be at least 3 characters.")
-      .max(20, "Username must be at most 20 characters."),
+      .max(20, "Username must be at most 20 characters.")
+      .regex(USERNAME_REGEX, "Only letters, numbers and _ are allowed."),
     email: z.email("Please enter a valid email address."),
     password: z
       .string()
@@ -94,11 +100,6 @@ export function SignUpClient() {
   const checkUsernameStatus = async (username: string) => {
     const currentRequest = ++requestId.current;
 
-    if (username.length < 1) {
-      setUsernameStatus("idle");
-      return;
-    }
-
     setUsernameStatus("checking");
 
     try {
@@ -117,7 +118,7 @@ export function SignUpClient() {
       setUsernameStatus(data?.available ? "available" : "taken");
     } catch {
       if (currentRequest === requestId.current) {
-        setUsernameStatus("idle");
+        setUsernameStatus("error");
       }
     }
   };
@@ -157,6 +158,23 @@ export function SignUpClient() {
     formState: { isSubmitting },
     control,
   } = form;
+
+  const usernameInput = useWatch({ control, name: "username" });
+
+  useEffect(() => {
+    if (!isValidUsername(usernameInput)) return;
+
+    let reqId = requestId.current;
+
+    const timer = setTimeout(() => {
+      checkUsernameStatus(usernameInput);
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+      reqId++;
+    };
+  }, [usernameInput]);
 
   const onSubmit = async (data: FormValues) => {
     const { confirmPassword, ...payload } = {
@@ -271,7 +289,9 @@ export function SignUpClient() {
                   placeholder="johndoe"
                   onChange={(e) => {
                     field.onChange(e);
-                    checkUsernameStatus(e.target.value);
+                    setUsernameStatus(
+                      isValidUsername(e.target.value) ? "checking" : "idle",
+                    );
                   }}
                 />
                 <InputGroupAddon align="inline-end">
@@ -453,7 +473,6 @@ export function SignUpClient() {
           disabled={
             isSubmitting ||
             usernameStatus === "checking" ||
-            usernameStatus === "error" ||
             usernameStatus === "taken"
           }
         >

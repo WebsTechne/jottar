@@ -31,7 +31,7 @@ export const auth = betterAuth({
     "exp://",
     "exp://**",
     "exp://10.198.*.*:*/**",
-    "http://10.196.30.24:3000",
+    "http://192.168.137.12:3000",
   ],
 
   ///// Plugins
