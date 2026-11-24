@@ -97,32 +97,6 @@ export function SignUpClient() {
 
   const [usernameStatus, setUsernameStatus] = useState<UsernameStatus>("idle");
 
-  const checkUsernameStatus = async (username: string) => {
-    const currentRequest = ++requestId.current;
-
-    setUsernameStatus("checking");
-
-    try {
-      const { data, error } = await authClient.isUsernameAvailable({
-        username,
-      });
-
-      // Ignore outdated responses
-      if (currentRequest !== requestId.current) return;
-
-      if (error) {
-        setUsernameStatus("error");
-        return;
-      }
-
-      setUsernameStatus(data?.available ? "available" : "taken");
-    } catch {
-      if (currentRequest === requestId.current) {
-        setUsernameStatus("error");
-      }
-    }
-  };
-
   // const handleSocialAuth = async (
   //   provider: "google" | "apple",
   //   callbackURL: string,
@@ -164,23 +138,36 @@ export function SignUpClient() {
   useEffect(() => {
     if (!isValidUsername(usernameInput)) return;
 
-    let reqId = requestId.current;
+    let cancelled = false;
 
-    const timer = setTimeout(() => {
-      checkUsernameStatus(usernameInput);
+    const timer = setTimeout(async () => {
+      try {
+        const { data, error } = await authClient.isUsernameAvailable({
+          username: usernameInput,
+        });
+
+        if (cancelled) return;
+
+        if (error) {
+          setUsernameStatus("error");
+          return;
+        }
+
+        setUsernameStatus(data?.available ? "available" : "taken");
+      } catch {
+        if (!cancelled) setUsernameStatus("error");
+      }
     }, 500);
 
     return () => {
       clearTimeout(timer);
-      reqId++;
+      cancelled = true;
     };
   }, [usernameInput]);
 
   const onSubmit = async (data: FormValues) => {
     const { confirmPassword, ...payload } = {
       ...data,
-      name: data.name,
-      username: data.username,
       email: data.email.toLowerCase().trim(),
     };
 
